@@ -11,10 +11,23 @@
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow">Diet Coach / Personal Trainer</p>
-        <h1>79kgへ落としながら、仕事で動ける体を作る</h1>
+        <h1>今日も一つ完了。79kgへ、体を作っていこう。</h1>
         <p class="lead" id="heroLead"></p>
+        <div class="hero-actions">
+          <span class="streak" id="todayScore"></span>
+          <span class="streak alt" id="motivationLine"></span>
+        </div>
       </div>
       <div class="hero-metrics" id="heroMetrics"></div>
+    </section>
+
+    <section class="panel victory-panel">
+      <div>
+        <p class="eyebrow">Today's Progress</p>
+        <h2 id="victoryTitle">今日の達成状況</h2>
+      </div>
+      <div class="completion-ring" id="completionRing"></div>
+      <div class="toast" id="feedbackToast" role="status" aria-live="polite"></div>
     </section>
 
     <section class="command-grid">
@@ -46,7 +59,7 @@
         <div class="section-head">
           <div>
             <p class="eyebrow">Training</p>
-            <h2>今週の筋トレメニュー</h2>
+            <h2>筋トレ実績</h2>
           </div>
         </div>
         <div id="strengthPlan"></div>
@@ -55,11 +68,25 @@
         <div class="section-head">
           <div>
             <p class="eyebrow">Diet</p>
-            <h2>今日の食事ルール</h2>
+            <h2>食事ルール</h2>
           </div>
         </div>
         <div id="dietPlan"></div>
       </section>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Workout Memo</p>
+          <h2>その他の筋トレログ</h2>
+        </div>
+      </div>
+      <textarea id="workoutMemo" class="memo-box" rows="4" placeholder="例: スクワット 10回 x 3、腕立て 8回 x 2。きつさ7/10。"></textarea>
+      <div class="memo-foot">
+        <span id="memoSaved"></span>
+        <button class="ghost-button" id="clearToday">今日のチェックをリセット</button>
+      </div>
     </section>
 
     <section class="panel chart-panel">
@@ -86,18 +113,18 @@
       <section class="panel">
         <div class="section-head">
           <div>
-            <p class="eyebrow">Data</p>
-            <h2>取得状態</h2>
+            <p class="eyebrow">Log</p>
+            <h2>完了ログ</h2>
           </div>
         </div>
-        <div id="dataStatus"></div>
+        <div id="completionLog"></div>
       </section>
     </section>
 
     <section class="panel">
       <div class="section-head">
         <div>
-          <p class="eyebrow">Log</p>
+          <p class="eyebrow">Daily Log</p>
           <h2>日別データ</h2>
         </div>
       </div>
@@ -106,7 +133,7 @@
           <thead>
             <tr>
               <th>日付</th>
-              <th>状態</th>
+              <th>完了</th>
               <th>睡眠</th>
               <th>歩数</th>
               <th>活動kcal</th>
