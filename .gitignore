@@ -1,0 +1,6 @@
+data/
+config/settings.json
+notes/
+secrets/*
+!secrets/.gitkeep
+npm-debug.log*

@@ -1,0 +1,21 @@
+{
+  "name": "healthcare-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "health:daily": "node src/healthReport.js",
+    "healthplanet:auth-url": "node scripts/healthplanet-auth-url.js",
+    "healthplanet:token": "node scripts/healthplanet-token.js",
+    "healthplanet:fetch": "node scripts/fetch-healthplanet.js",
+    "dashboard:build": "node scripts/build-dashboard.js",
+    "dashboard:serve": "node scripts/serve-dashboard.js",
+    "slack:test": "node scripts/test-slack-webhook.js",
+    "slack:channels": "node scripts/list-slack-channels.js",
+    "test": "node --test test/*.test.js",
+    "check": "node --check src/healthReport.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

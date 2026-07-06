@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Health Dashboard</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Healthcare Agent</p>
+      <h1>Health Dashboard</h1>
+    </div>
+    <div class="summary" id="summary"></div>
+  </header>
+
+  <main>
+    <section class="kpis" id="kpis"></section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>直近推移</h2>
+        <div class="tabs" id="metricTabs"></div>
+      </div>
+      <div class="chart" id="chart"></div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>体重目標</h2>
+        </div>
+        <div id="weightGoal"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>データ状態</h2>
+        </div>
+        <div id="dataStatus"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>日別データ</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>日付</th>
+              <th>状態</th>
+              <th>睡眠</th>
+              <th>歩数</th>
+              <th>kcal</th>
+              <th>体重</th>
+              <th>体脂肪</th>
+              <th>不足</th>
+            </tr>
+          </thead>
+          <tbody id="dailyRows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

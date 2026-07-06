@@ -1,0 +1,1290 @@
+{
+  "generatedAt": "2026-07-06T05:39:33.549Z",
+  "recordCount": 30,
+  "records": [
+    {
+      "date": "2026-06-07",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": null,
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyMassIndex": null,
+        "bodyFatPercent": null
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": null
+      },
+      "files": {
+        "healthFile": null,
+        "sleepFile": null,
+        "healthPlanetFile": null
+      }
+    },
+    {
+      "date": "2026-06-08",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": null,
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyMassIndex": null,
+        "bodyFatPercent": null
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": null
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-08.json",
+        "sleepFile": null,
+        "healthPlanetFile": null
+      }
+    },
+    {
+      "date": "2026-06-09",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": null,
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyMassIndex": null,
+        "bodyFatPercent": null
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": null
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-09.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-10.json",
+        "healthPlanetFile": null
+      }
+    },
+    {
+      "date": "2026-06-10",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": null,
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyMassIndex": null,
+        "bodyFatPercent": null
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": null
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-10.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-11.json",
+        "healthPlanetFile": null
+      }
+    },
+    {
+      "date": "2026-06-11",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": null,
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": 4.583333333333333,
+        "steps": 6814,
+        "activeEnergyKcal": 543,
+        "weightKg": 80.7,
+        "bodyMassIndex": null,
+        "bodyFatPercent": 27.9
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": 1.7
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-11.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-12.json",
+        "healthPlanetFile": null
+      }
+    },
+    {
+      "date": "2026-06-12",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": null,
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": 9.166666666666666,
+        "steps": 2340.5,
+        "activeEnergyKcal": 337,
+        "weightKg": 80.7,
+        "bodyMassIndex": null,
+        "bodyFatPercent": 28.1
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": 1.7
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-12.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-12.json",
+        "healthPlanetFile": null
+      }
+    },
+    {
+      "date": "2026-06-13",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": "2026-06-13",
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": 7.625555555555556,
+        "steps": 11782.5,
+        "activeEnergyKcal": 787,
+        "weightKg": null,
+        "bodyMassIndex": null,
+        "bodyFatPercent": null
+      },
+      "average7": {
+        "sleepHours": 5.72,
+        "steps": 6019.75,
+        "activeEnergyKcal": 521,
+        "weightKg": 81.3,
+        "bodyFatPercent": 28.2
+      },
+      "diffFromAverage7": {
+        "sleepHours": 1.91,
+        "steps": 5763,
+        "activeEnergyKcal": 266,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": 1.7
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-13.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-14.json",
+        "healthPlanetFile": "data/healthplanet/2026-06-13.json"
+      }
+    },
+    {
+      "date": "2026-06-14",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": "2026-06-14",
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": 4.333333333333334,
+        "steps": 7266.5,
+        "activeEnergyKcal": 424,
+        "weightKg": 81,
+        "bodyMassIndex": 30.9,
+        "bodyFatPercent": 28.7
+      },
+      "average7": {
+        "sleepHours": 5.5,
+        "steps": 6197.86,
+        "activeEnergyKcal": 507.14,
+        "weightKg": 81.25,
+        "bodyFatPercent": 28.28
+      },
+      "diffFromAverage7": {
+        "sleepHours": -1.17,
+        "steps": 1069,
+        "activeEnergyKcal": -83,
+        "weightKg": -0.2,
+        "bodyFatPercent": 0.4
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": 2
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-14.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-15.json",
+        "healthPlanetFile": "data\\healthplanet\\2026-06-14.json"
+      }
+    },
+    {
+      "date": "2026-06-15",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": "2026-06-15",
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": null,
+        "steps": 4013.5,
+        "activeEnergyKcal": 395,
+        "weightKg": 81.8,
+        "bodyMassIndex": 31.2,
+        "bodyFatPercent": 27.2
+      },
+      "average7": {
+        "sleepHours": 5.63,
+        "steps": 5945.07,
+        "activeEnergyKcal": 515.71,
+        "weightKg": 81.22,
+        "bodyFatPercent": 28.07
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": -1932,
+        "activeEnergyKcal": -121,
+        "weightKg": 0.6,
+        "bodyFatPercent": -0.9
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": 2.8
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-15.json",
+        "sleepFile": null,
+        "healthPlanetFile": "data\\healthplanet\\2026-06-15.json"
+      }
+    },
+    {
+      "date": "2026-06-16",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": "2026-06-17",
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": null,
+        "steps": 10112.5,
+        "activeEnergyKcal": 427,
+        "weightKg": 81.9,
+        "bodyMassIndex": 31.2,
+        "bodyFatPercent": 28.2
+      },
+      "average7": {
+        "sleepHours": 5.51,
+        "steps": 6820.64,
+        "activeEnergyKcal": 522.14,
+        "weightKg": 81.34,
+        "bodyFatPercent": 27.91
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": 3292,
+        "activeEnergyKcal": -95,
+        "weightKg": 0.6,
+        "bodyFatPercent": 0.3
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": 2.9
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-16.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-17.json",
+        "healthPlanetFile": "data\\healthplanet\\2026-06-17.json"
+      }
+    },
+    {
+      "date": "2026-06-17",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": "2026-06-18",
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": null,
+        "steps": 4345.5,
+        "activeEnergyKcal": 395,
+        "weightKg": 80.2,
+        "bodyMassIndex": 30.6,
+        "bodyFatPercent": 26.6
+      },
+      "average7": {
+        "sleepHours": 5.48,
+        "steps": 6802.71,
+        "activeEnergyKcal": 507.29,
+        "weightKg": 81.16,
+        "bodyFatPercent": 27.7
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": -2457,
+        "activeEnergyKcal": -112,
+        "weightKg": -1,
+        "bodyFatPercent": -1.1
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": 1.2
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-17.json",
+        "sleepFile": null,
+        "healthPlanetFile": "data\\healthplanet\\2026-06-18.json"
+      }
+    },
+    {
+      "date": "2026-06-18",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": "2026-06-19",
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": 4.250277777777778,
+        "steps": 5191.5,
+        "activeEnergyKcal": 605,
+        "weightKg": 80.3,
+        "bodyMassIndex": 30.6,
+        "bodyFatPercent": 26.3
+      },
+      "average7": {
+        "sleepHours": 5.29,
+        "steps": 6673.5,
+        "activeEnergyKcal": 553.71,
+        "weightKg": 81.1,
+        "bodyFatPercent": 27.47
+      },
+      "diffFromAverage7": {
+        "sleepHours": -1.04,
+        "steps": -1482,
+        "activeEnergyKcal": 51,
+        "weightKg": -0.8,
+        "bodyFatPercent": -1.2
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": 1.3
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-18.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-19.json",
+        "healthPlanetFile": "data\\healthplanet\\2026-06-19.json"
+      }
+    },
+    {
+      "date": "2026-06-19",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": "2026-06-20",
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": null,
+        "steps": 4694,
+        "activeEnergyKcal": 439,
+        "weightKg": 80.3,
+        "bodyMassIndex": 30.6,
+        "bodyFatPercent": 26.3
+      },
+      "average7": {
+        "sleepHours": 5.22,
+        "steps": 6930.64,
+        "activeEnergyKcal": 541.29,
+        "weightKg": 81.04,
+        "bodyFatPercent": 27.21
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": -2237,
+        "activeEnergyKcal": -102,
+        "weightKg": -0.7,
+        "bodyFatPercent": -0.9
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": 1.3
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-19.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-20.json",
+        "healthPlanetFile": "data\\healthplanet\\2026-06-20.json"
+      }
+    },
+    {
+      "date": "2026-06-20",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": "2026-06-21",
+      "readiness": {
+        "ready": false,
+        "checks": {
+          "healthData": true,
+          "sleepData": false,
+          "bodyComposition": true,
+          "ringConnInHealthData": true
+        },
+        "missing": [
+          "sleepData"
+        ]
+      },
+      "missing": [
+        "sleepData"
+      ],
+      "metrics": {
+        "sleepHours": null,
+        "steps": 4207.5,
+        "activeEnergyKcal": 593,
+        "weightKg": 80.8,
+        "bodyMassIndex": 30.8,
+        "bodyFatPercent": 27.9
+      },
+      "average7": {
+        "sleepHours": 4.63,
+        "steps": 5848.5,
+        "activeEnergyKcal": 525.86,
+        "weightKg": 81.01,
+        "bodyFatPercent": 27.1
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": -1641,
+        "activeEnergyKcal": 67,
+        "weightKg": -0.2,
+        "bodyFatPercent": 0.8
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": 1.8
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-20.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-21.json",
+        "healthPlanetFile": "data\\healthplanet\\2026-06-21.json"
+      }
+    },
+    {
+      "date": "2026-06-21",
+      "status": "body_only",
+      "bodyCompositionDate": "2026-06-21",
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": 80.8,
+        "bodyMassIndex": 30.8,
+        "bodyFatPercent": 27.9
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": null
+      },
+      "files": {
+        "healthFile": null,
+        "sleepFile": null,
+        "healthPlanetFile": "data/healthplanet/2026-06-21.json"
+      }
+    },
+    {
+      "date": "2026-06-22",
+      "status": "body_only",
+      "bodyCompositionDate": "2026-06-22",
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": 81.7,
+        "bodyMassIndex": 31.1,
+        "bodyFatPercent": 27.6
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": null
+      },
+      "files": {
+        "healthFile": null,
+        "sleepFile": null,
+        "healthPlanetFile": "data/healthplanet/2026-06-22.json"
+      }
+    },
+    {
+      "date": "2026-06-23",
+      "status": "body_only",
+      "bodyCompositionDate": "2026-06-23",
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": 82.2,
+        "bodyMassIndex": 31.3,
+        "bodyFatPercent": 27.2
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": null
+      },
+      "files": {
+        "healthFile": null,
+        "sleepFile": null,
+        "healthPlanetFile": "data/healthplanet/2026-06-23.json"
+      }
+    },
+    {
+      "date": "2026-06-24",
+      "status": "body_only",
+      "bodyCompositionDate": "2026-06-24",
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": 81,
+        "bodyMassIndex": 30.9,
+        "bodyFatPercent": 27.6
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": null
+      },
+      "files": {
+        "healthFile": null,
+        "sleepFile": null,
+        "healthPlanetFile": "data/healthplanet/2026-06-24.json"
+      }
+    },
+    {
+      "date": "2026-06-25",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": "2026-06-26",
+      "readiness": {
+        "ready": true,
+        "checks": {
+          "healthData": true,
+          "sleepData": true,
+          "bodyComposition": true,
+          "ringConnInHealthData": true
+        },
+        "missing": []
+      },
+      "missing": [],
+      "metrics": {
+        "sleepHours": 4.416666666666667,
+        "steps": 8621.5,
+        "activeEnergyKcal": 570,
+        "weightKg": 81.9,
+        "bodyMassIndex": 31.2,
+        "bodyFatPercent": 25.4
+      },
+      "average7": {
+        "sleepHours": 4.91,
+        "steps": 6722.92,
+        "activeEnergyKcal": 567.57,
+        "weightKg": 81.27,
+        "bodyFatPercent": 27.09
+      },
+      "diffFromAverage7": {
+        "sleepHours": -0.49,
+        "steps": 1899,
+        "activeEnergyKcal": 2,
+        "weightKg": 0.6,
+        "bodyFatPercent": -1.7
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": 2.9
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-25.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-26.json",
+        "healthPlanetFile": "data\\healthplanet\\2026-06-26.json"
+      }
+    },
+    {
+      "date": "2026-06-26",
+      "status": "not_ready",
+      "bodyCompositionDate": "2026-06-27",
+      "readiness": {
+        "ready": false,
+        "checks": {
+          "healthData": true,
+          "sleepData": false,
+          "bodyComposition": false,
+          "ringConnInHealthData": true
+        },
+        "missing": [
+          "sleepData",
+          "bodyComposition"
+        ]
+      },
+      "missing": [
+        "sleepData",
+        "bodyComposition"
+      ],
+      "metrics": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyMassIndex": null,
+        "bodyFatPercent": null
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": null
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-26.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-27 (1).json",
+        "healthPlanetFile": "data\\healthplanet\\2026-06-27.json"
+      }
+    },
+    {
+      "date": "2026-06-27",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": "2026-06-28",
+      "readiness": {
+        "ready": true,
+        "checks": {
+          "healthData": true,
+          "sleepData": true,
+          "bodyComposition": true,
+          "ringConnInHealthData": true
+        },
+        "missing": []
+      },
+      "missing": [],
+      "metrics": {
+        "sleepHours": 8.250833333333333,
+        "steps": 3576,
+        "activeEnergyKcal": 266,
+        "weightKg": 81.7,
+        "bodyMassIndex": 31.1,
+        "bodyFatPercent": 27.5
+      },
+      "average7": {
+        "sleepHours": 5.49,
+        "steps": 6221.99,
+        "activeEnergyKcal": 508.57,
+        "weightKg": 81.63,
+        "bodyFatPercent": 26.9
+      },
+      "diffFromAverage7": {
+        "sleepHours": 2.76,
+        "steps": -2646,
+        "activeEnergyKcal": -243,
+        "weightKg": 0.1,
+        "bodyFatPercent": 0.6
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": 2.7
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-27 (1).json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-28.json",
+        "healthPlanetFile": "data\\healthplanet\\2026-06-28.json"
+      }
+    },
+    {
+      "date": "2026-06-28",
+      "status": "not_ready",
+      "bodyCompositionDate": "2026-06-29",
+      "readiness": {
+        "ready": false,
+        "checks": {
+          "healthData": true,
+          "sleepData": true,
+          "bodyComposition": false,
+          "ringConnInHealthData": true
+        },
+        "missing": [
+          "bodyComposition"
+        ]
+      },
+      "missing": [
+        "bodyComposition"
+      ],
+      "metrics": {
+        "sleepHours": 4.666666666666667,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyMassIndex": null,
+        "bodyFatPercent": null
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": null
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-28.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-29.json",
+        "healthPlanetFile": "data\\healthplanet\\2026-06-29.json"
+      }
+    },
+    {
+      "date": "2026-06-29",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": "2026-06-30",
+      "readiness": {
+        "ready": true,
+        "checks": {
+          "healthData": true,
+          "sleepData": true,
+          "bodyComposition": true,
+          "ringConnInHealthData": true
+        },
+        "missing": []
+      },
+      "missing": [],
+      "metrics": {
+        "sleepHours": 6.124999999999999,
+        "steps": 5938.000000000001,
+        "activeEnergyKcal": 451,
+        "weightKg": 81.2,
+        "bodyMassIndex": 30.9,
+        "bodyFatPercent": 28.2
+      },
+      "average7": {
+        "sleepHours": 5.36,
+        "steps": 5446.57,
+        "activeEnergyKcal": 462.86,
+        "weightKg": 81.49,
+        "bodyFatPercent": 27.03
+      },
+      "diffFromAverage7": {
+        "sleepHours": 0.76,
+        "steps": 491,
+        "activeEnergyKcal": -12,
+        "weightKg": -0.3,
+        "bodyFatPercent": 1.2
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": 2.2
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-29.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-30.json",
+        "healthPlanetFile": "data\\healthplanet\\2026-06-30.json"
+      }
+    },
+    {
+      "date": "2026-06-30",
+      "status": "not_ready",
+      "bodyCompositionDate": "2026-07-01",
+      "readiness": {
+        "ready": false,
+        "checks": {
+          "healthData": true,
+          "sleepData": false,
+          "bodyComposition": false,
+          "ringConnInHealthData": true
+        },
+        "missing": [
+          "sleepData",
+          "bodyComposition"
+        ]
+      },
+      "missing": [
+        "sleepData",
+        "bodyComposition"
+      ],
+      "metrics": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyMassIndex": null,
+        "bodyFatPercent": null
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": null
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-30.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-06-30.json",
+        "healthPlanetFile": "data\\healthplanet\\2026-07-01.json"
+      }
+    },
+    {
+      "date": "2026-07-01",
+      "status": "not_ready",
+      "bodyCompositionDate": "2026-07-02",
+      "readiness": {
+        "ready": false,
+        "checks": {
+          "healthData": true,
+          "sleepData": true,
+          "bodyComposition": false,
+          "ringConnInHealthData": true
+        },
+        "missing": [
+          "bodyComposition"
+        ]
+      },
+      "missing": [
+        "bodyComposition"
+      ],
+      "metrics": {
+        "sleepHours": 3.4166666666666665,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyMassIndex": null,
+        "bodyFatPercent": null
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": null
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-07-01.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-07-02.json",
+        "healthPlanetFile": "data\\healthplanet\\2026-07-02.json"
+      }
+    },
+    {
+      "date": "2026-07-02",
+      "status": "not_ready",
+      "bodyCompositionDate": "2026-07-03",
+      "readiness": {
+        "ready": false,
+        "checks": {
+          "healthData": true,
+          "sleepData": true,
+          "bodyComposition": false,
+          "ringConnInHealthData": true
+        },
+        "missing": [
+          "bodyComposition"
+        ]
+      },
+      "missing": [
+        "bodyComposition"
+      ],
+      "metrics": {
+        "sleepHours": 5.666666666666667,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyMassIndex": null,
+        "bodyFatPercent": null
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": null
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-07-02.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-07-03.json",
+        "healthPlanetFile": "data\\healthplanet\\2026-07-03.json"
+      }
+    },
+    {
+      "date": "2026-07-03",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": "2026-07-04",
+      "readiness": {
+        "ready": true,
+        "checks": {
+          "healthData": true,
+          "sleepData": true,
+          "bodyComposition": true,
+          "ringConnInHealthData": true
+        },
+        "missing": []
+      },
+      "missing": [],
+      "metrics": {
+        "sleepHours": 9.916666666666668,
+        "steps": 2484.5,
+        "activeEnergyKcal": 345,
+        "weightKg": 80.7,
+        "bodyMassIndex": 30.7,
+        "bodyFatPercent": 27.1
+      },
+      "average7": {
+        "sleepHours": 6.21,
+        "steps": 4533.14,
+        "activeEnergyKcal": 382,
+        "weightKg": 81.3,
+        "bodyFatPercent": 27.7
+      },
+      "diffFromAverage7": {
+        "sleepHours": 3.71,
+        "steps": -2049,
+        "activeEnergyKcal": -37,
+        "weightKg": -0.6,
+        "bodyFatPercent": -0.6
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": 1.7
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-07-03.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-07-04.json",
+        "healthPlanetFile": "data\\healthplanet\\2026-07-04.json"
+      }
+    },
+    {
+      "date": "2026-07-04",
+      "status": "not_ready",
+      "bodyCompositionDate": "2026-07-05",
+      "readiness": {
+        "ready": false,
+        "checks": {
+          "healthData": true,
+          "sleepData": false,
+          "bodyComposition": true,
+          "ringConnInHealthData": true
+        },
+        "missing": [
+          "sleepData"
+        ]
+      },
+      "missing": [
+        "sleepData"
+      ],
+      "metrics": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": 82,
+        "bodyMassIndex": 31.2,
+        "bodyFatPercent": 27.5
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": null
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-07-04.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-07-05.json",
+        "healthPlanetFile": "data\\healthplanet\\2026-07-05.json"
+      }
+    },
+    {
+      "date": "2026-07-05",
+      "status": "not_ready",
+      "bodyCompositionDate": "2026-07-06",
+      "readiness": {
+        "ready": false,
+        "checks": {
+          "healthData": true,
+          "sleepData": false,
+          "bodyComposition": true,
+          "ringConnInHealthData": true
+        },
+        "missing": [
+          "sleepData"
+        ]
+      },
+      "missing": [
+        "sleepData"
+      ],
+      "metrics": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": 81.2,
+        "bodyMassIndex": 30.9,
+        "bodyFatPercent": 27.1
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": null
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-07-05.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-07-06.json",
+        "healthPlanetFile": "data\\healthplanet\\2026-07-06.json"
+      }
+    },
+    {
+      "date": "2026-07-06",
+      "status": "body_only",
+      "bodyCompositionDate": "2026-07-06",
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": 81.2,
+        "bodyMassIndex": 30.9,
+        "bodyFatPercent": 27.1
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": null
+      },
+      "files": {
+        "healthFile": null,
+        "sleepFile": null,
+        "healthPlanetFile": "data/healthplanet/2026-07-06.json"
+      }
+    }
+  ]
+}

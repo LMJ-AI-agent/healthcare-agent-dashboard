@@ -1,0 +1,51 @@
+{
+  "timeZone": "Asia/Tokyo",
+  "healthDataDir": "G:\\共有ドライブ\\90_AIエージェント連携用\\iPhoneヘルスデータ_JSON",
+  "healthDataDirs": [
+    "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ",
+    "G:\\マイドライブ\\ヘルスデータ",
+    "G:\\マイドライブ\\Health Auto Export\\ヘルスデータ",
+    "G:\\共有ドライブ\\90_AIエージェント連携用\\iPhoneヘルスデータ_JSON",
+    "G:\\マイドライブ\\90_AIエージェント連携用\\iPhoneヘルスデータ_JSON",
+    "G:\\マイドライブ\\Health Auto Export",
+    "G:\\マイドライブ\\HealthAutoExport"
+  ],
+  "manualNotesDir": "notes/manual",
+  "manualNotesDirs": [
+    "notes/manual",
+    "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\メモ",
+    "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ノート"
+  ],
+  "ringConnExportDir": "data/ringconn_exports",
+  "healthPlanet": {
+    "enabled": true,
+    "clientFile": "secrets/healthplanet-client.json",
+    "tokenFile": "secrets/healthplanet-token.json",
+    "outputDir": "data/healthplanet",
+    "tags": ["6021", "6022", "6023", "6024", "6025", "6026", "6027", "6028", "6029"]
+  },
+  "outputDir": "data/reports",
+  "statePath": "data/state.json",
+  "slackWebhookFile": "secrets/slack-webhook.txt",
+  "slackBotTokenFile": "secrets/slack-bot-token.txt",
+  "slackMemoChannelId": "",
+  "slackMemoWindowStartHour": 18,
+  "slackMemoWindowEndHour": 8,
+  "maxSlackMemoChars": 20000,
+  "maxHealthFileBytes": 1500000,
+  "maxManualNoteBytes": 80000,
+  "maxRingConnBytes": 180000,
+  "historyDays": 14,
+  "codexCommand": "codex",
+  "codexArgs": [
+    "exec",
+    "--skip-git-repo-check",
+    "--sandbox",
+    "workspace-write",
+    "--cd",
+    "C:\\Users\\ai-agent\\Desktop\\AIエージェント\\healthcare-agent"
+  ],
+  "codexWorkdir": "C:\\Users\\ai-agent\\Desktop\\AIエージェント\\healthcare-agent",
+  "jobTimeoutMs": 600000,
+  "maxOutputChars": 3500
+}
