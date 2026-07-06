@@ -316,11 +316,11 @@ test('buildVisualHealthReport renders scannable chart summary', () => {
     healthPlanetTokenStatus: { remainingDays: 18 },
   });
 
-  assert.match(report, /📊 ヘルスレポート 2026-06-25/);
-  assert.match(report, /📌 今日の主要データ/);
-  assert.match(report, /█/);
-  assert.match(report, /📈 直近7日グラフ/);
-  assert.match(report, /🎯 今日やること/);
+  assert.match(report, /Diet Coach Report 2026-06-25/);
+  assert.match(report, /今日の主要データ/);
+  assert.match(report, /5角形パラメータ/);
+  assert.match(report, /今週の筋トレ方針/);
+  assert.match(report, /詳細ダッシュボード: https:\/\/lmj-ai-agent\.github\.io\/healthcare-agent-dashboard\//);
   assert.match(report, /HealthPlanet API更新まで: あと18日/);
 });
 
@@ -360,7 +360,8 @@ test('runDailyHealthReport dry-run writes artifacts without codex or slack', asy
 
   assert.equal(result.skipped, false);
   const report = await readFile(join(outputDir, '2026-06-07', 'report.md'), 'utf8');
-  assert.match(report, /ヘルスレポート/);
+  assert.match(report, /Diet Coach Report/);
+  assert.match(report, /詳細ダッシュボード/);
 });
 
 test('runDailyHealthReport skips without health data', async () => {

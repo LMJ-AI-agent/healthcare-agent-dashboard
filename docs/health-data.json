@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-06T11:35:23.210Z",
-  "recordCount": 30,
+  "generatedAt": "2026-07-06T11:51:19.536Z",
+  "recordCount": 31,
   "goals": {
     "weightTargetKg": 79,
     "dailySteps": 8000,
@@ -1923,17 +1923,93 @@
     },
     {
       "date": "2026-07-06",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": "2026-07-07",
+      "readiness": {
+        "ready": false,
+        "checks": {
+          "healthData": true,
+          "sleepData": false,
+          "bodyComposition": false,
+          "ringConnInHealthData": true
+        },
+        "missing": [
+          "sleepData",
+          "bodyComposition"
+        ]
+      },
+      "missing": [
+        "sleepData",
+        "bodyComposition"
+      ],
+      "metrics": {
+        "sleepHours": null,
+        "steps": 3474,
+        "activeEnergyKcal": 213,
+        "weightKg": 81.2,
+        "bodyMassIndex": 30.9,
+        "bodyFatPercent": 27.1
+      },
+      "average7": {
+        "sleepHours": 6.04,
+        "steps": 4792.14,
+        "activeEnergyKcal": 349.71,
+        "weightKg": 81.26,
+        "bodyFatPercent": 27.4
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": -1318,
+        "activeEnergyKcal": -137,
+        "weightKg": -0.1,
+        "bodyFatPercent": -0.3
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": 2.2
+      },
+      "files": {
+        "healthFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-07-06.json",
+        "sleepFile": "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ヘルスデータ\\iPhoneヘルスデータ-2026-07-06.json",
+        "healthPlanetFile": "data\\healthplanet\\2026-07-07.json"
+      },
+      "coaching": {
+        "topPriority": "未取得データを確認",
+        "actions": [
+          "歩数はあと4,526歩。昼食後10分、夕方10分の2回に分けて歩く。",
+          "睡眠データは未取得。回復状態が読めないので、筋トレは20分以内でフォーム重視にする。",
+          "体脂肪率は管理圏内。体重だけで判断せず、筋トレ継続で見た目の変化を狙う。",
+          "79.0kgまであと2.2kg。2週間で1kg減のペースなら、今日は小さく確実に削る日。"
+        ],
+        "deltas": {
+          "weightKg": 0,
+          "bodyFatPercent": 0,
+          "sleepHours": null,
+          "steps": null,
+          "activeEnergyKcal": null
+        },
+        "sevenDay": {
+          "sleepHours": 6.33,
+          "steps": 2979,
+          "activeEnergyKcal": 279,
+          "weightKg": 81.27,
+          "bodyFatPercent": 27.2
+        }
+      }
+    },
+    {
+      "date": "2026-07-07",
       "status": "body_only",
-      "bodyCompositionDate": "2026-07-06",
+      "bodyCompositionDate": "2026-07-07",
       "readiness": null,
       "missing": [],
       "metrics": {
         "sleepHours": null,
         "steps": null,
         "activeEnergyKcal": null,
-        "weightKg": 81.2,
-        "bodyMassIndex": 30.9,
-        "bodyFatPercent": 27.1
+        "weightKg": null,
+        "bodyMassIndex": null,
+        "bodyFatPercent": null
       },
       "average7": {
         "sleepHours": null,
@@ -1956,7 +2032,7 @@
       "files": {
         "healthFile": null,
         "sleepFile": null,
-        "healthPlanetFile": "data/healthplanet/2026-07-06.json"
+        "healthPlanetFile": "data/healthplanet/2026-07-07.json"
       },
       "coaching": {
         "topPriority": "未取得データを確認",
@@ -1964,19 +2040,19 @@
           "歩数データは未取得。今日の最低ラインは8,000歩。昼食後10分、夕方10分の2回に分けて歩く。",
           "睡眠データは未取得。回復状態が読めないので、筋トレは20分以内でフォーム重視にする。",
           "体脂肪率は管理圏内。体重だけで判断せず、筋トレ継続で見た目の変化を狙う。",
-          "79.0kgまであと2.2kg。2週間で1kg減のペースなら、今日は小さく確実に削る日。"
+          "79.0kg目標は達成圏。リバウンド防止として筋トレと睡眠を崩さない。"
         ],
         "deltas": {
-          "weightKg": 0,
-          "bodyFatPercent": 0,
+          "weightKg": null,
+          "bodyFatPercent": null,
           "sleepHours": null,
           "steps": null,
           "activeEnergyKcal": null
         },
         "sevenDay": {
           "sleepHours": 6.33,
-          "steps": 2485,
-          "activeEnergyKcal": 345,
+          "steps": 2979,
+          "activeEnergyKcal": 279,
           "weightKg": 81.27,
           "bodyFatPercent": 27.2
         }

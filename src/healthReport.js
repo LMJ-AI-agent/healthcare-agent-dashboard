@@ -1117,9 +1117,9 @@ export async function runDailyHealthReport(options = {}) {
   const narrative = options.noCodex
     ? dryRunReport(input)
     : await generateReportWithCodex({ prompt, settings });
-  const report = buildVisualHealthReport(input, narrative);
+  const report = buildVisualHealthReport(input, narrative, { settings });
   const artifactDir = await writeArtifacts({ settings, targetDate, input, prompt, report });
-  if (!options.dryRun) await tryBuildDashboard();
+  if (!options.dryRun) await tryPublishDashboard();
 
   if (!options.dryRun) {
     await postToSlack({ settings, text: report });
@@ -1168,6 +1168,15 @@ async function tryBuildDashboard() {
   }
 }
 
+async function tryPublishDashboard() {
+  try {
+    await runProcess(process.execPath, ['scripts/publish-dashboard.js'], { cwd: process.cwd(), timeoutMs: 120000 });
+  } catch (error) {
+    console.warn(`Dashboard publish skipped: ${error.message}`);
+    await tryBuildDashboard();
+  }
+}
+
 function runProcess(command, args, { cwd, timeoutMs }) {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, {
@@ -1203,7 +1212,7 @@ async function generateReportWithCodex({ prompt, settings }) {
   return result.output.trim();
 }
 
-export function buildVisualHealthReport(input, narrative = '') {
+export function buildVisualHealthReport(input, narrative = '', options = {}) {
   const trend = input.trendSummary || {};
   const target = trend.target || {};
   const avg7 = trend.currentSevenDayAverage || {};
@@ -1211,23 +1220,26 @@ export function buildVisualHealthReport(input, narrative = '') {
   const goals = trend.goals || {};
   const rows7 = (input.history || []).filter((row) => row.metrics || row.sleep).slice(-7);
   const tokenStatus = input.healthPlanetTokenStatus;
-  const status = dailyStatus({ target, avg7, goals });
-  const actionItems = buildActionItems({ target, avg7, goals });
+  const status = dailyStatus({ target, goals });
+  const actionItems = buildActionItems({ target, goals });
   const memoLines = formatSlackMemos(input.slackMemos);
+  const dashboardUrl = dashboardUrlFromSettings(options.settings);
+  const scores = buildPentagonScores({ target });
 
   return [
-    `📊 ヘルスレポート ${input.targetDate}｜${status.label}`,
+    `*Diet Coach Report ${input.targetDate}*`,
+    `優先テーマ: *${status.label}*`,
     '',
-    `${status.icon} ${status.summary}`,
+    status.summary,
     '',
-    '📌 今日の主要データ',
+    '*今日の主要データ*',
     metricLine({
       label: '睡眠',
       value: target.sleepHours,
       average: avg7.sleepHours,
       diff: diff7.sleepHours,
       unit: 'hours',
-      target: 7,
+      target: 6.5,
       better: 'higher',
     }),
     metricLine({
@@ -1240,54 +1252,69 @@ export function buildVisualHealthReport(input, narrative = '') {
       better: 'higher',
     }),
     metricLine({
-      label: '活動',
+      label: '活動量',
       value: target.activeEnergyKcal,
       average: avg7.activeEnergyKcal,
       diff: diff7.activeEnergyKcal,
       unit: 'kcal',
-      target: 550,
+      target: 650,
       better: 'higher',
     }),
     bodyLine({ target, avg7, diff7, goals }),
     bodyFatLine({ target, avg7, diff7 }),
     '',
-    '📈 直近7日グラフ',
+    '*5角形パラメータ*',
+    ...scores.map((score) => pentagonScoreLine(score)),
+    '',
+    '*今日やること*',
+    ...actionItems.map((item, index) => `${index + 1}. ${item}`),
+    '',
+    '*今週の筋トレ方針*',
+    ...buildTrainingItems({ target }),
+    '',
+    '*直近7日の流れ*',
     trendLine('睡眠', rows7, (row) => row.sleep?.totalSleepHours, 'hours'),
     trendLine('歩数', rows7, (row) => row.metrics?.steps, 'steps'),
     trendLine('体重', rows7, (row) => row.metrics?.weightKg, 'kg'),
-    trendLine('体脂肪', rows7, (row) => row.metrics?.bodyFatPercent, 'percent'),
+    trendLine('体脂肪率', rows7, (row) => row.metrics?.bodyFatPercent, 'percent'),
+    ...(memoLines.length > 0 ? ['', '*Slackメモ*', ...memoLines] : []),
     '',
-    '🎯 今日やること',
-    ...actionItems.map((item, index) => `${index + 1}. ${item}`),
-    ...(memoLines.length > 0 ? ['', '📝 Slackメモ', ...memoLines] : []),
-    '',
-    `補足: 詳細分析は内部で使用。表示は判断に必要な数字だけに絞っています。`,
+    `詳細ダッシュボード: ${dashboardUrl}`,
     tokenStatus?.remainingDays != null ? `HealthPlanet API更新まで: あと${tokenStatus.remainingDays}日` : null,
   ].filter((line) => line != null).join('\n');
 }
 
-function dailyStatus({ target, avg7, goals }) {
+function dailyStatus({ target, goals }) {
   const sleep = target.sleepHours == null ? null : Number(target.sleepHours);
   const steps = target.steps == null ? null : Number(target.steps);
   const weight = Number(goals.latestWeightKg ?? target.weightKg);
-  if (Number.isFinite(sleep) && sleep < 5.5) {
+  if (!Number.isFinite(sleep) || !Number.isFinite(steps)) {
     return {
-      label: '回復優先',
-      icon: '🟡',
-      summary: `睡眠が${formatMetricValue(sleep, 'hours')}で不足。今日は減量より、集中力を落とさない回復設計を優先。`,
+      label: '未取得データを確認',
+      summary: '睡眠または歩数が未取得です。回復状態が読めないので、今日は筋トレを20分以内にして、食事と歩数の最低ラインを守ります。',
     };
   }
-  if (Number.isFinite(steps) && steps >= 8000 && Number.isFinite(weight) && weight <= Number(avg7.weightKg || weight)) {
+  if (sleep < 5.5) {
     return {
-      label: '良い流れ',
-      icon: '🟢',
-      summary: '活動量と体重の流れは良好。今日は無理に増やさず、同じ型を再現する日。',
+      label: '回復を守りながら減量',
+      summary: `睡眠が${formatMetricValue(sleep, 'hours')}で短めです。今日は高強度ではなく、歩数・食事・軽い筋トレで崩さない日です。`,
+    };
+  }
+  if (steps < 8000) {
+    return {
+      label: '活動量を戻す',
+      summary: `歩数が${formatMetricValue(steps, 'steps')}です。今日の主目的は8,000歩に近づけて、消費量の土台を戻すことです。`,
+    };
+  }
+  if (Number.isFinite(weight) && weight > 79) {
+    return {
+      label: '筋トレで体を締める',
+      summary: `79.0kgまであと${formatMetricValue(weight - 79, 'kg')}。体重を落としながら筋肉を残すため、今日は筋トレとたんぱく質を優先します。`,
     };
   }
   return {
-    label: '調整日',
-    icon: '🔵',
-    summary: '大きく崩れてはいないが、睡眠・歩数・食事量のどれかを整えると明日の仕事効率が上がる状態。',
+    label: '維持と習慣化',
+    summary: '体重目標は射程圏内です。リバウンドを避けるため、食事を崩さず筋トレと睡眠を継続します。',
   };
 }
 
@@ -1295,20 +1322,20 @@ function metricLine({ label, value, average, diff, unit, target, better }) {
   if (value == null) return `・${label}: データなし`;
   const ratio = target ? Number(value) / target : null;
   const mark = healthMark(diff, better);
-  return `・${label}: ${formatMetricValue(value, unit)} ${progressBar(ratio)} / 7日平均 ${formatMetricValue(average, unit)}（差 ${signedMetric(diff, unit)} ${mark}）`;
+  return `・${label}: ${formatMetricValue(value, unit)} ${progressBar(ratio)} / 7日平均 ${formatMetricValue(average, unit)} / 平均差 ${signedMetric(diff, unit)} ${mark}`;
 }
 
 function bodyLine({ target, avg7, diff7, goals }) {
   const weight = target.weightKg;
   if (weight == null) return '・体重: データなし';
   const gap = goals.kgToTarget ?? diff(weight, goals.weightTargetKgByJuneEnd ?? 79, 1);
-  return `・体重: ${formatMetricValue(weight, 'kg')} / 7日平均 ${formatMetricValue(avg7.weightKg, 'kg')}（差 ${signedMetric(diff7.weightKg, 'kg')}） / 79.0kgまで あと${formatMetricValue(gap, 'kg')}`;
+  return `・体重: ${formatMetricValue(weight, 'kg')} / 7日平均 ${formatMetricValue(avg7.weightKg, 'kg')} / 平均差 ${signedMetric(diff7.weightKg, 'kg')} / 79.0kgまであと ${formatMetricValue(gap, 'kg')}`;
 }
 
 function bodyFatLine({ target, avg7, diff7 }) {
   if (target.bodyFatPercent == null) return '・体脂肪率: データなし';
   const mark = healthMark(diff7.bodyFatPercent, 'lower');
-  return `・体脂肪率: ${formatMetricValue(target.bodyFatPercent, 'percent')} / 7日平均 ${formatMetricValue(avg7.bodyFatPercent, 'percent')}（差 ${signedMetric(diff7.bodyFatPercent, 'point')} ${mark}）`;
+  return `・体脂肪率: ${formatMetricValue(target.bodyFatPercent, 'percent')} / 7日平均 ${formatMetricValue(avg7.bodyFatPercent, 'percent')} / 平均差 ${signedMetric(diff7.bodyFatPercent, 'point')} ${mark}`;
 }
 
 function trendLine(label, rows, picker, unit) {
@@ -1319,25 +1346,67 @@ function trendLine(label, rows, picker, unit) {
   return `・${label}: ${sparkline(values)}  最新 ${formatMetricValue(last, unit)}`;
 }
 
-function buildActionItems({ target, avg7, goals }) {
+function buildActionItems({ target, goals }) {
   const items = [];
-  if (target.sleepHours == null || target.sleepHours < 5.5) {
-    items.push('今日は23:45までに就寝準備。睡眠不足の日は判断力が落ちるため、夜の追加作業を切る。');
+  if (target.sleepHours == null) {
+    items.push('睡眠データが未取得。回復状態が読めないので、筋トレは20分以内でフォーム確認にする。');
+  } else if (target.sleepHours < 5.5) {
+    items.push('睡眠が短い。今日は高強度を避け、スクワット・壁腕立て・プランクを各2セットまで。');
   } else {
-    items.push('今日も就寝前60分の画面時間を減らし、睡眠を6時間30分以上で維持する。');
+    items.push('筋トレを20分実行。下半身・背中・体幹のどれかを選び、最後までやり切る。');
   }
-  if ((target.steps ?? 0) < 8000) {
-    items.push(`歩数を8,000歩へ寄せる。現在 ${formatMetricValue(target.steps, 'steps')} なので、昼と夕方に各15分歩く。`);
+  if (target.steps == null) {
+    items.push('歩数データが未取得。最低ラインは8,000歩。昼食後10分、夕方10分で分割して歩く。');
+  } else if (target.steps < 8000) {
+    items.push(`歩数を8,000歩へ寄せる。現在 ${formatMetricValue(target.steps, 'steps')} なので、昼と夕方に各10分歩く。`);
   } else {
-    items.push(`歩数は十分。今日は8,000歩前後を維持し、疲労を残す追加運動はしない。`);
+    items.push('歩数は基準クリア。追加で追い込みすぎず、筋トレと食事の質を優先する。');
   }
   const gap = goals.kgToTarget;
   if (gap != null && gap > 0) {
-    items.push(`79.0kgまであと${formatMetricValue(gap, 'kg')}。夕食は主食を控えめ、たんぱく質を先に食べる。`);
+    items.push(`79.0kgまであと${formatMetricValue(gap, 'kg')}。夜の間食を削り、毎食たんぱく質を先に食べる。`);
   } else {
-    items.push('体重目標は射程内。食事を崩さず、同じ生活パターンを継続する。');
+    items.push('体重目標は達成圏。食事を崩さず、筋トレと睡眠でリバウンドを防ぐ。');
   }
   return items;
+}
+
+function buildTrainingItems({ target }) {
+  const tired = target.sleepHours == null || target.sleepHours < 5.5;
+  if (tired) {
+    return [
+      '・回復日メニュー: スクワット10回 x 2、壁腕立て10回 x 2、プランク20秒 x 2',
+      '・目的: 疲労を残さず、筋トレ習慣だけは切らさない',
+    ];
+  }
+  return [
+    '・下半身: スクワット10回 x 3、ヒップヒンジ12回 x 3',
+    '・上半身: 腕立て8回 x 3、ローイング12回 x 3',
+    '・体幹: プランク30秒 x 3、デッドバグ左右10回 x 2',
+  ];
+}
+
+function buildPentagonScores({ target }) {
+  return [
+    { label: '減量', score: clamp(100 - Math.max(0, (Number(target.weightKg ?? 84) - 79) * 12), 0, 100) },
+    { label: '活動', score: clamp((Number(target.steps ?? 0) / 8000) * 100, 0, 100) },
+    { label: '睡眠', score: clamp((Number(target.sleepHours ?? 0) / 6.5) * 100, 0, 100) },
+    { label: '体脂肪', score: clamp(100 - Math.max(0, (Number(target.bodyFatPercent ?? 32) - 25) * 9), 0, 100) },
+    { label: '筋トレ', score: estimateStrengthScore(target) },
+  ].map((item) => ({ ...item, score: Math.round(item.score) }));
+}
+
+function estimateStrengthScore(target) {
+  let score = 45;
+  if (Number(target.steps ?? 0) >= 8000) score += 18;
+  if (Number(target.sleepHours ?? 0) >= 6) score += 18;
+  if (Number(target.activeEnergyKcal ?? 0) >= 650) score += 12;
+  if (Number(target.bodyFatPercent ?? 99) <= 28) score += 7;
+  return clamp(score, 0, 100);
+}
+
+function pentagonScoreLine({ label, score }) {
+  return `・${label}: ${score}/100 ${progressBar(score / 100)}`;
 }
 
 function formatSlackMemos(slackMemos) {
@@ -1376,14 +1445,14 @@ function signedMetric(value, unit) {
 function healthMark(delta, better) {
   if (delta == null || !Number.isFinite(Number(delta)) || Number(delta) === 0) return '→';
   const positive = better === 'higher' ? Number(delta) > 0 : Number(delta) < 0;
-  return positive ? '↗' : '↘';
+  return positive ? '改善' : '要調整';
 }
 
 function progressBar(ratio) {
   if (ratio == null || !Number.isFinite(Number(ratio))) return '';
   const width = 8;
   const filled = Math.max(0, Math.min(width, Math.round(Number(ratio) * width)));
-  return `[${'█'.repeat(filled)}${'░'.repeat(width - filled)}]`;
+  return `[${'■'.repeat(filled)}${'□'.repeat(width - filled)}]`;
 }
 
 function sparkline(values) {
@@ -1401,11 +1470,18 @@ function sparkline(values) {
   }).join('');
 }
 
+function dashboardUrlFromSettings(settings) {
+  return settings?.dashboardUrl || 'https://lmj-ai-agent.github.io/healthcare-agent-dashboard/';
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, Number(value) || 0));
+}
+
 function truncateText(text, maxLength) {
   const value = String(text || '');
   return value.length <= maxLength ? value : `${value.slice(0, maxLength)}...`;
 }
-
 function dryRunReport(input) {
   const healthName = input.healthFile ? basename(input.healthFile.path) : 'not found';
   return [
@@ -1462,3 +1538,4 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     process.exitCode = 1;
   });
 }
+
