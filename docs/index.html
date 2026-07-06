@@ -3,24 +3,40 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Health Dashboard</title>
+  <title>Diet Coach Dashboard</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
   <header class="topbar">
     <div>
       <p class="eyebrow">Healthcare Agent</p>
-      <h1>Health Dashboard</h1>
+      <h1>Diet Coach Dashboard</h1>
     </div>
     <div class="summary" id="summary"></div>
   </header>
 
   <main>
+    <section class="coach-grid">
+      <section class="panel coach-panel">
+        <div class="panel-head">
+          <h2>今日のコーチング</h2>
+          <span class="pill" id="coachFocus"></span>
+        </div>
+        <div id="coachActions"></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head">
+          <h2>今週の作戦</h2>
+        </div>
+        <div id="weeklyPlan"></div>
+      </section>
+    </section>
+
     <section class="kpis" id="kpis"></section>
 
     <section class="panel">
       <div class="panel-head">
-        <h2>直近推移</h2>
+        <h2>推移グラフ</h2>
         <div class="tabs" id="metricTabs"></div>
       </div>
       <div class="chart" id="chart"></div>
@@ -29,16 +45,23 @@
     <section class="grid">
       <div class="panel">
         <div class="panel-head">
-          <h2>体重目標</h2>
+          <h2>79kg目標</h2>
         </div>
         <div id="weightGoal"></div>
       </div>
       <div class="panel">
         <div class="panel-head">
-          <h2>データ状態</h2>
+          <h2>筋トレプラン</h2>
         </div>
-        <div id="dataStatus"></div>
+        <div id="strengthPlan"></div>
       </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>データ状態</h2>
+      </div>
+      <div id="dataStatus"></div>
     </section>
 
     <section class="panel">
@@ -53,9 +76,10 @@
               <th>状態</th>
               <th>睡眠</th>
               <th>歩数</th>
-              <th>kcal</th>
+              <th>活動kcal</th>
               <th>体重</th>
               <th>体脂肪</th>
+              <th>BMI</th>
               <th>不足</th>
             </tr>
           </thead>
