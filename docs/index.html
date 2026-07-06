@@ -7,66 +7,99 @@
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <header class="topbar">
-    <div>
-      <p class="eyebrow">Healthcare Agent</p>
-      <h1>Diet Coach Dashboard</h1>
-    </div>
-    <div class="summary" id="summary"></div>
-  </header>
+  <main class="shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Diet Coach / Personal Trainer</p>
+        <h1>79kgへ落としながら、仕事で動ける体を作る</h1>
+        <p class="lead" id="heroLead"></p>
+      </div>
+      <div class="hero-metrics" id="heroMetrics"></div>
+    </section>
 
-  <main>
-    <section class="coach-grid">
-      <section class="panel coach-panel">
-        <div class="panel-head">
-          <h2>今日のコーチング</h2>
-          <span class="pill" id="coachFocus"></span>
+    <section class="command-grid">
+      <section class="panel command-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Today</p>
+            <h2>今日の指示</h2>
+          </div>
+          <span class="pill" id="topPriority"></span>
         </div>
         <div id="coachActions"></div>
       </section>
-      <section class="panel">
-        <div class="panel-head">
-          <h2>今週の作戦</h2>
+      <section class="panel radar-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Condition Pentagon</p>
+            <h2>5角形パラメータ</h2>
+          </div>
         </div>
-        <div id="weeklyPlan"></div>
+        <div id="radar"></div>
       </section>
     </section>
 
     <section class="kpis" id="kpis"></section>
 
-    <section class="panel">
-      <div class="panel-head">
-        <h2>推移グラフ</h2>
+    <section class="workout-grid">
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Training</p>
+            <h2>今週の筋トレメニュー</h2>
+          </div>
+        </div>
+        <div id="strengthPlan"></div>
+      </section>
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Diet</p>
+            <h2>今日の食事ルール</h2>
+          </div>
+        </div>
+        <div id="dietPlan"></div>
+      </section>
+    </section>
+
+    <section class="panel chart-panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Trend</p>
+          <h2>推移グラフ</h2>
+        </div>
         <div class="tabs" id="metricTabs"></div>
       </div>
       <div class="chart" id="chart"></div>
     </section>
 
-    <section class="grid">
-      <div class="panel">
-        <div class="panel-head">
-          <h2>79kg目標</h2>
+    <section class="lower-grid">
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Goal</p>
+            <h2>79kg目標</h2>
+          </div>
         </div>
         <div id="weightGoal"></div>
-      </div>
-      <div class="panel">
-        <div class="panel-head">
-          <h2>筋トレプラン</h2>
+      </section>
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Data</p>
+            <h2>取得状態</h2>
+          </div>
         </div>
-        <div id="strengthPlan"></div>
-      </div>
+        <div id="dataStatus"></div>
+      </section>
     </section>
 
     <section class="panel">
-      <div class="panel-head">
-        <h2>データ状態</h2>
-      </div>
-      <div id="dataStatus"></div>
-    </section>
-
-    <section class="panel">
-      <div class="panel-head">
-        <h2>日別データ</h2>
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Log</p>
+          <h2>日別データ</h2>
+        </div>
       </div>
       <div class="table-wrap">
         <table>
@@ -80,7 +113,6 @@
               <th>体重</th>
               <th>体脂肪</th>
               <th>BMI</th>
-              <th>不足</th>
             </tr>
           </thead>
           <tbody id="dailyRows"></tbody>
@@ -88,7 +120,6 @@
       </div>
     </section>
   </main>
-
   <script src="./app.js"></script>
 </body>
 </html>
