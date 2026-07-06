@@ -1,8 +1,9 @@
 {
-  "generatedAt": "2026-07-06T12:43:49.484Z",
+  "generatedAt": "2026-07-06T12:48:06.021Z",
   "recordCount": 31,
   "goals": {
     "weightKg": 79,
+    "deadline": "2026-07-31",
     "steps": 8000,
     "sleepHours": 6.5,
     "activeEnergyKcal": 650,

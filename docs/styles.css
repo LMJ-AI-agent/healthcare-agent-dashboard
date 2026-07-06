@@ -102,6 +102,7 @@ h2 { font-size: 20px; }
   border: 1px solid #e4ece5;
   border-radius: 8px;
   background: #fff;
+  cursor: pointer;
 }
 .task-card.done, .plan-card.done { border-color: rgba(21,149,107,.35); background: #f0fbf5; }
 .task-row, .plan-card .top { display: grid; grid-template-columns: 42px 1fr auto; gap: 12px; align-items: center; }
@@ -117,6 +118,7 @@ h2 { font-size: 20px; }
   font-weight: 950;
 }
 .done .check-button { color: white; background: var(--green); border-color: var(--green); }
+.inline-memo { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
 .task-card strong, .plan-card h3 { display: block; font-size: 15px; }
 .task-card p { margin: 4px 0 0; color: var(--muted); line-height: 1.55; }
 .tag { padding: 5px 8px; border-radius: 999px; background: #f0f5ef; color: #4f5f56; font-size: 12px; font-weight: 850; }

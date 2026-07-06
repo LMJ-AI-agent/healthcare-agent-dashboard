@@ -8,6 +8,7 @@ const outputDir = join(root, 'docs');
 
 const GOALS = {
   weightKg: 79,
+  deadline: '2026-07-31',
   steps: 8000,
   sleepHours: 6.5,
   activeEnergyKcal: 650,
@@ -219,6 +220,14 @@ function dashboardHtml() {
           </div>
         </div>
         <div id="strengthPlan"></div>
+        <div class="inline-memo">
+          <p class="eyebrow">Workout Memo</p>
+          <textarea id="workoutMemo" class="memo-box" rows="4" placeholder="例: スクワット 10回 x 3、腕立て 8回 x 2。きつさ7/10。"></textarea>
+          <div class="memo-foot">
+            <span id="memoSaved"></span>
+            <button class="ghost-button" id="clearToday">今日のチェックをリセット</button>
+          </div>
+        </div>
       </section>
       <section class="panel">
         <div class="section-head">
@@ -229,20 +238,6 @@ function dashboardHtml() {
         </div>
         <div id="dietPlan"></div>
       </section>
-    </section>
-
-    <section class="panel">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Workout Memo</p>
-          <h2>その他の筋トレログ</h2>
-        </div>
-      </div>
-      <textarea id="workoutMemo" class="memo-box" rows="4" placeholder="例: スクワット 10回 x 3、腕立て 8回 x 2。きつさ7/10。"></textarea>
-      <div class="memo-foot">
-        <span id="memoSaved"></span>
-        <button class="ghost-button" id="clearToday">今日のチェックをリセット</button>
-      </div>
     </section>
 
     <section class="panel chart-panel">
@@ -428,6 +423,7 @@ h2 { font-size: 20px; }
   border: 1px solid #e4ece5;
   border-radius: 8px;
   background: #fff;
+  cursor: pointer;
 }
 .task-card.done, .plan-card.done { border-color: rgba(21,149,107,.35); background: #f0fbf5; }
 .task-row, .plan-card .top { display: grid; grid-template-columns: 42px 1fr auto; gap: 12px; align-items: center; }
@@ -443,6 +439,7 @@ h2 { font-size: 20px; }
   font-weight: 950;
 }
 .done .check-button { color: white; background: var(--green); border-color: var(--green); }
+.inline-memo { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
 .task-card strong, .plan-card h3 { display: block; font-size: 15px; }
 .task-card p { margin: 4px 0 0; color: var(--muted); line-height: 1.55; }
 .tag { padding: 5px 8px; border-radius: 999px; background: #f0f5ef; color: #4f5f56; font-size: 12px; font-weight: 850; }
@@ -504,7 +501,7 @@ th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: l
 }
 
 function dashboardJs() {
-  return `const GOALS = { weightKg: 79, steps: 8000, sleepHours: 6.5, activeEnergyKcal: 650, bodyFatPercent: 25 };
+  return `const GOALS = { weightKg: 79, deadline: '2026-07-31', steps: 8000, sleepHours: 6.5, activeEnergyKcal: 650, bodyFatPercent: 25 };
 const metrics = {
   weightKg: { label: '体重', color: '#3567e8', format: v => v == null ? '-' : v.toFixed(1) + 'kg' },
   bodyFatPercent: { label: '体脂肪率', color: '#df4b4b', format: v => v == null ? '-' : v.toFixed(1) + '%' },
@@ -589,7 +586,7 @@ function renderHeroMetrics(record, kgLeft) {
   const total = todayPlan.length;
   const cards = [
     ['今日の完了', completed + '/' + total, completionRate() + '% 達成'],
-    ['現在体重', metrics.weightKg.format(m.weightKg), kgLeft == null ? '目標79.0kg' : '残り' + kgLeft.toFixed(1) + 'kg'],
+    ['現在体重', metrics.weightKg.format(m.weightKg), kgLeft == null ? targetDeadlineText() : targetDeadlineText() + ' / 残り' + kgLeft.toFixed(1) + 'kg'],
     ['体脂肪率', metrics.bodyFatPercent.format(m.bodyFatPercent), seven.bodyFatPercent == null ? '7日平均なし' : '7日平均 ' + seven.bodyFatPercent.toFixed(1) + '%'],
     ['睡眠', metrics.sleepHours.format(m.sleepHours), seven.sleepHours == null ? '7日平均なし' : '7日平均 ' + hours(seven.sleepHours)],
   ];
@@ -603,9 +600,9 @@ function renderCompletionSummary() {
   const completed = completedCount();
   const total = todayPlan.length;
   const activeTheme = currentThemeText();
-  document.getElementById('todayScore').textContent = '今日の完了 ' + completed + '/' + total;
+  document.getElementById('todayScore').textContent = '今日の指示 ' + completed + '/' + total + ' 完了';
   document.getElementById('motivationLine').textContent = activeTheme || (rate >= 80 ? '最高です。この調子でいこう。' : rate >= 40 ? 'かなり進んでいます。あと少し。' : 'まず1つ押そう。流れができます。');
-  document.getElementById('victoryTitle').textContent = rate >= 100 ? '今日のメニュー完了。素晴らしいです！' : '今日は ' + completed + '/' + total + ' 完了';
+  document.getElementById('victoryTitle').textContent = rate >= 100 ? '今日の指示 ' + completed + '/' + total + ' 完了。素晴らしいです！' : '今日の指示 ' + completed + '/' + total + ' 完了';
   document.getElementById('completionRing').innerHTML = ringSvg(rate);
 }
 
@@ -639,8 +636,14 @@ function taskCard(item, compact = false) {
 }
 
 function bindTaskButtons() {
+  document.querySelectorAll('.task-card[data-task-id], .plan-card[data-task-id]').forEach(card => {
+    card.onclick = () => toggleTask(card.dataset.taskId);
+  });
   document.querySelectorAll('.check-button').forEach(button => {
-    button.onclick = () => toggleTask(button.dataset.taskId);
+    button.onclick = event => {
+      event.stopPropagation();
+      toggleTask(button.dataset.taskId);
+    };
   });
 }
 
@@ -849,6 +852,7 @@ function renderWeightGoal(record) {
     '<div class="status-list">' +
     '<div class="status-item"><span>現在</span><strong>' + metrics.weightKg.format(weight) + '</strong></div>' +
     '<div class="status-item"><span>目標</span><strong>' + target.toFixed(1) + 'kg</strong></div>' +
+    '<div class="status-item"><span>期限</span><strong>' + targetDeadlineText() + '</strong></div>' +
     '<div class="status-item"><span>残り</span><strong>' + (weight == null ? '-' : (weight - target).toFixed(1) + 'kg') + '</strong></div>' +
     '<div class="status-item"><span>推奨ペース</span><strong>2週間で1kg減</strong></div>' +
     '<div class="progress"><span style="width:' + progress + '%"></span></div>' +
@@ -884,6 +888,11 @@ function loadThemeStore() {
 function saveThemeStore() { localStorage.setItem('dietCoach:themes', JSON.stringify(themeStore)); }
 function completedCount() { return Object.values(dayState?.tasks || {}).filter(Boolean).length; }
 function completionRate() { return todayPlan.length ? Math.round((completedCount() / todayPlan.length) * 100) : 0; }
+function targetDeadlineText() { return formatDateJa(GOALS.deadline) + 'までに' + GOALS.weightKg.toFixed(1) + 'kg'; }
+function formatDateJa(isoDate) {
+  const date = new Date(isoDate + 'T00:00:00+09:00');
+  return Number.isNaN(date.getTime()) ? isoDate : date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric' });
+}
 function showFeedback(text) {
   const toast = document.getElementById('feedbackToast');
   toast.textContent = text;
