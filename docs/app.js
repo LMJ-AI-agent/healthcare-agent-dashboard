@@ -12,6 +12,7 @@ let selectedMetric = 'weightKg';
 let latestRecord = null;
 let todayPlan = [];
 let dayState = null;
+let themeStore = null;
 
 fetch('./health-data.json')
   .then(res => res.json())
@@ -19,6 +20,7 @@ fetch('./health-data.json')
     records = data.records || [];
     latestRecord = [...records].reverse().find(r => hasAnyMetric(r)) || records.at(-1);
     dayState = loadDayState(latestRecord?.date || todayIso());
+    themeStore = loadThemeStore();
     render(data);
   });
 
@@ -41,8 +43,10 @@ function render(data) {
   renderChart();
   renderWeightGoal(latestRecord);
   renderCompletionLog();
+  renderThemeStock();
   renderTable();
   bindReset();
+  bindThemeStock();
 }
 
 function buildTodayPlan(record) {
@@ -92,8 +96,9 @@ function renderCompletionSummary() {
   const rate = completionRate();
   const completed = completedCount();
   const total = todayPlan.length;
+  const activeTheme = currentThemeText();
   document.getElementById('todayScore').textContent = '今日の完了 ' + completed + '/' + total;
-  document.getElementById('motivationLine').textContent = rate >= 80 ? '最高です。この調子でいこう。' : rate >= 40 ? 'かなり進んでいます。あと少し。' : 'まず1つ押そう。流れができます。';
+  document.getElementById('motivationLine').textContent = activeTheme || (rate >= 80 ? '最高です。この調子でいこう。' : rate >= 40 ? 'かなり進んでいます。あと少し。' : 'まず1つ押そう。流れができます。');
   document.getElementById('victoryTitle').textContent = rate >= 100 ? '今日のメニュー完了。素晴らしいです！' : '今日は ' + completed + '/' + total + ' 完了';
   document.getElementById('completionRing').innerHTML = ringSvg(rate);
 }
@@ -168,6 +173,74 @@ function bindReset() {
     render(dataPlaceholder());
     showFeedback('今日のチェックをリセットしました。');
   };
+}
+
+function renderThemeStock() {
+  const themes = themeStore?.themes || [];
+  const activeId = themeStore?.activeId || null;
+  document.getElementById('themeCount').textContent = themes.length + '件ストック';
+  document.getElementById('themeStock').innerHTML = themes.length
+    ? '<div class="theme-list">' + themes.map(theme => (
+      '<div class="theme-card ' + (theme.id === activeId ? 'active' : '') + '" data-theme-id="' + theme.id + '">' +
+      '<div><strong>' + escapeHtml(theme.text) + '</strong><small>' + new Date(theme.createdAt).toLocaleString('ja-JP') + (theme.id === activeId ? ' / 今のテーマ' : '') + '</small></div>' +
+      '<div class="theme-actions">' +
+      '<button class="primary" type="button" data-theme-action="activate" data-theme-id="' + theme.id + '">今のテーマにする</button>' +
+      '<button type="button" data-theme-action="delete" data-theme-id="' + theme.id + '">削除</button>' +
+      '</div></div>'
+    )).join('') + '</div>'
+    : '<div class="status-list"><div class="status-item"><span>ストック</span><strong>まだありません</strong></div></div>';
+}
+
+function bindThemeStock() {
+  document.getElementById('addTheme').onclick = () => addThemeFromInput();
+  document.getElementById('themeInput').onkeydown = event => {
+    if (event.key === 'Enter') addThemeFromInput();
+  };
+  document.querySelectorAll('[data-theme-action]').forEach(button => {
+    button.onclick = () => {
+      if (button.dataset.themeAction === 'activate') activateTheme(button.dataset.themeId);
+      if (button.dataset.themeAction === 'delete') deleteTheme(button.dataset.themeId);
+    };
+  });
+}
+
+function addThemeFromInput() {
+  const input = document.getElementById('themeInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const theme = { id: 'theme-' + Date.now(), text, createdAt: new Date().toISOString() };
+  themeStore.themes.unshift(theme);
+  themeStore.activeId = theme.id;
+  saveThemeStore();
+  input.value = '';
+  showFeedback('今後のテーマとしてストックしました。');
+  renderCompletionSummary();
+  renderThemeStock();
+  bindThemeStock();
+}
+
+function activateTheme(id) {
+  themeStore.activeId = id;
+  saveThemeStore();
+  showFeedback('今のテーマに設定しました。');
+  renderCompletionSummary();
+  renderThemeStock();
+  bindThemeStock();
+}
+
+function deleteTheme(id) {
+  themeStore.themes = themeStore.themes.filter(theme => theme.id !== id);
+  if (themeStore.activeId === id) themeStore.activeId = themeStore.themes[0]?.id || null;
+  saveThemeStore();
+  showFeedback('テーマを削除しました。');
+  renderCompletionSummary();
+  renderThemeStock();
+  bindThemeStock();
+}
+
+function currentThemeText() {
+  const active = (themeStore?.themes || []).find(theme => theme.id === themeStore.activeId);
+  return active ? '今のテーマ: ' + active.text : '';
 }
 
 function renderCompletionLog() {
@@ -294,6 +367,15 @@ function loadDayState(date) {
   }
 }
 function saveDayState() { localStorage.setItem('dietCoach:' + dayState.date, JSON.stringify(dayState)); }
+function loadThemeStore() {
+  try {
+    const raw = localStorage.getItem('dietCoach:themes');
+    return raw ? { themes: [], activeId: null, ...JSON.parse(raw) } : { themes: [], activeId: null };
+  } catch {
+    return { themes: [], activeId: null };
+  }
+}
+function saveThemeStore() { localStorage.setItem('dietCoach:themes', JSON.stringify(themeStore)); }
 function completedCount() { return Object.values(dayState?.tasks || {}).filter(Boolean).length; }
 function completionRate() { return todayPlan.length ? Math.round((completedCount() / todayPlan.length) * 100) : 0; }
 function showFeedback(text) {

@@ -124,6 +124,17 @@ h2 { font-size: 20px; }
 .memo-box { width: 100%; resize: vertical; border: 1px solid var(--line); border-radius: 8px; padding: 13px; font: inherit; line-height: 1.6; color: var(--ink); background: #fff; }
 .memo-foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 10px; color: var(--muted); font-size: 13px; }
 .ghost-button { border: 1px solid var(--line); background: #fff; color: var(--muted); border-radius: 999px; padding: 8px 12px; cursor: pointer; font-weight: 800; }
+.theme-input { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; margin-bottom: 12px; }
+.theme-input input { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 12px 13px; font: inherit; background: #fff; color: var(--ink); }
+.theme-input button { border: 0; border-radius: 8px; padding: 0 16px; background: #12261f; color: white; font-weight: 900; cursor: pointer; }
+.theme-list { display: grid; gap: 10px; }
+.theme-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 13px; border: 1px solid #e4ece5; border-radius: 8px; background: #fff; }
+.theme-card.active { border-color: rgba(21,149,107,.4); background: #f0fbf5; }
+.theme-card strong { display: block; margin-bottom: 4px; font-size: 15px; }
+.theme-card small { color: var(--muted); }
+.theme-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+.theme-actions button { border: 1px solid var(--line); border-radius: 999px; padding: 7px 10px; background: #fff; color: var(--muted); font-weight: 800; cursor: pointer; }
+.theme-actions .primary { border-color: rgba(21,149,107,.25); background: #e6f8ef; color: #086343; }
 .radar-layout { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(170px, .7fr); gap: 12px; align-items: center; }
 .radar-layout svg { width: 100%; max-height: 300px; }
 .score-row { display: grid; grid-template-columns: 76px 1fr 42px; gap: 8px; align-items: center; font-size: 13px; }
@@ -160,5 +171,7 @@ th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: l
   h1 { font-size: 36px; }
   .hero-metrics, .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .radar-layout, .victory-panel { grid-template-columns: 1fr; }
+  .theme-input, .theme-card { grid-template-columns: 1fr; }
+  .theme-actions { justify-content: flex-start; }
   .section-head { flex-direction: column; }
 }

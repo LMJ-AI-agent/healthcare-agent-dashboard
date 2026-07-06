@@ -280,6 +280,21 @@ function dashboardHtml() {
     <section class="panel">
       <div class="section-head">
         <div>
+          <p class="eyebrow">Theme Stock</p>
+          <h2>今後のテーマ</h2>
+        </div>
+        <span class="pill" id="themeCount"></span>
+      </div>
+      <div class="theme-input">
+        <input id="themeInput" type="text" placeholder="例: 体脂肪率を下げるために夜の間食をなくす">
+        <button id="addTheme" type="button">ストック</button>
+      </div>
+      <div id="themeStock"></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <div>
           <p class="eyebrow">Daily Log</p>
           <h2>日別データ</h2>
         </div>
@@ -435,6 +450,17 @@ h2 { font-size: 20px; }
 .memo-box { width: 100%; resize: vertical; border: 1px solid var(--line); border-radius: 8px; padding: 13px; font: inherit; line-height: 1.6; color: var(--ink); background: #fff; }
 .memo-foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 10px; color: var(--muted); font-size: 13px; }
 .ghost-button { border: 1px solid var(--line); background: #fff; color: var(--muted); border-radius: 999px; padding: 8px 12px; cursor: pointer; font-weight: 800; }
+.theme-input { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; margin-bottom: 12px; }
+.theme-input input { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 12px 13px; font: inherit; background: #fff; color: var(--ink); }
+.theme-input button { border: 0; border-radius: 8px; padding: 0 16px; background: #12261f; color: white; font-weight: 900; cursor: pointer; }
+.theme-list { display: grid; gap: 10px; }
+.theme-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 13px; border: 1px solid #e4ece5; border-radius: 8px; background: #fff; }
+.theme-card.active { border-color: rgba(21,149,107,.4); background: #f0fbf5; }
+.theme-card strong { display: block; margin-bottom: 4px; font-size: 15px; }
+.theme-card small { color: var(--muted); }
+.theme-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+.theme-actions button { border: 1px solid var(--line); border-radius: 999px; padding: 7px 10px; background: #fff; color: var(--muted); font-weight: 800; cursor: pointer; }
+.theme-actions .primary { border-color: rgba(21,149,107,.25); background: #e6f8ef; color: #086343; }
 .radar-layout { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(170px, .7fr); gap: 12px; align-items: center; }
 .radar-layout svg { width: 100%; max-height: 300px; }
 .score-row { display: grid; grid-template-columns: 76px 1fr 42px; gap: 8px; align-items: center; font-size: 13px; }
@@ -471,6 +497,8 @@ th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: l
   h1 { font-size: 36px; }
   .hero-metrics, .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .radar-layout, .victory-panel { grid-template-columns: 1fr; }
+  .theme-input, .theme-card { grid-template-columns: 1fr; }
+  .theme-actions { justify-content: flex-start; }
   .section-head { flex-direction: column; }
 }`;
 }
@@ -490,6 +518,7 @@ let selectedMetric = 'weightKg';
 let latestRecord = null;
 let todayPlan = [];
 let dayState = null;
+let themeStore = null;
 
 fetch('./health-data.json')
   .then(res => res.json())
@@ -497,6 +526,7 @@ fetch('./health-data.json')
     records = data.records || [];
     latestRecord = [...records].reverse().find(r => hasAnyMetric(r)) || records.at(-1);
     dayState = loadDayState(latestRecord?.date || todayIso());
+    themeStore = loadThemeStore();
     render(data);
   });
 
@@ -519,8 +549,10 @@ function render(data) {
   renderChart();
   renderWeightGoal(latestRecord);
   renderCompletionLog();
+  renderThemeStock();
   renderTable();
   bindReset();
+  bindThemeStock();
 }
 
 function buildTodayPlan(record) {
@@ -570,8 +602,9 @@ function renderCompletionSummary() {
   const rate = completionRate();
   const completed = completedCount();
   const total = todayPlan.length;
+  const activeTheme = currentThemeText();
   document.getElementById('todayScore').textContent = '今日の完了 ' + completed + '/' + total;
-  document.getElementById('motivationLine').textContent = rate >= 80 ? '最高です。この調子でいこう。' : rate >= 40 ? 'かなり進んでいます。あと少し。' : 'まず1つ押そう。流れができます。';
+  document.getElementById('motivationLine').textContent = activeTheme || (rate >= 80 ? '最高です。この調子でいこう。' : rate >= 40 ? 'かなり進んでいます。あと少し。' : 'まず1つ押そう。流れができます。');
   document.getElementById('victoryTitle').textContent = rate >= 100 ? '今日のメニュー完了。素晴らしいです！' : '今日は ' + completed + '/' + total + ' 完了';
   document.getElementById('completionRing').innerHTML = ringSvg(rate);
 }
@@ -646,6 +679,74 @@ function bindReset() {
     render(dataPlaceholder());
     showFeedback('今日のチェックをリセットしました。');
   };
+}
+
+function renderThemeStock() {
+  const themes = themeStore?.themes || [];
+  const activeId = themeStore?.activeId || null;
+  document.getElementById('themeCount').textContent = themes.length + '件ストック';
+  document.getElementById('themeStock').innerHTML = themes.length
+    ? '<div class="theme-list">' + themes.map(theme => (
+      '<div class="theme-card ' + (theme.id === activeId ? 'active' : '') + '" data-theme-id="' + theme.id + '">' +
+      '<div><strong>' + escapeHtml(theme.text) + '</strong><small>' + new Date(theme.createdAt).toLocaleString('ja-JP') + (theme.id === activeId ? ' / 今のテーマ' : '') + '</small></div>' +
+      '<div class="theme-actions">' +
+      '<button class="primary" type="button" data-theme-action="activate" data-theme-id="' + theme.id + '">今のテーマにする</button>' +
+      '<button type="button" data-theme-action="delete" data-theme-id="' + theme.id + '">削除</button>' +
+      '</div></div>'
+    )).join('') + '</div>'
+    : '<div class="status-list"><div class="status-item"><span>ストック</span><strong>まだありません</strong></div></div>';
+}
+
+function bindThemeStock() {
+  document.getElementById('addTheme').onclick = () => addThemeFromInput();
+  document.getElementById('themeInput').onkeydown = event => {
+    if (event.key === 'Enter') addThemeFromInput();
+  };
+  document.querySelectorAll('[data-theme-action]').forEach(button => {
+    button.onclick = () => {
+      if (button.dataset.themeAction === 'activate') activateTheme(button.dataset.themeId);
+      if (button.dataset.themeAction === 'delete') deleteTheme(button.dataset.themeId);
+    };
+  });
+}
+
+function addThemeFromInput() {
+  const input = document.getElementById('themeInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const theme = { id: 'theme-' + Date.now(), text, createdAt: new Date().toISOString() };
+  themeStore.themes.unshift(theme);
+  themeStore.activeId = theme.id;
+  saveThemeStore();
+  input.value = '';
+  showFeedback('今後のテーマとしてストックしました。');
+  renderCompletionSummary();
+  renderThemeStock();
+  bindThemeStock();
+}
+
+function activateTheme(id) {
+  themeStore.activeId = id;
+  saveThemeStore();
+  showFeedback('今のテーマに設定しました。');
+  renderCompletionSummary();
+  renderThemeStock();
+  bindThemeStock();
+}
+
+function deleteTheme(id) {
+  themeStore.themes = themeStore.themes.filter(theme => theme.id !== id);
+  if (themeStore.activeId === id) themeStore.activeId = themeStore.themes[0]?.id || null;
+  saveThemeStore();
+  showFeedback('テーマを削除しました。');
+  renderCompletionSummary();
+  renderThemeStock();
+  bindThemeStock();
+}
+
+function currentThemeText() {
+  const active = (themeStore?.themes || []).find(theme => theme.id === themeStore.activeId);
+  return active ? '今のテーマ: ' + active.text : '';
 }
 
 function renderCompletionLog() {
@@ -772,6 +873,15 @@ function loadDayState(date) {
   }
 }
 function saveDayState() { localStorage.setItem('dietCoach:' + dayState.date, JSON.stringify(dayState)); }
+function loadThemeStore() {
+  try {
+    const raw = localStorage.getItem('dietCoach:themes');
+    return raw ? { themes: [], activeId: null, ...JSON.parse(raw) } : { themes: [], activeId: null };
+  } catch {
+    return { themes: [], activeId: null };
+  }
+}
+function saveThemeStore() { localStorage.setItem('dietCoach:themes', JSON.stringify(themeStore)); }
 function completedCount() { return Object.values(dayState?.tasks || {}).filter(Boolean).length; }
 function completionRate() { return todayPlan.length ? Math.round((completedCount() / todayPlan.length) * 100) : 0; }
 function showFeedback(text) {
