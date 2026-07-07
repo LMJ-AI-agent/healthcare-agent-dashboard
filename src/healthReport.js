@@ -84,11 +84,19 @@ export function evaluateDataReadiness({ healthFile, healthData, sleepFile, sleep
     ),
     ringConnInHealthData: containsRingConnData(healthData) || containsRingConnData(sleepData),
   };
+  const requiredChecks = {
+    healthData: checks.healthData,
+    bodyComposition: checks.bodyComposition,
+    ringConnInHealthData: checks.ringConnInHealthData,
+  };
   return {
-    ready: Object.values(checks).every(Boolean),
+    ready: Object.values(requiredChecks).every(Boolean),
     checks,
-    missing: Object.entries(checks)
+    missing: Object.entries(requiredChecks)
       .filter(([, ok]) => !ok)
+      .map(([name]) => name),
+    warnings: Object.entries(checks)
+      .filter(([name, ok]) => !ok && requiredChecks[name] == null)
       .map(([name]) => name),
   };
 }

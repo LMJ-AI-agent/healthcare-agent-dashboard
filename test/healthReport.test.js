@@ -192,7 +192,7 @@ test('collectInput rejects late-afternoon RingConn sleep for morning report', as
   assert.equal(input.readiness.checks.sleepData, false);
 });
 
-test('evaluateDataReadiness requires health, sleep, body composition, and RingConn data', () => {
+test('evaluateDataReadiness requires health, body composition, and RingConn data; sleep is a warning', () => {
   const ready = evaluateDataReadiness({
     healthFile: { path: 'health.json' },
     healthData: '{"source":"RingConn","steps":1234}',
@@ -212,7 +212,23 @@ test('evaluateDataReadiness requires health, sleep, body composition, and RingCo
     healthPlanet: { normalized: { weightKg: 80.8, bodyFatPercent: null, bodyMassIndex: 30.8 } },
   });
   assert.equal(missing.ready, false);
-  assert.deepEqual(missing.missing, ['sleepData', 'bodyComposition', 'ringConnInHealthData']);
+  assert.deepEqual(missing.missing, ['bodyComposition', 'ringConnInHealthData']);
+  assert.deepEqual(missing.warnings, ['sleepData']);
+});
+
+test('evaluateDataReadiness does not block posting when only sleep is missing', () => {
+  const readiness = evaluateDataReadiness({
+    healthFile: { path: 'health.json' },
+    healthData: '{"source":"RingConn","steps":1234}',
+    sleepFile: { path: 'sleep.json' },
+    sleepData: '{"data":{"metrics":[{"name":"step_count"}]}}',
+    sleepSummary: null,
+    healthPlanet: { normalized: { weightKg: 80.8, bodyFatPercent: 27.5, bodyMassIndex: 30.8 } },
+  });
+
+  assert.equal(readiness.ready, true);
+  assert.deepEqual(readiness.missing, []);
+  assert.deepEqual(readiness.warnings, ['sleepData']);
 });
 
 test('runDailyHealthReport skips posting until required data is ready', async () => {
@@ -241,7 +257,8 @@ test('runDailyHealthReport skips posting until required data is ready', async ()
 
   assert.equal(result.skipped, true);
   assert.match(result.reason, /Data is not ready/);
-  assert.deepEqual(result.readiness.missing, ['sleepData', 'bodyComposition', 'ringConnInHealthData']);
+  assert.deepEqual(result.readiness.missing, ['bodyComposition', 'ringConnInHealthData']);
+  assert.deepEqual(result.readiness.warnings, ['sleepData']);
   assert.equal(await hasPostedForDate(join(root, 'state.json'), '2026-06-07'), false);
 });
 

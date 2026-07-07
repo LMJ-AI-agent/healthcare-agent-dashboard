@@ -209,6 +209,17 @@ function dashboardHtml() {
       </section>
     </section>
 
+    <section class="panel action-details-panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Action Details</p>
+          <h2>実行項目</h2>
+        </div>
+        <span class="pill" id="actionDetailCount"></span>
+      </div>
+      <div id="actionDetails"></div>
+    </section>
+
     <section class="kpis" id="kpis"></section>
 
     <section class="workout-grid">
@@ -417,6 +428,12 @@ h2 { font-size: 20px; }
 .section-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
 .pill { display: inline-flex; align-items: center; min-height: 30px; padding: 6px 11px; border-radius: 999px; background: #e6f8ef; color: #086343; font-size: 13px; font-weight: 850; white-space: nowrap; }
 .task-list, .plan-stack, .status-list, .score-list { display: grid; gap: 10px; }
+.summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.summary-card { min-height: 104px; padding: 14px; border: 1px solid #e4ece5; border-radius: 8px; background: #fff; }
+.summary-card span { display: block; color: var(--muted); font-size: 12px; font-weight: 800; }
+.summary-card strong { display: block; margin-top: 8px; font-size: 30px; line-height: 1; }
+.summary-card small { display: block; margin-top: 8px; color: var(--muted); line-height: 1.45; }
+.action-detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .task-card, .plan-card {
   position: relative;
   padding: 14px;
@@ -493,6 +510,7 @@ th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: l
   .hero { padding: 20px; min-height: 0; }
   h1 { font-size: 36px; }
   .hero-metrics, .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .summary-grid, .action-detail-grid { grid-template-columns: 1fr; }
   .radar-layout, .victory-panel { grid-template-columns: 1fr; }
   .theme-input, .theme-card { grid-template-columns: 1fr; }
   .theme-actions { justify-content: flex-start; }
@@ -537,6 +555,7 @@ function render(data) {
   renderHeroMetrics(latestRecord, kgLeft);
   renderCompletionSummary();
   renderCoaching();
+  renderActionDetails();
   renderRadar(latestRecord);
   renderKpis(latestRecord);
   renderStrengthPlan();
@@ -609,7 +628,25 @@ function renderCompletionSummary() {
 function renderCoaching() {
   document.getElementById('topPriority').textContent = latestRecord?.coaching?.topPriority || 'データ確認';
   const items = todayPlan.filter(item => item.group === 'today');
-  document.getElementById('coachActions').innerHTML = '<div class="task-list">' + items.map(item => taskCard(item)).join('') + '</div>';
+  const completed = items.filter(item => dayState.tasks[item.id]).length;
+  const total = items.length;
+  const allCompleted = completedCount();
+  const allTotal = todayPlan.length;
+  document.getElementById('coachActions').innerHTML =
+    '<div class="summary-grid">' +
+    '<div class="summary-card"><span>今日の指示</span><strong>' + completed + '/' + total + '</strong><small>細かい実行内容は下の「実行項目」で管理します。</small></div>' +
+    '<div class="summary-card"><span>達成率</span><strong>' + allCompleted + '/' + allTotal + '</strong><small>全タスク合計: ' + completionRate() + '% 完了</small></div>' +
+    '<div class="summary-card"><span>次の一手</span><strong>' + nextTaskLabel() + '</strong><small>完了した項目はログへ自動反映されます。</small></div>' +
+    '</div>';
+}
+
+function renderActionDetails() {
+  const items = todayPlan.filter(item => item.group === 'today');
+  const done = items.filter(item => dayState.tasks[item.id]).length;
+  document.getElementById('actionDetailCount').textContent = done + '/' + items.length + ' 完了';
+  document.getElementById('actionDetails').innerHTML = items.length
+    ? '<div class="action-detail-grid">' + items.map(item => taskCard(item)).join('') + '</div>'
+    : '<div class="status-list"><div class="status-item"><span>実行項目</span><strong>データ更新待ち</strong></div></div>';
   bindTaskButtons();
 }
 
@@ -658,6 +695,7 @@ function renderAfterStateChange() {
   renderCompletionSummary();
   renderHeroMetrics(latestRecord, latestRecord?.metrics?.weightKg == null ? null : latestRecord.metrics.weightKg - GOALS.weightKg);
   renderCoaching();
+  renderActionDetails();
   renderStrengthPlan();
   renderDietPlan();
   renderCompletionLog();
@@ -888,6 +926,10 @@ function loadThemeStore() {
 function saveThemeStore() { localStorage.setItem('dietCoach:themes', JSON.stringify(themeStore)); }
 function completedCount() { return Object.values(dayState?.tasks || {}).filter(Boolean).length; }
 function completionRate() { return todayPlan.length ? Math.round((completedCount() / todayPlan.length) * 100) : 0; }
+function nextTaskLabel() {
+  const next = todayPlan.find(item => !dayState?.tasks?.[item.id]);
+  return next ? next.title : '全部完了';
+}
 function targetDeadlineText() { return formatDateJa(GOALS.deadline) + 'までに' + GOALS.weightKg.toFixed(1) + 'kg'; }
 function formatDateJa(isoDate) {
   const date = new Date(isoDate + 'T00:00:00+09:00');
