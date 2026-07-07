@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-07T06:26:13.444Z",
+  "generatedAt": "2026-07-07T08:42:08.813Z",
   "recordCount": 31,
   "goals": {
     "weightKg": 79,
@@ -1787,65 +1787,63 @@
         "checks": {
           "healthData": true,
           "sleepData": false,
-          "bodyComposition": false,
+          "bodyComposition": true,
           "ringConnInHealthData": true
         },
         "missing": [
-          "sleepData",
-          "bodyComposition"
+          "sleepData"
         ]
       },
       "missing": [
-        "sleepData",
-        "bodyComposition"
+        "sleepData"
       ],
       "metrics": {
         "sleepHours": null,
-        "steps": 3474,
-        "activeEnergyKcal": 213,
-        "weightKg": 81.2,
-        "bodyMassIndex": 30.9,
-        "bodyFatPercent": 27.1
+        "steps": 4497,
+        "activeEnergyKcal": 341,
+        "weightKg": 81.3,
+        "bodyMassIndex": 31,
+        "bodyFatPercent": 26.6
       },
       "average7": {
         "sleepHours": 6.04,
-        "steps": 4792.14,
-        "activeEnergyKcal": 349.71,
-        "weightKg": 81.26,
-        "bodyFatPercent": 27.4
+        "steps": 4938.29,
+        "activeEnergyKcal": 368,
+        "weightKg": 81.28,
+        "bodyFatPercent": 27.3
       },
       "diffFromAverage7": {
         "sleepHours": null,
-        "steps": -1318,
-        "activeEnergyKcal": -137,
-        "weightKg": -0.1,
-        "bodyFatPercent": -0.3
+        "steps": -441,
+        "activeEnergyKcal": -27,
+        "weightKg": 0,
+        "bodyFatPercent": -0.7
       },
       "goal": {
         "weightTargetKg": 79,
-        "kgToTarget": 2.2
+        "kgToTarget": 2.3
       },
       "coaching": {
         "topPriority": "未取得データを確認",
         "actions": [
-          "歩数はあと4,526歩。昼食後10分、夕方10分の2回に分けて歩く。",
+          "歩数はあと3,503歩。昼食後10分、夕方10分の2回に分けて歩く。",
           "睡眠データは未取得。回復状態が読めないので、筋トレは20分以内でフォーム重視にする。",
           "体脂肪率は管理圏内。体重だけで判断せず、筋トレ継続で見た目の変化を狙う。",
-          "79.0kgまであと2.2kg。2週間で1kg減のペースなら、今日は小さく確実に削る日。"
+          "79.0kgまであと2.3kg。2週間で1kg減のペースなら、今日は小さく確実に削る日。"
         ],
         "deltas": {
-          "weightKg": 0,
-          "bodyFatPercent": 0,
+          "weightKg": 0.1,
+          "bodyFatPercent": -0.5,
           "sleepHours": null,
           "steps": null,
           "activeEnergyKcal": null
         },
         "sevenDay": {
           "sleepHours": 6.33,
-          "steps": 2979,
-          "activeEnergyKcal": 279,
-          "weightKg": 81.27,
-          "bodyFatPercent": 27.2
+          "steps": 3491,
+          "activeEnergyKcal": 343,
+          "weightKg": 81.3,
+          "bodyFatPercent": 27.08
         }
       }
     },
@@ -1890,18 +1888,18 @@
           "79.0kgまであと2.3kg。2週間で1kg減のペースなら、今日は小さく確実に削る日。"
         ],
         "deltas": {
-          "weightKg": 0.1,
-          "bodyFatPercent": -0.5,
+          "weightKg": 0,
+          "bodyFatPercent": 0,
           "sleepHours": null,
           "steps": null,
           "activeEnergyKcal": null
         },
         "sevenDay": {
           "sleepHours": 6.33,
-          "steps": 2979,
-          "activeEnergyKcal": 279,
-          "weightKg": 81.28,
-          "bodyFatPercent": 27.08
+          "steps": 3491,
+          "activeEnergyKcal": 343,
+          "weightKg": 81.3,
+          "bodyFatPercent": 26.98
         }
       }
     }
