@@ -167,12 +167,12 @@ function dashboardHtml() {
   <main class="shell">
     <header class="app-header">
       <a class="brand" href="#top" aria-label="ダイエットダッシュボードの先頭へ">
-        <span class="brand-mark">79</span>
+        <span class="brand-mark">76</span>
         <span><strong>BODY PROJECT</strong><small>Diet coach dashboard</small></span>
       </a>
       <nav class="section-nav" aria-label="ページ内ナビゲーション">
         <a href="#today">今日</a>
-        <a href="#training">筋トレ</a>
+        <a href="#roadmap">ロードマップ</a>
         <a href="#trend">推移</a>
         <a href="#records">記録</a>
       </nav>
@@ -182,12 +182,12 @@ function dashboardHtml() {
     <section class="hero" id="top">
       <div class="hero-copy">
         <p class="hero-kicker">PERSONAL TRANSFORMATION / 2026</p>
-        <h1 id="campaignTitle">今日も一つ完了。79kgへ、体を作っていこう。</h1>
-        <div class="goal-lockup">GOAL <strong id="heroGoalBadge">79.0 KG</strong></div>
+        <h1 id="campaignTitle">目指せ76.0kg 自己規律改善プロジェクト</h1>
+        <div class="goal-lockup">NEXT GOAL <strong id="heroGoalBadge">76.0 KG</strong></div>
         <p class="lead" id="heroLead"></p>
         <div class="hero-actions">
-          <span class="streak" id="todayScore"></span>
-          <span class="streak alt" id="motivationLine"></span>
+          <span class="streak">2026.10.31までに76kg</span>
+          <span class="streak alt">毎朝2km走る習慣をつくる</span>
         </div>
       </div>
       <div class="hero-scoreboard">
@@ -198,16 +198,64 @@ function dashboardHtml() {
 
     <section class="hero-metrics" id="heroMetrics" aria-label="本日の主要指標"></section>
 
-    <section class="today-layout" id="today">
-      <section class="panel victory-panel">
+    <section class="panel roadmap-panel" id="roadmap">
+      <div class="roadmap-intro">
         <div>
-          <p class="eyebrow">Today's Score</p>
-          <h2 id="victoryTitle">今日の達成状況</h2>
-          <p class="section-note">押した項目は、そのまま今日の実績になります。</p>
+          <p class="eyebrow">Discipline Roadmap</p>
+          <h2>3年後までの自己規律ロードマップ</h2>
         </div>
-        <div class="completion-ring" id="completionRing"></div>
-        <div class="toast" id="feedbackToast" role="status" aria-live="polite"></div>
-      </section>
+        <p>2026年7月22日、81.7kgから開始。体重だけでなく、毎朝走ることを当たり前にする。</p>
+      </div>
+      <div class="roadmap-start">
+        <span>START</span>
+        <strong>2026.07.22</strong>
+        <b>81.7kg</b>
+      </div>
+      <div class="roadmap-track">
+        <article class="roadmap-step current">
+          <span class="roadmap-index">01</span>
+          <small>3か月後</small>
+          <time datetime="2026-10-31">2026.10.31</time>
+          <strong>76kg</strong>
+          <b>毎朝 2km</b>
+          <p>自己規律が改善され、毎朝走る生活を定着させる。</p>
+        </article>
+        <article class="roadmap-step">
+          <span class="roadmap-index">02</span>
+          <small>半年後</small>
+          <time datetime="2027-01-22">2027.01.22</time>
+          <strong>70kg</strong>
+          <b>毎朝 4km</b>
+          <p>さらに自己規律を高め、朝4kmを継続できる状態にする。</p>
+        </article>
+        <article class="roadmap-step">
+          <span class="roadmap-index">03</span>
+          <small>1年後</small>
+          <time datetime="2027-07-22">2027.07.22</time>
+          <strong>65kg</strong>
+          <b>毎朝 5km</b>
+          <p>毎朝5kmを生活の基準にし、65kgまで体を整える。</p>
+        </article>
+        <article class="roadmap-step">
+          <span class="roadmap-index">04</span>
+          <small>2年後</small>
+          <time datetime="2028-07-22">2028.07.22</time>
+          <strong>62kg</strong>
+          <b>毎朝 5km</b>
+          <p>高い自己規律を確立し、62kgの体を完成させる。</p>
+        </article>
+        <article class="roadmap-step final">
+          <span class="roadmap-index">05</span>
+          <small>3年後</small>
+          <time datetime="2029-07-22">2029.07.22</time>
+          <strong>62kg維持</strong>
+          <b>毎朝 5km</b>
+          <p>高い自己規律を保ち、62kgと朝5kmを維持する。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="today-layout" id="today">
       <section class="panel command-panel">
         <div class="section-head">
           <div>
@@ -229,49 +277,7 @@ function dashboardHtml() {
       </section>
     </section>
 
-    <section class="panel action-details-panel">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Do It Today</p>
-          <h2>今日、やり切ること</h2>
-        </div>
-        <span class="pill" id="actionDetailCount"></span>
-      </div>
-      <div id="actionDetails"></div>
-    </section>
-
     <section class="kpis" id="kpis"></section>
-
-    <section class="workout-grid" id="training">
-      <section class="panel training-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Strength Training</p>
-            <h2>今日の筋トレ</h2>
-          </div>
-          <span class="category-chip strength-chip">BODY MAKE</span>
-        </div>
-        <div id="strengthPlan"></div>
-        <div class="inline-memo">
-          <p class="eyebrow">Training Log</p>
-          <textarea id="workoutMemo" class="memo-box" rows="4" placeholder="例: スクワット 10回 x 3、腕立て 8回 x 2。きつさ7/10。"></textarea>
-          <div class="memo-foot">
-            <span id="memoSaved"></span>
-            <button class="ghost-button" id="clearToday">今日のチェックをリセット</button>
-          </div>
-        </div>
-      </section>
-      <section class="panel diet-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Nutrition</p>
-            <h2>今日の食事ルール</h2>
-          </div>
-          <span class="category-chip diet-chip">FAT LOSS</span>
-        </div>
-        <div id="dietPlan"></div>
-      </section>
-    </section>
 
     <section class="progress-layout" id="trend">
       <section class="panel chart-panel">
@@ -288,7 +294,7 @@ function dashboardHtml() {
         <div class="section-head">
           <div>
             <p class="eyebrow">Race to Goal</p>
-            <h2>79kgまでの現在地</h2>
+            <h2>76kgまでの現在地</h2>
           </div>
           <span class="pill" id="campaignPeriod"></span>
         </div>
@@ -296,74 +302,15 @@ function dashboardHtml() {
       </section>
     </section>
 
-    <section class="lower-grid">
-      <section class="panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Goal Analysis</p>
-            <h2>目標ペース</h2>
-          </div>
-        </div>
-        <div id="weightGoal"></div>
-      </section>
-      <section class="panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Today's Log</p>
-            <h2>今日の実績</h2>
-          </div>
-        </div>
-        <div id="completionLog"></div>
-      </section>
-    </section>
-
-    <section class="planning-grid">
-      <section class="panel milestone-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Milestones</p>
-            <h2>月別マイルストーン</h2>
-          </div>
-        </div>
-        <div id="milestones"></div>
-      </section>
-      <section class="panel theme-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Focus Stock</p>
-            <h2>今後のテーマ</h2>
-          </div>
-          <span class="pill" id="themeCount"></span>
-        </div>
-        <div class="theme-input">
-          <input id="themeInput" type="text" placeholder="例: 夜の間食をなくす">
-          <button id="addTheme" type="button">追加</button>
-        </div>
-        <div id="themeStock"></div>
-      </section>
-    </section>
-
-    <details class="panel goal-settings-panel">
-      <summary>
-        <span><small>PROJECT SETTINGS</small><strong>目標値を編集</strong></span>
-        <span class="pill" id="goalSaveStatus">未保存の変更なし</span>
-      </summary>
-      <div class="goal-settings-body">
-        <div class="goal-form">
-          <label>目標体重<input id="goalWeightInput" type="number" step="0.1" min="35" max="160"></label>
-          <label>期限<input id="goalDeadlineInput" type="date"></label>
-          <label>開始体重<input id="goalStartWeightInput" type="number" step="0.1" min="35" max="180"></label>
-          <label>開始日<input id="goalStartDateInput" type="date"></label>
-          <label>歩数目標<input id="goalStepsInput" type="number" step="500" min="1000" max="30000"></label>
-          <label>睡眠目標<input id="goalSleepInput" type="number" step="0.25" min="3" max="10"></label>
-          <label>体脂肪率目標<input id="goalBodyFatInput" type="number" step="0.1" min="5" max="45"></label>
-        </div>
-        <div class="goal-buttons">
-          <button class="primary-button" id="saveGoals" type="button">保存して反映</button>
-          <button class="ghost-button" id="resetGoals" type="button">初期値に戻す</button>
+    <section class="panel goal-analysis-panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Goal Analysis</p>
+          <h2>10月31日までの目標ペース</h2>
         </div>
       </div>
-    </details>
+      <div id="weightGoal"></div>
+    </section>
 
     <section class="panel records-panel" id="records">
       <div class="section-head">
@@ -377,7 +324,6 @@ function dashboardHtml() {
           <thead>
             <tr>
               <th>日付</th>
-              <th>完了</th>
               <th>睡眠</th>
               <th>歩数</th>
               <th>活動kcal</th>
@@ -461,11 +407,11 @@ body {
   box-shadow: var(--shadow);
 }
 .hero-copy { position: relative; padding: 44px 48px 38px; overflow: hidden; }
-.hero-copy::after { content: "79"; position: absolute; right: -12px; bottom: -70px; color: rgba(255,255,255,.035); font-size: 300px; font-weight: 950; line-height: 1; pointer-events: none; }
+.hero-copy::after { content: "76"; position: absolute; right: -12px; bottom: -70px; color: rgba(255,255,255,.035); font-size: 300px; font-weight: 950; line-height: 1; pointer-events: none; }
 .hero-kicker { margin: 0 0 18px; color: var(--cyan); font-size: 11px; font-weight: 950; letter-spacing: .14em; }
 .eyebrow { margin: 0 0 7px; color: var(--muted); font-size: 11px; font-weight: 950; letter-spacing: .12em; text-transform: uppercase; }
 h1, h2, h3 { margin: 0; letter-spacing: 0; }
-h1 { max-width: 760px; font-size: clamp(38px, 5.2vw, 72px); line-height: 1.04; font-weight: 950; }
+h1 { max-width: 760px; font-size: clamp(38px, 3.8vw, 54px); line-height: 1.08; font-weight: 950; }
 h2 { font-size: 22px; font-weight: 950; }
 .goal-lockup { display: flex; align-items: baseline; gap: 12px; margin-top: 20px; color: rgba(255,255,255,.48); font-size: 12px; font-weight: 950; letter-spacing: .12em; }
 .goal-lockup strong { color: var(--coral); font-size: clamp(34px, 4vw, 58px); letter-spacing: 0; }
@@ -496,6 +442,26 @@ h2 { font-size: 22px; font-weight: 950; }
 .hero-card span { color: var(--muted); font-size: 11px; font-weight: 900; }
 .hero-card strong { display: block; margin-top: 10px; color: var(--ink); font-size: 28px; line-height: 1; }
 .hero-card small { display: block; margin-top: 7px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+.roadmap-panel { position: relative; overflow: hidden; padding: 0; }
+.roadmap-panel::before { content: ""; position: absolute; left: 0; top: 0; width: 8px; height: 100%; background: var(--coral); }
+.roadmap-intro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, .65fr); gap: 28px; align-items: end; padding: 26px 30px 22px; border-bottom: 1px solid var(--line); }
+.roadmap-intro p:last-child { max-width: 540px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+.roadmap-start { display: flex; align-items: baseline; gap: 14px; padding: 15px 30px; color: #fff; background: var(--night); }
+.roadmap-start span { color: var(--cyan); font-size: 10px; font-weight: 950; letter-spacing: .14em; }
+.roadmap-start strong { font-size: 15px; }
+.roadmap-start b { margin-left: auto; color: var(--lime); font-size: 22px; }
+.roadmap-track { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.roadmap-step { position: relative; min-height: 260px; padding: 24px 20px 22px; border-right: 1px solid var(--line); }
+.roadmap-step:last-child { border-right: 0; }
+.roadmap-step::before { content: ""; position: absolute; left: 20px; top: 0; width: 40px; height: 4px; background: var(--cyan); }
+.roadmap-step.current::before { background: var(--coral); }
+.roadmap-step.final::before { background: var(--lime); }
+.roadmap-index { display: block; color: #cbd3d8; font-size: 34px; font-weight: 950; line-height: 1; }
+.roadmap-step small { display: block; margin-top: 18px; color: var(--coral); font-size: 11px; font-weight: 950; }
+.roadmap-step time { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; }
+.roadmap-step strong { display: block; margin-top: 12px; font-size: 30px; line-height: 1; }
+.roadmap-step b { display: inline-block; margin-top: 12px; padding: 6px 8px; color: #fff; background: var(--blue); font-size: 12px; }
+.roadmap-step p { margin: 14px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
 .panel, .kpi {
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -504,7 +470,7 @@ h2 { font-size: 22px; font-weight: 950; }
 }
 .panel { padding: 22px; margin-top: 16px; }
 .section-note { margin: 10px 0 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
-.today-layout { display: grid; grid-template-columns: minmax(330px, .85fr) minmax(460px, 1.25fr) minmax(360px, 1fr); gap: 14px; }
+.today-layout { display: grid; grid-template-columns: minmax(520px, 1.25fr) minmax(400px, .75fr); gap: 14px; }
 .victory-panel {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 110px;
@@ -666,12 +632,14 @@ h2 { font-size: 22px; font-weight: 950; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th, td { padding: 11px 8px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
 th { color: var(--muted); font-size: 11px; text-transform: uppercase; }
-th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+th:first-child, td:first-child { text-align: left; }
 @media (max-width: 1180px) {
   .hero, .today-layout, .progress-layout { grid-template-columns: 1fr; }
   .hero-scoreboard { border-left: 0; border-top: 1px solid rgba(255,255,255,.14); }
   .goal-form { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .radar-layout { grid-template-columns: minmax(220px, .8fr) 1fr; }
+  .roadmap-track { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .roadmap-step { border-bottom: 1px solid var(--line); }
   .campaign-stat-grid, .kpis { grid-template-columns: repeat(3, minmax(140px, 1fr)); }
 }
 @media (max-width: 720px) {
@@ -688,6 +656,10 @@ th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: l
   .hero-card:nth-child(2) { border-right: 0; }
   .hero-card:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
   .workout-grid, .lower-grid, .planning-grid { grid-template-columns: 1fr; }
+  .roadmap-intro { grid-template-columns: 1fr; padding: 22px; }
+  .roadmap-start { padding: 14px 22px; }
+  .roadmap-track { grid-template-columns: 1fr; }
+  .roadmap-step { min-height: 0; border-right: 0; }
   .summary-grid, .action-detail-grid { grid-template-columns: 1fr; }
   .radar-layout { grid-template-columns: 1fr; }
   .theme-input, .theme-card { grid-template-columns: 1fr; }
@@ -710,8 +682,8 @@ th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: l
 }
 
 function dashboardJs() {
-  return `const DEFAULT_GOALS = { startWeightKg: 84, startDate: '2026-06-01', weightKg: 79, deadline: '2026-07-31', steps: 8000, sleepHours: 6.5, activeEnergyKcal: 650, bodyFatPercent: 25 };
-let GOALS = loadGoalSettings();
+  return `const DEFAULT_GOALS = { startWeightKg: 81.7, startDate: '2026-07-22', weightKg: 76, deadline: '2026-10-31', steps: 8000, sleepHours: 6.5, activeEnergyKcal: 650, bodyFatPercent: 25 };
+let GOALS = { ...DEFAULT_GOALS };
 const metrics = {
   weightKg: { label: '体重', color: '#3567e8', format: v => v == null ? '-' : v.toFixed(1) + 'kg' },
   bodyFatPercent: { label: '体脂肪率', color: '#df4b4b', format: v => v == null ? '-' : v.toFixed(1) + '%' },
@@ -744,28 +716,18 @@ function render(data) {
   const kgLeft = m.weightKg == null ? null : m.weightKg - GOALS.weightKg;
   todayPlan = buildTodayPlan(latestRecord);
   document.getElementById('heroLead').textContent = data.generatedAt
-    ? '更新: ' + new Date(data.generatedAt).toLocaleString('ja-JP') + ' / ' + data.recordCount + '日分。チェックして進めるほど、今日のログと達成率が育ちます。'
+    ? '更新: ' + new Date(data.generatedAt).toLocaleString('ja-JP') + ' / ' + data.recordCount + '日分。最初の到達点は2026年10月31日の76kgと毎朝2km。'
     : '';
   renderHeroMetrics(latestRecord, kgLeft);
   renderGoalManager(latestRecord);
   renderCampaignProgress(latestRecord);
-  renderMilestones();
-  renderCompletionSummary();
   renderCoaching();
-  renderActionDetails();
   renderRadar(latestRecord);
   renderKpis(latestRecord);
-  renderStrengthPlan();
-  renderDietPlan();
-  renderMemo();
   renderTabs();
   renderChart();
   renderWeightGoal(latestRecord);
-  renderCompletionLog();
-  renderThemeStock();
   renderTable();
-  bindReset();
-  bindThemeStock();
 }
 
 function buildTodayPlan(record) {
@@ -798,10 +760,8 @@ function buildTodayPlan(record) {
 function renderHeroMetrics(record, kgLeft) {
   const m = record?.metrics || {};
   const seven = record?.coaching?.sevenDay || {};
-  const completed = completedCount();
-  const total = todayPlan.length;
   const cards = [
-    ['今日の完了', completed + '/' + total, completionRate() + '% 達成'],
+    ['現在体重', metrics.weightKg.format(m.weightKg), kgLeft == null ? targetDeadlineText() : '76kgまであと' + Math.max(0, kgLeft).toFixed(1) + 'kg'],
     ['体脂肪率', metrics.bodyFatPercent.format(m.bodyFatPercent), seven.bodyFatPercent == null ? '7日平均なし' : '7日平均 ' + seven.bodyFatPercent.toFixed(1) + '%'],
     ['睡眠', metrics.sleepHours.format(m.sleepHours), seven.sleepHours == null ? '7日平均なし' : '7日平均 ' + hours(seven.sleepHours)],
     ['歩数', metrics.steps.format(m.steps), seven.steps == null ? '7日平均なし' : '7日平均 ' + Math.round(seven.steps).toLocaleString('ja-JP') + '歩'],
@@ -825,18 +785,6 @@ function renderGoalManager(record) {
     '<div class="goal-stat"><span>期限</span><strong>' + (daysLeft == null ? '-' : daysLeft + '日') + '</strong><small>' + (pace == null ? '達成後は維持フェーズ' : '週' + pace.toFixed(2) + 'kgペース') + '</small></div>' +
     '<div class="goal-progress"><span style="width:' + progress + '%"></span></div>' +
     '</div>';
-  document.getElementById('goalWeightInput').value = GOALS.weightKg;
-  document.getElementById('goalDeadlineInput').value = GOALS.deadline;
-  document.getElementById('goalStartWeightInput').value = GOALS.startWeightKg;
-  document.getElementById('goalStartDateInput').value = GOALS.startDate;
-  document.getElementById('goalStepsInput').value = GOALS.steps;
-  document.getElementById('goalSleepInput').value = GOALS.sleepHours;
-  document.getElementById('goalBodyFatInput').value = GOALS.bodyFatPercent;
-  document.querySelectorAll('.goal-form input').forEach(input => {
-    input.oninput = () => { document.getElementById('goalSaveStatus').textContent = '未保存の変更あり'; };
-  });
-  document.getElementById('saveGoals').onclick = saveGoalsFromInputs;
-  document.getElementById('resetGoals').onclick = resetGoals;
 }
 
 function renderCampaignProgress(record) {
@@ -852,7 +800,7 @@ function renderCampaignProgress(record) {
   const currentPace = current == null || elapsedDays <= 0 ? null : round3(Math.max(0, start - current) / elapsedDays);
   const expected = expectedWeightForDate(todayIso());
   const delay = current == null || expected == null ? null : round1(current - expected);
-  document.getElementById('campaignTitle').textContent = '目指せ' + target.toFixed(1) + 'kg ダイエット企画';
+  document.getElementById('campaignTitle').textContent = '目指せ' + target.toFixed(1) + 'kg 自己規律改善プロジェクト';
   document.getElementById('heroGoalBadge').textContent = target.toFixed(1) + ' KG';
   document.getElementById('campaignPeriod').textContent = formatDateJa(GOALS.startDate) + ' - ' + formatDateJa(GOALS.deadline);
   const paceStatus = requiredPace == null || currentPace == null
@@ -896,16 +844,13 @@ function renderCompletionSummary() {
 
 function renderCoaching() {
   document.getElementById('topPriority').textContent = latestRecord?.coaching?.topPriority || 'データ確認';
-  const items = todayPlan.filter(item => item.group === 'today');
-  const completed = items.filter(item => dayState.tasks[item.id]).length;
-  const total = items.length;
-  const allCompleted = completedCount();
-  const allTotal = todayPlan.length;
+  const weight = latestRecord?.metrics?.weightKg;
+  const remaining = weight == null ? null : Math.max(0, weight - GOALS.weightKg);
   document.getElementById('coachActions').innerHTML =
     '<div class="summary-grid">' +
-    '<div class="summary-card"><span>今日の指示</span><strong>' + completed + '/' + total + '</strong><small>細かい実行内容は下の「実行項目」で管理します。</small></div>' +
-    '<div class="summary-card"><span>達成率</span><strong>' + allCompleted + '/' + allTotal + '</strong><small>全タスク合計: ' + completionRate() + '% 完了</small></div>' +
-    '<div class="summary-card"><span>次の一手</span><strong>' + nextTaskLabel() + '</strong><small>完了した項目はログへ自動反映されます。</small></div>' +
+    '<div class="summary-card"><span>今日の最優先</span><strong>' + escapeHtml(latestRecord?.coaching?.topPriority || 'データ確認') + '</strong><small>健康データを基準に、今日いちばん重要なこと。</small></div>' +
+    '<div class="summary-card"><span>3か月後</span><strong>76kg</strong><small>2026年10月31日まで。現在から' + (remaining == null ? '-' : remaining.toFixed(1) + 'kg') + '。</small></div>' +
+    '<div class="summary-card"><span>朝の習慣</span><strong>2km</strong><small>毎朝走ることを、最初の自己規律の基準にする。</small></div>' +
     '</div>';
 }
 
@@ -1091,12 +1036,15 @@ function renderRadar(record) {
 
 function buildScores(record) {
   const m = record?.metrics || {};
+  const seven = record?.coaching?.sevenDay || {};
+  const stepHabit = clamp(((seven.steps ?? 0) / GOALS.steps) * 100, 0, 100);
+  const sleepHabit = clamp(((seven.sleepHours ?? 0) / GOALS.sleepHours) * 100, 0, 100);
   return [
     { label: '減量', score: clamp(100 - Math.max(0, (m.weightKg ?? 84) - GOALS.weightKg) * 12, 0, 100) },
     { label: '活動', score: clamp(((m.steps ?? 0) / GOALS.steps) * 100, 0, 100) },
     { label: '睡眠', score: clamp(((m.sleepHours ?? 0) / GOALS.sleepHours) * 100, 0, 100) },
     { label: '体脂肪', score: clamp(100 - Math.max(0, (m.bodyFatPercent ?? 32) - GOALS.bodyFatPercent) * 9, 0, 100) },
-    { label: '実行', score: completionRate() },
+    { label: '習慣', score: (stepHabit + sleepHabit) / 2 },
   ].map(s => ({ ...s, score: Math.round(s.score) }));
 }
 
@@ -1174,10 +1122,7 @@ function renderWeightGoal(record) {
 
 function renderTable() {
   document.getElementById('dailyRows').innerHTML = [...records].reverse().map(r => {
-    const state = loadDayState(r.date);
-    const total = r.date === latestRecord?.date ? todayPlan.length : Object.keys(state.tasks || {}).length;
-    const done = Object.values(state.tasks || {}).filter(Boolean).length;
-    return '<tr><td>' + r.date + '</td><td>' + done + '/' + total + '</td><td>' + metrics.sleepHours.format(r.metrics.sleepHours) + '</td><td>' + metrics.steps.format(r.metrics.steps) + '</td><td>' + metrics.activeEnergyKcal.format(r.metrics.activeEnergyKcal) + '</td><td>' + metrics.weightKg.format(r.metrics.weightKg) + '</td><td>' + metrics.bodyFatPercent.format(r.metrics.bodyFatPercent) + '</td><td>' + (r.metrics.bodyMassIndex == null ? '-' : r.metrics.bodyMassIndex.toFixed(1)) + '</td></tr>';
+    return '<tr><td>' + r.date + '</td><td>' + metrics.sleepHours.format(r.metrics.sleepHours) + '</td><td>' + metrics.steps.format(r.metrics.steps) + '</td><td>' + metrics.activeEnergyKcal.format(r.metrics.activeEnergyKcal) + '</td><td>' + metrics.weightKg.format(r.metrics.weightKg) + '</td><td>' + metrics.bodyFatPercent.format(r.metrics.bodyFatPercent) + '</td><td>' + (r.metrics.bodyMassIndex == null ? '-' : r.metrics.bodyMassIndex.toFixed(1)) + '</td></tr>';
   }).join('');
 }
 

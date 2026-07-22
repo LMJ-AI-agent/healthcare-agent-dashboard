@@ -1,5 +1,5 @@
-const DEFAULT_GOALS = { startWeightKg: 84, startDate: '2026-06-01', weightKg: 79, deadline: '2026-07-31', steps: 8000, sleepHours: 6.5, activeEnergyKcal: 650, bodyFatPercent: 25 };
-let GOALS = loadGoalSettings();
+const DEFAULT_GOALS = { startWeightKg: 81.7, startDate: '2026-07-22', weightKg: 76, deadline: '2026-10-31', steps: 8000, sleepHours: 6.5, activeEnergyKcal: 650, bodyFatPercent: 25 };
+let GOALS = { ...DEFAULT_GOALS };
 const metrics = {
   weightKg: { label: '体重', color: '#3567e8', format: v => v == null ? '-' : v.toFixed(1) + 'kg' },
   bodyFatPercent: { label: '体脂肪率', color: '#df4b4b', format: v => v == null ? '-' : v.toFixed(1) + '%' },
@@ -32,28 +32,18 @@ function render(data) {
   const kgLeft = m.weightKg == null ? null : m.weightKg - GOALS.weightKg;
   todayPlan = buildTodayPlan(latestRecord);
   document.getElementById('heroLead').textContent = data.generatedAt
-    ? '更新: ' + new Date(data.generatedAt).toLocaleString('ja-JP') + ' / ' + data.recordCount + '日分。チェックして進めるほど、今日のログと達成率が育ちます。'
+    ? '更新: ' + new Date(data.generatedAt).toLocaleString('ja-JP') + ' / ' + data.recordCount + '日分。最初の到達点は2026年10月31日の76kgと毎朝2km。'
     : '';
   renderHeroMetrics(latestRecord, kgLeft);
   renderGoalManager(latestRecord);
   renderCampaignProgress(latestRecord);
-  renderMilestones();
-  renderCompletionSummary();
   renderCoaching();
-  renderActionDetails();
   renderRadar(latestRecord);
   renderKpis(latestRecord);
-  renderStrengthPlan();
-  renderDietPlan();
-  renderMemo();
   renderTabs();
   renderChart();
   renderWeightGoal(latestRecord);
-  renderCompletionLog();
-  renderThemeStock();
   renderTable();
-  bindReset();
-  bindThemeStock();
 }
 
 function buildTodayPlan(record) {
@@ -86,10 +76,8 @@ function buildTodayPlan(record) {
 function renderHeroMetrics(record, kgLeft) {
   const m = record?.metrics || {};
   const seven = record?.coaching?.sevenDay || {};
-  const completed = completedCount();
-  const total = todayPlan.length;
   const cards = [
-    ['今日の完了', completed + '/' + total, completionRate() + '% 達成'],
+    ['現在体重', metrics.weightKg.format(m.weightKg), kgLeft == null ? targetDeadlineText() : '76kgまであと' + Math.max(0, kgLeft).toFixed(1) + 'kg'],
     ['体脂肪率', metrics.bodyFatPercent.format(m.bodyFatPercent), seven.bodyFatPercent == null ? '7日平均なし' : '7日平均 ' + seven.bodyFatPercent.toFixed(1) + '%'],
     ['睡眠', metrics.sleepHours.format(m.sleepHours), seven.sleepHours == null ? '7日平均なし' : '7日平均 ' + hours(seven.sleepHours)],
     ['歩数', metrics.steps.format(m.steps), seven.steps == null ? '7日平均なし' : '7日平均 ' + Math.round(seven.steps).toLocaleString('ja-JP') + '歩'],
@@ -113,18 +101,6 @@ function renderGoalManager(record) {
     '<div class="goal-stat"><span>期限</span><strong>' + (daysLeft == null ? '-' : daysLeft + '日') + '</strong><small>' + (pace == null ? '達成後は維持フェーズ' : '週' + pace.toFixed(2) + 'kgペース') + '</small></div>' +
     '<div class="goal-progress"><span style="width:' + progress + '%"></span></div>' +
     '</div>';
-  document.getElementById('goalWeightInput').value = GOALS.weightKg;
-  document.getElementById('goalDeadlineInput').value = GOALS.deadline;
-  document.getElementById('goalStartWeightInput').value = GOALS.startWeightKg;
-  document.getElementById('goalStartDateInput').value = GOALS.startDate;
-  document.getElementById('goalStepsInput').value = GOALS.steps;
-  document.getElementById('goalSleepInput').value = GOALS.sleepHours;
-  document.getElementById('goalBodyFatInput').value = GOALS.bodyFatPercent;
-  document.querySelectorAll('.goal-form input').forEach(input => {
-    input.oninput = () => { document.getElementById('goalSaveStatus').textContent = '未保存の変更あり'; };
-  });
-  document.getElementById('saveGoals').onclick = saveGoalsFromInputs;
-  document.getElementById('resetGoals').onclick = resetGoals;
 }
 
 function renderCampaignProgress(record) {
@@ -140,7 +116,7 @@ function renderCampaignProgress(record) {
   const currentPace = current == null || elapsedDays <= 0 ? null : round3(Math.max(0, start - current) / elapsedDays);
   const expected = expectedWeightForDate(todayIso());
   const delay = current == null || expected == null ? null : round1(current - expected);
-  document.getElementById('campaignTitle').textContent = '目指せ' + target.toFixed(1) + 'kg ダイエット企画';
+  document.getElementById('campaignTitle').textContent = '目指せ' + target.toFixed(1) + 'kg 自己規律改善プロジェクト';
   document.getElementById('heroGoalBadge').textContent = target.toFixed(1) + ' KG';
   document.getElementById('campaignPeriod').textContent = formatDateJa(GOALS.startDate) + ' - ' + formatDateJa(GOALS.deadline);
   const paceStatus = requiredPace == null || currentPace == null
@@ -184,16 +160,13 @@ function renderCompletionSummary() {
 
 function renderCoaching() {
   document.getElementById('topPriority').textContent = latestRecord?.coaching?.topPriority || 'データ確認';
-  const items = todayPlan.filter(item => item.group === 'today');
-  const completed = items.filter(item => dayState.tasks[item.id]).length;
-  const total = items.length;
-  const allCompleted = completedCount();
-  const allTotal = todayPlan.length;
+  const weight = latestRecord?.metrics?.weightKg;
+  const remaining = weight == null ? null : Math.max(0, weight - GOALS.weightKg);
   document.getElementById('coachActions').innerHTML =
     '<div class="summary-grid">' +
-    '<div class="summary-card"><span>今日の指示</span><strong>' + completed + '/' + total + '</strong><small>細かい実行内容は下の「実行項目」で管理します。</small></div>' +
-    '<div class="summary-card"><span>達成率</span><strong>' + allCompleted + '/' + allTotal + '</strong><small>全タスク合計: ' + completionRate() + '% 完了</small></div>' +
-    '<div class="summary-card"><span>次の一手</span><strong>' + nextTaskLabel() + '</strong><small>完了した項目はログへ自動反映されます。</small></div>' +
+    '<div class="summary-card"><span>今日の最優先</span><strong>' + escapeHtml(latestRecord?.coaching?.topPriority || 'データ確認') + '</strong><small>健康データを基準に、今日いちばん重要なこと。</small></div>' +
+    '<div class="summary-card"><span>3か月後</span><strong>76kg</strong><small>2026年10月31日まで。現在から' + (remaining == null ? '-' : remaining.toFixed(1) + 'kg') + '。</small></div>' +
+    '<div class="summary-card"><span>朝の習慣</span><strong>2km</strong><small>毎朝走ることを、最初の自己規律の基準にする。</small></div>' +
     '</div>';
 }
 
@@ -379,12 +352,15 @@ function renderRadar(record) {
 
 function buildScores(record) {
   const m = record?.metrics || {};
+  const seven = record?.coaching?.sevenDay || {};
+  const stepHabit = clamp(((seven.steps ?? 0) / GOALS.steps) * 100, 0, 100);
+  const sleepHabit = clamp(((seven.sleepHours ?? 0) / GOALS.sleepHours) * 100, 0, 100);
   return [
     { label: '減量', score: clamp(100 - Math.max(0, (m.weightKg ?? 84) - GOALS.weightKg) * 12, 0, 100) },
     { label: '活動', score: clamp(((m.steps ?? 0) / GOALS.steps) * 100, 0, 100) },
     { label: '睡眠', score: clamp(((m.sleepHours ?? 0) / GOALS.sleepHours) * 100, 0, 100) },
     { label: '体脂肪', score: clamp(100 - Math.max(0, (m.bodyFatPercent ?? 32) - GOALS.bodyFatPercent) * 9, 0, 100) },
-    { label: '実行', score: completionRate() },
+    { label: '習慣', score: (stepHabit + sleepHabit) / 2 },
   ].map(s => ({ ...s, score: Math.round(s.score) }));
 }
 
@@ -462,10 +438,7 @@ function renderWeightGoal(record) {
 
 function renderTable() {
   document.getElementById('dailyRows').innerHTML = [...records].reverse().map(r => {
-    const state = loadDayState(r.date);
-    const total = r.date === latestRecord?.date ? todayPlan.length : Object.keys(state.tasks || {}).length;
-    const done = Object.values(state.tasks || {}).filter(Boolean).length;
-    return '<tr><td>' + r.date + '</td><td>' + done + '/' + total + '</td><td>' + metrics.sleepHours.format(r.metrics.sleepHours) + '</td><td>' + metrics.steps.format(r.metrics.steps) + '</td><td>' + metrics.activeEnergyKcal.format(r.metrics.activeEnergyKcal) + '</td><td>' + metrics.weightKg.format(r.metrics.weightKg) + '</td><td>' + metrics.bodyFatPercent.format(r.metrics.bodyFatPercent) + '</td><td>' + (r.metrics.bodyMassIndex == null ? '-' : r.metrics.bodyMassIndex.toFixed(1)) + '</td></tr>';
+    return '<tr><td>' + r.date + '</td><td>' + metrics.sleepHours.format(r.metrics.sleepHours) + '</td><td>' + metrics.steps.format(r.metrics.steps) + '</td><td>' + metrics.activeEnergyKcal.format(r.metrics.activeEnergyKcal) + '</td><td>' + metrics.weightKg.format(r.metrics.weightKg) + '</td><td>' + metrics.bodyFatPercent.format(r.metrics.bodyFatPercent) + '</td><td>' + (r.metrics.bodyMassIndex == null ? '-' : r.metrics.bodyMassIndex.toFixed(1)) + '</td></tr>';
   }).join('');
 }
 

@@ -10,12 +10,12 @@
   <main class="shell">
     <header class="app-header">
       <a class="brand" href="#top" aria-label="ダイエットダッシュボードの先頭へ">
-        <span class="brand-mark">79</span>
+        <span class="brand-mark">76</span>
         <span><strong>BODY PROJECT</strong><small>Diet coach dashboard</small></span>
       </a>
       <nav class="section-nav" aria-label="ページ内ナビゲーション">
         <a href="#today">今日</a>
-        <a href="#training">筋トレ</a>
+        <a href="#roadmap">ロードマップ</a>
         <a href="#trend">推移</a>
         <a href="#records">記録</a>
       </nav>
@@ -25,12 +25,12 @@
     <section class="hero" id="top">
       <div class="hero-copy">
         <p class="hero-kicker">PERSONAL TRANSFORMATION / 2026</p>
-        <h1 id="campaignTitle">今日も一つ完了。79kgへ、体を作っていこう。</h1>
-        <div class="goal-lockup">GOAL <strong id="heroGoalBadge">79.0 KG</strong></div>
+        <h1 id="campaignTitle">目指せ76.0kg 自己規律改善プロジェクト</h1>
+        <div class="goal-lockup">NEXT GOAL <strong id="heroGoalBadge">76.0 KG</strong></div>
         <p class="lead" id="heroLead"></p>
         <div class="hero-actions">
-          <span class="streak" id="todayScore"></span>
-          <span class="streak alt" id="motivationLine"></span>
+          <span class="streak">2026.10.31までに76kg</span>
+          <span class="streak alt">毎朝2km走る習慣をつくる</span>
         </div>
       </div>
       <div class="hero-scoreboard">
@@ -41,16 +41,64 @@
 
     <section class="hero-metrics" id="heroMetrics" aria-label="本日の主要指標"></section>
 
-    <section class="today-layout" id="today">
-      <section class="panel victory-panel">
+    <section class="panel roadmap-panel" id="roadmap">
+      <div class="roadmap-intro">
         <div>
-          <p class="eyebrow">Today's Score</p>
-          <h2 id="victoryTitle">今日の達成状況</h2>
-          <p class="section-note">押した項目は、そのまま今日の実績になります。</p>
+          <p class="eyebrow">Discipline Roadmap</p>
+          <h2>3年後までの自己規律ロードマップ</h2>
         </div>
-        <div class="completion-ring" id="completionRing"></div>
-        <div class="toast" id="feedbackToast" role="status" aria-live="polite"></div>
-      </section>
+        <p>2026年7月22日、81.7kgから開始。体重だけでなく、毎朝走ることを当たり前にする。</p>
+      </div>
+      <div class="roadmap-start">
+        <span>START</span>
+        <strong>2026.07.22</strong>
+        <b>81.7kg</b>
+      </div>
+      <div class="roadmap-track">
+        <article class="roadmap-step current">
+          <span class="roadmap-index">01</span>
+          <small>3か月後</small>
+          <time datetime="2026-10-31">2026.10.31</time>
+          <strong>76kg</strong>
+          <b>毎朝 2km</b>
+          <p>自己規律が改善され、毎朝走る生活を定着させる。</p>
+        </article>
+        <article class="roadmap-step">
+          <span class="roadmap-index">02</span>
+          <small>半年後</small>
+          <time datetime="2027-01-22">2027.01.22</time>
+          <strong>70kg</strong>
+          <b>毎朝 4km</b>
+          <p>さらに自己規律を高め、朝4kmを継続できる状態にする。</p>
+        </article>
+        <article class="roadmap-step">
+          <span class="roadmap-index">03</span>
+          <small>1年後</small>
+          <time datetime="2027-07-22">2027.07.22</time>
+          <strong>65kg</strong>
+          <b>毎朝 5km</b>
+          <p>毎朝5kmを生活の基準にし、65kgまで体を整える。</p>
+        </article>
+        <article class="roadmap-step">
+          <span class="roadmap-index">04</span>
+          <small>2年後</small>
+          <time datetime="2028-07-22">2028.07.22</time>
+          <strong>62kg</strong>
+          <b>毎朝 5km</b>
+          <p>高い自己規律を確立し、62kgの体を完成させる。</p>
+        </article>
+        <article class="roadmap-step final">
+          <span class="roadmap-index">05</span>
+          <small>3年後</small>
+          <time datetime="2029-07-22">2029.07.22</time>
+          <strong>62kg維持</strong>
+          <b>毎朝 5km</b>
+          <p>高い自己規律を保ち、62kgと朝5kmを維持する。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="today-layout" id="today">
       <section class="panel command-panel">
         <div class="section-head">
           <div>
@@ -72,49 +120,7 @@
       </section>
     </section>
 
-    <section class="panel action-details-panel">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Do It Today</p>
-          <h2>今日、やり切ること</h2>
-        </div>
-        <span class="pill" id="actionDetailCount"></span>
-      </div>
-      <div id="actionDetails"></div>
-    </section>
-
     <section class="kpis" id="kpis"></section>
-
-    <section class="workout-grid" id="training">
-      <section class="panel training-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Strength Training</p>
-            <h2>今日の筋トレ</h2>
-          </div>
-          <span class="category-chip strength-chip">BODY MAKE</span>
-        </div>
-        <div id="strengthPlan"></div>
-        <div class="inline-memo">
-          <p class="eyebrow">Training Log</p>
-          <textarea id="workoutMemo" class="memo-box" rows="4" placeholder="例: スクワット 10回 x 3、腕立て 8回 x 2。きつさ7/10。"></textarea>
-          <div class="memo-foot">
-            <span id="memoSaved"></span>
-            <button class="ghost-button" id="clearToday">今日のチェックをリセット</button>
-          </div>
-        </div>
-      </section>
-      <section class="panel diet-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Nutrition</p>
-            <h2>今日の食事ルール</h2>
-          </div>
-          <span class="category-chip diet-chip">FAT LOSS</span>
-        </div>
-        <div id="dietPlan"></div>
-      </section>
-    </section>
 
     <section class="progress-layout" id="trend">
       <section class="panel chart-panel">
@@ -131,7 +137,7 @@
         <div class="section-head">
           <div>
             <p class="eyebrow">Race to Goal</p>
-            <h2>79kgまでの現在地</h2>
+            <h2>76kgまでの現在地</h2>
           </div>
           <span class="pill" id="campaignPeriod"></span>
         </div>
@@ -139,74 +145,15 @@
       </section>
     </section>
 
-    <section class="lower-grid">
-      <section class="panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Goal Analysis</p>
-            <h2>目標ペース</h2>
-          </div>
-        </div>
-        <div id="weightGoal"></div>
-      </section>
-      <section class="panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Today's Log</p>
-            <h2>今日の実績</h2>
-          </div>
-        </div>
-        <div id="completionLog"></div>
-      </section>
-    </section>
-
-    <section class="planning-grid">
-      <section class="panel milestone-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Milestones</p>
-            <h2>月別マイルストーン</h2>
-          </div>
-        </div>
-        <div id="milestones"></div>
-      </section>
-      <section class="panel theme-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Focus Stock</p>
-            <h2>今後のテーマ</h2>
-          </div>
-          <span class="pill" id="themeCount"></span>
-        </div>
-        <div class="theme-input">
-          <input id="themeInput" type="text" placeholder="例: 夜の間食をなくす">
-          <button id="addTheme" type="button">追加</button>
-        </div>
-        <div id="themeStock"></div>
-      </section>
-    </section>
-
-    <details class="panel goal-settings-panel">
-      <summary>
-        <span><small>PROJECT SETTINGS</small><strong>目標値を編集</strong></span>
-        <span class="pill" id="goalSaveStatus">未保存の変更なし</span>
-      </summary>
-      <div class="goal-settings-body">
-        <div class="goal-form">
-          <label>目標体重<input id="goalWeightInput" type="number" step="0.1" min="35" max="160"></label>
-          <label>期限<input id="goalDeadlineInput" type="date"></label>
-          <label>開始体重<input id="goalStartWeightInput" type="number" step="0.1" min="35" max="180"></label>
-          <label>開始日<input id="goalStartDateInput" type="date"></label>
-          <label>歩数目標<input id="goalStepsInput" type="number" step="500" min="1000" max="30000"></label>
-          <label>睡眠目標<input id="goalSleepInput" type="number" step="0.25" min="3" max="10"></label>
-          <label>体脂肪率目標<input id="goalBodyFatInput" type="number" step="0.1" min="5" max="45"></label>
-        </div>
-        <div class="goal-buttons">
-          <button class="primary-button" id="saveGoals" type="button">保存して反映</button>
-          <button class="ghost-button" id="resetGoals" type="button">初期値に戻す</button>
+    <section class="panel goal-analysis-panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Goal Analysis</p>
+          <h2>10月31日までの目標ペース</h2>
         </div>
       </div>
-    </details>
+      <div id="weightGoal"></div>
+    </section>
 
     <section class="panel records-panel" id="records">
       <div class="section-head">
@@ -220,7 +167,6 @@
           <thead>
             <tr>
               <th>日付</th>
-              <th>完了</th>
               <th>睡眠</th>
               <th>歩数</th>
               <th>活動kcal</th>
