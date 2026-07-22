@@ -41,9 +41,11 @@ function render(data) {
   renderRadar(latestRecord);
   renderKpis(latestRecord);
   renderTabs();
+  renderWeightForecast();
   renderChart();
   renderWeightGoal(latestRecord);
   renderTable();
+  requestAnimationFrame(animateCounters);
 }
 
 function buildTodayPlan(record) {
@@ -96,9 +98,9 @@ function renderGoalManager(record) {
   const progress = weight == null ? 0 : clamp(((GOALS.startWeightKg - weight) / Math.max(.1, GOALS.startWeightKg - GOALS.weightKg)) * 100, 0, 100);
   document.getElementById('goalOverview').innerHTML =
     '<div class="goal-overview-grid">' +
-    '<div class="goal-stat primary"><span>現在</span><strong>' + metrics.weightKg.format(weight) + '</strong><small>目標 ' + GOALS.weightKg.toFixed(1) + 'kg</small></div>' +
-    '<div class="goal-stat"><span>残り</span><strong>' + (kgLeft == null ? '-' : Math.max(0, kgLeft).toFixed(1) + 'kg') + '</strong><small>' + targetDeadlineText() + '</small></div>' +
-    '<div class="goal-stat"><span>期限</span><strong>' + (daysLeft == null ? '-' : daysLeft + '日') + '</strong><small>' + (pace == null ? '達成後は維持フェーズ' : '週' + pace.toFixed(2) + 'kgペース') + '</small></div>' +
+    '<div class="goal-stat primary"><span>現在</span>' + counterStrong(weight, 1, 'kg') + '<small>目標 ' + GOALS.weightKg.toFixed(1) + 'kg</small></div>' +
+    '<div class="goal-stat"><span>残り</span>' + counterStrong(kgLeft == null ? null : Math.max(0, kgLeft), 1, 'kg') + '<small>' + targetDeadlineText() + '</small></div>' +
+    '<div class="goal-stat"><span>期限</span>' + counterStrong(daysLeft, 0, '日') + '<small>' + (pace == null ? '達成後は維持フェーズ' : '週' + pace.toFixed(2) + 'kgペース') + '</small></div>' +
     '<div class="goal-progress"><span style="width:' + progress + '%"></span></div>' +
     '</div>';
 }
@@ -388,9 +390,59 @@ function renderTabs() {
   });
 }
 
+function renderWeightForecast() {
+  const forecast = buildWeightForecast();
+  const host = document.getElementById('weightForecast');
+  if (!forecast) {
+    host.innerHTML = '<div class="forecast-block primary"><span>ネクストゴール時の予測</span><strong>-</strong><small>体重記録が5件以上になると表示</small></div>';
+    return;
+  }
+  const gap = round1(forecast.predictedKg - GOALS.weightKg);
+  const monthly = round1(forecast.dailySlope * 30);
+  const gapClass = gap > 0 ? ' alert' : '';
+  const trendLabel = monthly > 0 ? '+' + monthly.toFixed(1) : monthly.toFixed(1);
+  host.innerHTML =
+    '<div class="forecast-block primary"><span>ネクストゴール時の予測</span>' + counterStrong(forecast.predictedKg, 1, 'kg') + '<small>' + formatDateJa(GOALS.deadline) + ' 時点</small></div>' +
+    '<div class="forecast-block"><span>ネクストゴール</span>' + counterStrong(GOALS.weightKg, 1, 'kg') + '<small>毎朝2kmを習慣化</small></div>' +
+    '<div class="forecast-block' + gapClass + '"><span>予測と目標の差</span>' + counterStrong(Math.abs(gap), 1, 'kg') + '<small>' + (gap > 0 ? '目標より上振れ' : '目標達成圏内') + '</small></div>' +
+    '<div class="forecast-block"><span>現状トレンド</span><strong>' + trendLabel + 'kg/月</strong><small>直近30日・' + forecast.sampleCount + '件から推定</small></div>';
+}
+
+function buildWeightForecast() {
+  const weightRows = records.filter(r => r.metrics?.weightKg != null);
+  const latest = weightRows.at(-1);
+  if (!latest) return null;
+  const cutoff = shiftIsoDate(latest.date, -29);
+  const sample = weightRows.filter(r => r.date >= cutoff && r.date <= latest.date);
+  if (sample.length < 5) return null;
+  const baseMs = Date.parse(sample[0].date + 'T00:00:00Z');
+  const points = sample.map(r => ({ x: (Date.parse(r.date + 'T00:00:00Z') - baseMs) / 86400000, y: Number(r.metrics.weightKg) }));
+  const slopes = [];
+  for (let i = 0; i < points.length; i += 1) {
+    for (let j = i + 1; j < points.length; j += 1) {
+      const dayGap = points[j].x - points[i].x;
+      if (dayGap > 0) slopes.push((points[j].y - points[i].y) / dayGap);
+    }
+  }
+  if (!slopes.length) return null;
+  const dailySlope = clamp(median(slopes), -0.05, 0.05);
+  const intercept = median(points.map(point => point.y - dailySlope * point.x));
+  const goalX = (Date.parse(GOALS.deadline + 'T00:00:00Z') - baseMs) / 86400000;
+  const predictedKg = clamp(intercept + dailySlope * goalX, 40, 180);
+  return { predictedKg: round1(predictedKg), dailySlope, sampleCount: sample.length };
+}
+
+function median(values) {
+  const sorted = [...values].sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
 function renderChart() {
   const meta = metrics[selectedMetric];
-  const rows = records.filter(r => r.metrics?.[selectedMetric] != null);
+  const anchorDate = latestRecord?.date || todayIso();
+  const cutoffDate = shiftIsoDate(anchorDate, -89);
+  const rows = records.filter(r => r.date >= cutoffDate && r.date <= anchorDate && r.metrics?.[selectedMetric] != null);
   const values = rows.map(r => r.metrics[selectedMetric]);
   const targetValues = selectedMetric === 'weightKg' ? rows.map(r => expectedWeightForDate(r.date)).filter(v => v != null) : [];
   const chart = document.getElementById('chart');
@@ -399,23 +451,31 @@ function renderChart() {
   const pad = max === min ? 1 : (max - min) * 0.15;
   const lo = min - pad, hi = max + pad;
   const width = 940, height = 310, left = 56, right = 20, top = 22, bottom = 44;
-  const x = i => left + i * ((width - left - right) / Math.max(1, rows.length - 1));
+  const rangeStartMs = Date.parse(cutoffDate + 'T00:00:00Z');
+  const rangeEndMs = Date.parse(anchorDate + 'T00:00:00Z');
+  const x = isoDate => left + ((Date.parse(isoDate + 'T00:00:00Z') - rangeStartMs) / Math.max(1, rangeEndMs - rangeStartMs)) * (width - left - right);
   const y = v => top + (hi - v) * ((height - top - bottom) / Math.max(1, hi - lo));
-  const points = rows.map((r, i) => [x(i), y(r.metrics[selectedMetric]), r]);
+  const points = rows.map(r => [x(r.date), y(r.metrics[selectedMetric]), r]);
   const path = points.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
   const targetPoints = selectedMetric === 'weightKg'
-    ? rows.map((r, i) => [x(i), expectedWeightForDate(r.date)]).filter(([, v]) => v != null).map(([px, v, r]) => [px, y(v), r])
+    ? rows.map(r => [x(r.date), expectedWeightForDate(r.date)]).filter(([, v]) => v != null).map(([px, v, r]) => [px, y(v), r])
     : [];
   const targetPath = targetPoints.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
   const area = path + ' L' + points.at(-1)[0].toFixed(1) + ',' + (height - bottom) + ' L' + points[0][0].toFixed(1) + ',' + (height - bottom) + ' Z';
-  const labels = rows.map((r, i) => i % Math.ceil(rows.length / 8) === 0 || i === rows.length - 1 ? '<text x="' + x(i) + '" y="' + (height - 13) + '" text-anchor="middle" font-size="11" fill="#66736d">' + r.date.slice(5) + '</text>' : '').join('');
+  const labels = Array.from({ length: 6 }, (_, index) => {
+    const ratio = index / 5;
+    const tickMs = rangeStartMs + (rangeEndMs - rangeStartMs) * ratio;
+    const tickDate = new Date(tickMs).toISOString().slice(0, 10);
+    const tickX = left + ratio * (width - left - right);
+    return '<line x1="' + tickX + '" y1="' + top + '" x2="' + tickX + '" y2="' + (height - bottom) + '" stroke="#e8ecef" stroke-dasharray="3 6"/><text x="' + tickX + '" y="' + (height - 13) + '" text-anchor="middle" font-size="11" fill="#66736d">' + tickDate.slice(5) + '</text>';
+  }).join('');
   chart.innerHTML = '<svg viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="' + meta.label + ' chart">' +
     '<line x1="' + left + '" y1="' + top + '" x2="' + left + '" y2="' + (height - bottom) + '" stroke="#dfe6df"/>' +
     '<line x1="' + left + '" y1="' + (height - bottom) + '" x2="' + (width - right) + '" y2="' + (height - bottom) + '" stroke="#dfe6df"/>' +
-    '<path d="' + area + '" fill="' + meta.color + '" opacity=".11"/>' +
+    '<path class="chart-area" d="' + area + '" fill="' + meta.color + '"/>' +
     (targetPath ? '<path d="' + targetPath + '" fill="none" stroke="#ff593d" stroke-width="2.5" stroke-dasharray="8 7"/><text x="' + (width - right - 126) + '" y="' + (top + 18) + '" font-size="12" font-weight="800" fill="#ff593d">目標ペース</text>' : '') +
-    '<path d="' + path + '" fill="none" stroke="' + meta.color + '" stroke-width="3.5"/>' +
-    points.map(([cx, cy, r]) => '<circle cx="' + cx + '" cy="' + cy + '" r="4.5" fill="#fff" stroke="' + meta.color + '" stroke-width="3"><title>' + r.date + ': ' + meta.format(r.metrics[selectedMetric]) + '</title></circle>').join('') +
+    '<path class="chart-line" d="' + path + '" fill="none" stroke="' + meta.color + '" stroke-width="3.5"/>' +
+    points.map(([cx, cy, r], index) => '<circle class="chart-point" style="animation-delay:' + Math.min(.8, index * .025).toFixed(2) + 's" cx="' + cx + '" cy="' + cy + '" r="4.5" fill="#fff" stroke="' + meta.color + '" stroke-width="3"><title>' + r.date + ': ' + meta.format(r.metrics[selectedMetric]) + '</title></circle>').join('') +
     '<text x="8" y="' + (top + 6) + '" font-size="11" fill="#66736d">' + meta.format(max) + '</text>' +
     '<text x="8" y="' + (height - bottom) + '" font-size="11" fill="#66736d">' + meta.format(min) + '</text>' + labels + '</svg>';
 }
@@ -582,6 +642,42 @@ function hours(value) { if (value == null || !Number.isFinite(Number(value))) re
 function todayIso() { return isoFromDate(new Date()); }
 function isoFromDate(date) {
   return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+}
+function shiftIsoDate(isoDate, dayOffset) {
+  const date = new Date(isoDate + 'T00:00:00Z');
+  date.setUTCDate(date.getUTCDate() + dayOffset);
+  return date.toISOString().slice(0, 10);
+}
+function counterStrong(value, decimals, suffix) {
+  if (value == null || !Number.isFinite(Number(value))) return '<strong>-</strong>';
+  const number = Number(value);
+  return '<strong class="count-up" data-count="' + number + '" data-decimals="' + decimals + '" data-suffix="' + suffix + '">' + formatCounter(number, decimals, suffix) + '</strong>';
+}
+function animateCounters() {
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.count-up').forEach((element, index) => {
+    if (element.dataset.animated === 'true') return;
+    element.dataset.animated = 'true';
+    const target = Number(element.dataset.count);
+    const decimals = Number(element.dataset.decimals || 0);
+    const suffix = element.dataset.suffix || '';
+    if (reducedMotion || !Number.isFinite(target)) {
+      element.textContent = formatCounter(target, decimals, suffix);
+      return;
+    }
+    const duration = 850 + index * 90;
+    const startedAt = performance.now();
+    const tick = now => {
+      const progress = Math.min(1, (now - startedAt) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      element.textContent = formatCounter(target * eased, decimals, suffix);
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+}
+function formatCounter(value, decimals, suffix) {
+  return Number(value).toLocaleString('ja-JP', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
 }
 function clamp(value, min, max) { return Math.max(min, Math.min(max, Number(value) || 0)); }
 function round1(value) { return Math.round(Number(value) * 10) / 10; }

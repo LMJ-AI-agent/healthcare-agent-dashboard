@@ -190,9 +190,13 @@ function dashboardHtml() {
           <span class="streak alt">毎朝2km走る習慣をつくる</span>
         </div>
       </div>
-      <div class="hero-scoreboard">
-        <p class="scoreboard-label">PROJECT STATUS</p>
-        <div id="goalOverview"></div>
+      <div class="hero-portrait">
+        <img src="./assets/image-2.jpg" alt="自己規律改善プロジェクトのメインビジュアル">
+        <span class="photo-scan" aria-hidden="true"></span>
+        <div class="hero-scoreboard">
+          <p class="scoreboard-label">PROJECT STATUS</p>
+          <div id="goalOverview"></div>
+        </div>
       </div>
     </section>
 
@@ -286,8 +290,12 @@ function dashboardHtml() {
             <p class="eyebrow">Performance Trend</p>
             <h2>数字で見る変化</h2>
           </div>
-          <div class="tabs" id="metricTabs"></div>
+          <div class="trend-controls">
+            <span class="range-pill">直近90日</span>
+            <div class="tabs" id="metricTabs"></div>
+          </div>
         </div>
+        <div class="forecast-strip" id="weightForecast"></div>
         <div class="chart" id="chart"></div>
       </section>
       <section class="panel campaign-progress-panel">
@@ -394,9 +402,9 @@ body {
 .live-badge { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 11px; font-weight: 900; }
 .live-badge i { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 5px rgba(31,159,114,.13); }
 .hero {
-  min-height: 390px;
+  min-height: 500px;
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(390px, .85fr);
+  grid-template-columns: minmax(0, 1.08fr) minmax(440px, .92fr);
   align-items: stretch;
   gap: 0;
   overflow: hidden;
@@ -406,7 +414,7 @@ body {
   color: #fff;
   box-shadow: var(--shadow);
 }
-.hero-copy { position: relative; padding: 44px 48px 38px; overflow: hidden; }
+.hero-copy { position: relative; display: flex; flex-direction: column; justify-content: center; padding: 44px 48px 38px; overflow: hidden; }
 .hero-copy::after { content: "76"; position: absolute; right: -12px; bottom: -70px; color: rgba(255,255,255,.035); font-size: 300px; font-weight: 950; line-height: 1; pointer-events: none; }
 .hero-kicker { margin: 0 0 18px; color: var(--cyan); font-size: 11px; font-weight: 950; letter-spacing: .14em; }
 .eyebrow { margin: 0 0 7px; color: var(--muted); font-size: 11px; font-weight: 950; letter-spacing: .12em; text-transform: uppercase; }
@@ -430,10 +438,16 @@ h2 { font-size: 22px; font-weight: 950; }
   font-weight: 950;
 }
 .streak.alt { border-color: rgba(255,255,255,.16); background: transparent; color: rgba(255,255,255,.72); }
-.hero-scoreboard { padding: 30px; border-left: 1px solid rgba(255,255,255,.14); background: #181d24; }
-.scoreboard-label { margin: 0 0 18px; color: var(--coral); font-size: 11px; font-weight: 950; letter-spacing: .14em; }
+.hero-portrait { position: relative; min-height: 500px; overflow: hidden; background: #292f35; }
+.hero-portrait img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 47%; animation: portrait-drift 12s ease-in-out infinite alternate; }
+.photo-scan { position: absolute; top: 0; bottom: 0; left: -4px; width: 3px; background: var(--lime); opacity: .68; box-shadow: 0 0 20px rgba(200,245,94,.6); animation: photo-scan 7s ease-in-out infinite; pointer-events: none; }
+.hero-scoreboard { position: absolute; right: 18px; bottom: 18px; left: 18px; padding: 15px; border: 1px solid rgba(255,255,255,.18); background: rgba(17,21,27,.9); backdrop-filter: blur(10px); }
+.scoreboard-label { margin: 0 0 10px; color: var(--coral); font-size: 10px; font-weight: 950; letter-spacing: .14em; }
 .hero-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line-dark); border-top: 0; background: var(--paper); box-shadow: var(--shadow); }
-.hero-card { position: relative; min-height: 120px; padding: 20px; border-right: 1px solid var(--line); background: #fff; }
+.hero-card { position: relative; min-height: 120px; padding: 20px; border-right: 1px solid var(--line); background: #fff; animation: rise-in .7s ease both; }
+.hero-card:nth-child(2) { animation-delay: .08s; }
+.hero-card:nth-child(3) { animation-delay: .16s; }
+.hero-card:nth-child(4) { animation-delay: .24s; }
 .hero-card:last-child { border-right: 0; }
 .hero-card::before { content: ""; position: absolute; left: 20px; top: 0; width: 44px; height: 4px; background: var(--cyan); }
 .hero-card:nth-child(2)::before { background: var(--coral); }
@@ -451,7 +465,11 @@ h2 { font-size: 22px; font-weight: 950; }
 .roadmap-start strong { font-size: 15px; }
 .roadmap-start b { margin-left: auto; color: var(--lime); font-size: 22px; }
 .roadmap-track { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
-.roadmap-step { position: relative; min-height: 260px; padding: 24px 20px 22px; border-right: 1px solid var(--line); }
+.roadmap-step { position: relative; min-height: 260px; padding: 24px 20px 22px; border-right: 1px solid var(--line); animation: rise-in .65s ease both; }
+.roadmap-step:nth-child(2) { animation-delay: .08s; }
+.roadmap-step:nth-child(3) { animation-delay: .16s; }
+.roadmap-step:nth-child(4) { animation-delay: .24s; }
+.roadmap-step:nth-child(5) { animation-delay: .32s; }
 .roadmap-step:last-child { border-right: 0; }
 .roadmap-step::before { content: ""; position: absolute; left: 20px; top: 0; width: 40px; height: 4px; background: var(--cyan); }
 .roadmap-step.current::before { background: var(--coral); }
@@ -529,6 +547,15 @@ h2 { font-size: 22px; font-weight: 950; }
 .goal-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
 .primary-button { border: 0; border-radius: 4px; padding: 10px 14px; background: var(--night); color: #fff; font-weight: 950; cursor: pointer; }
 .progress-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(420px, .65fr); gap: 14px; }
+.trend-controls { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; }
+.range-pill { display: inline-flex; align-items: center; min-height: 33px; padding: 7px 10px; border-radius: 4px; color: var(--night); background: var(--lime); font-size: 11px; font-weight: 950; white-space: nowrap; }
+.forecast-strip { display: grid; grid-template-columns: minmax(190px, 1.1fr) repeat(3, minmax(120px, .75fr)); gap: 1px; margin-bottom: 14px; border: 1px solid var(--line-dark); background: var(--line-dark); overflow: hidden; }
+.forecast-block { min-height: 96px; padding: 14px; background: #f7f9fa; }
+.forecast-block.primary { color: #fff; background: var(--night); }
+.forecast-block.alert { color: var(--night); background: var(--coral); }
+.forecast-block span { display: block; color: inherit; opacity: .62; font-size: 10px; font-weight: 950; letter-spacing: .06em; }
+.forecast-block strong { display: block; margin-top: 8px; font-size: 26px; line-height: 1; }
+.forecast-block small { display: block; margin-top: 7px; color: inherit; opacity: .68; font-size: 10px; line-height: 1.4; }
 .campaign-stat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .campaign-stat {
   min-height: 114px;
@@ -623,6 +650,9 @@ h2 { font-size: 22px; font-weight: 950; }
 .tab.active { color: #fff; border-color: var(--night); background: var(--night); }
 .chart { min-height: 310px; }
 .chart svg { width: 100%; height: 310px; display: block; }
+.chart-line { stroke-dasharray: 1800; stroke-dashoffset: 1800; animation: draw-chart 1.8s cubic-bezier(.2,.8,.2,1) forwards; }
+.chart-area { opacity: 0; animation: fade-chart .9s ease .55s forwards; }
+.chart-point { transform-box: fill-box; transform-origin: center; animation: point-pop .35s ease both; }
 .status-item { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .status-item span { color: var(--muted); }
 .ok { color: var(--green); }
@@ -633,9 +663,15 @@ table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th, td { padding: 11px 8px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
 th { color: var(--muted); font-size: 11px; text-transform: uppercase; }
 th:first-child, td:first-child { text-align: left; }
+@keyframes portrait-drift { from { transform: scale(1.01); } to { transform: scale(1.06) translateY(-8px); } }
+@keyframes photo-scan { 0%, 12% { left: -4px; opacity: 0; } 24%, 72% { opacity: .68; } 88%, 100% { left: calc(100% + 4px); opacity: 0; } }
+@keyframes rise-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes draw-chart { to { stroke-dashoffset: 0; } }
+@keyframes fade-chart { to { opacity: .11; } }
+@keyframes point-pop { from { opacity: 0; transform: scale(.35); } to { opacity: 1; transform: scale(1); } }
 @media (max-width: 1180px) {
   .hero, .today-layout, .progress-layout { grid-template-columns: 1fr; }
-  .hero-scoreboard { border-left: 0; border-top: 1px solid rgba(255,255,255,.14); }
+  .hero-portrait { min-height: 560px; }
   .goal-form { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .radar-layout { grid-template-columns: minmax(220px, .8fr) 1fr; }
   .roadmap-track { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -650,7 +686,8 @@ th:first-child, td:first-child { text-align: left; }
   .hero { min-height: 0; }
   .hero-copy { padding: 30px 22px; }
   .hero-copy::after { font-size: 200px; }
-  .hero-scoreboard { padding: 20px; }
+  .hero-portrait { min-height: 520px; }
+  .hero-scoreboard { right: 10px; bottom: 10px; left: 10px; padding: 11px; }
   h1 { font-size: 40px; }
   .hero-metrics, .goal-overview-grid, .goal-form, .campaign-stat-grid, .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hero-card:nth-child(2) { border-right: 0; }
@@ -661,6 +698,8 @@ th:first-child, td:first-child { text-align: left; }
   .roadmap-track { grid-template-columns: 1fr; }
   .roadmap-step { min-height: 0; border-right: 0; }
   .summary-grid, .action-detail-grid { grid-template-columns: 1fr; }
+  .forecast-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .trend-controls { justify-content: flex-start; }
   .radar-layout { grid-template-columns: 1fr; }
   .theme-input, .theme-card { grid-template-columns: 1fr; }
   .theme-actions { justify-content: flex-start; }
@@ -678,6 +717,9 @@ th:first-child, td:first-child { text-align: left; }
   .panel { padding: 17px; }
   .task-row { grid-template-columns: 38px minmax(0, 1fr); }
   .tag { grid-column: 2; width: max-content; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }`;
 }
 
@@ -725,9 +767,11 @@ function render(data) {
   renderRadar(latestRecord);
   renderKpis(latestRecord);
   renderTabs();
+  renderWeightForecast();
   renderChart();
   renderWeightGoal(latestRecord);
   renderTable();
+  requestAnimationFrame(animateCounters);
 }
 
 function buildTodayPlan(record) {
@@ -780,9 +824,9 @@ function renderGoalManager(record) {
   const progress = weight == null ? 0 : clamp(((GOALS.startWeightKg - weight) / Math.max(.1, GOALS.startWeightKg - GOALS.weightKg)) * 100, 0, 100);
   document.getElementById('goalOverview').innerHTML =
     '<div class="goal-overview-grid">' +
-    '<div class="goal-stat primary"><span>現在</span><strong>' + metrics.weightKg.format(weight) + '</strong><small>目標 ' + GOALS.weightKg.toFixed(1) + 'kg</small></div>' +
-    '<div class="goal-stat"><span>残り</span><strong>' + (kgLeft == null ? '-' : Math.max(0, kgLeft).toFixed(1) + 'kg') + '</strong><small>' + targetDeadlineText() + '</small></div>' +
-    '<div class="goal-stat"><span>期限</span><strong>' + (daysLeft == null ? '-' : daysLeft + '日') + '</strong><small>' + (pace == null ? '達成後は維持フェーズ' : '週' + pace.toFixed(2) + 'kgペース') + '</small></div>' +
+    '<div class="goal-stat primary"><span>現在</span>' + counterStrong(weight, 1, 'kg') + '<small>目標 ' + GOALS.weightKg.toFixed(1) + 'kg</small></div>' +
+    '<div class="goal-stat"><span>残り</span>' + counterStrong(kgLeft == null ? null : Math.max(0, kgLeft), 1, 'kg') + '<small>' + targetDeadlineText() + '</small></div>' +
+    '<div class="goal-stat"><span>期限</span>' + counterStrong(daysLeft, 0, '日') + '<small>' + (pace == null ? '達成後は維持フェーズ' : '週' + pace.toFixed(2) + 'kgペース') + '</small></div>' +
     '<div class="goal-progress"><span style="width:' + progress + '%"></span></div>' +
     '</div>';
 }
@@ -1072,9 +1116,59 @@ function renderTabs() {
   });
 }
 
+function renderWeightForecast() {
+  const forecast = buildWeightForecast();
+  const host = document.getElementById('weightForecast');
+  if (!forecast) {
+    host.innerHTML = '<div class="forecast-block primary"><span>ネクストゴール時の予測</span><strong>-</strong><small>体重記録が5件以上になると表示</small></div>';
+    return;
+  }
+  const gap = round1(forecast.predictedKg - GOALS.weightKg);
+  const monthly = round1(forecast.dailySlope * 30);
+  const gapClass = gap > 0 ? ' alert' : '';
+  const trendLabel = monthly > 0 ? '+' + monthly.toFixed(1) : monthly.toFixed(1);
+  host.innerHTML =
+    '<div class="forecast-block primary"><span>ネクストゴール時の予測</span>' + counterStrong(forecast.predictedKg, 1, 'kg') + '<small>' + formatDateJa(GOALS.deadline) + ' 時点</small></div>' +
+    '<div class="forecast-block"><span>ネクストゴール</span>' + counterStrong(GOALS.weightKg, 1, 'kg') + '<small>毎朝2kmを習慣化</small></div>' +
+    '<div class="forecast-block' + gapClass + '"><span>予測と目標の差</span>' + counterStrong(Math.abs(gap), 1, 'kg') + '<small>' + (gap > 0 ? '目標より上振れ' : '目標達成圏内') + '</small></div>' +
+    '<div class="forecast-block"><span>現状トレンド</span><strong>' + trendLabel + 'kg/月</strong><small>直近30日・' + forecast.sampleCount + '件から推定</small></div>';
+}
+
+function buildWeightForecast() {
+  const weightRows = records.filter(r => r.metrics?.weightKg != null);
+  const latest = weightRows.at(-1);
+  if (!latest) return null;
+  const cutoff = shiftIsoDate(latest.date, -29);
+  const sample = weightRows.filter(r => r.date >= cutoff && r.date <= latest.date);
+  if (sample.length < 5) return null;
+  const baseMs = Date.parse(sample[0].date + 'T00:00:00Z');
+  const points = sample.map(r => ({ x: (Date.parse(r.date + 'T00:00:00Z') - baseMs) / 86400000, y: Number(r.metrics.weightKg) }));
+  const slopes = [];
+  for (let i = 0; i < points.length; i += 1) {
+    for (let j = i + 1; j < points.length; j += 1) {
+      const dayGap = points[j].x - points[i].x;
+      if (dayGap > 0) slopes.push((points[j].y - points[i].y) / dayGap);
+    }
+  }
+  if (!slopes.length) return null;
+  const dailySlope = clamp(median(slopes), -0.05, 0.05);
+  const intercept = median(points.map(point => point.y - dailySlope * point.x));
+  const goalX = (Date.parse(GOALS.deadline + 'T00:00:00Z') - baseMs) / 86400000;
+  const predictedKg = clamp(intercept + dailySlope * goalX, 40, 180);
+  return { predictedKg: round1(predictedKg), dailySlope, sampleCount: sample.length };
+}
+
+function median(values) {
+  const sorted = [...values].sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
 function renderChart() {
   const meta = metrics[selectedMetric];
-  const rows = records.filter(r => r.metrics?.[selectedMetric] != null);
+  const anchorDate = latestRecord?.date || todayIso();
+  const cutoffDate = shiftIsoDate(anchorDate, -89);
+  const rows = records.filter(r => r.date >= cutoffDate && r.date <= anchorDate && r.metrics?.[selectedMetric] != null);
   const values = rows.map(r => r.metrics[selectedMetric]);
   const targetValues = selectedMetric === 'weightKg' ? rows.map(r => expectedWeightForDate(r.date)).filter(v => v != null) : [];
   const chart = document.getElementById('chart');
@@ -1083,23 +1177,31 @@ function renderChart() {
   const pad = max === min ? 1 : (max - min) * 0.15;
   const lo = min - pad, hi = max + pad;
   const width = 940, height = 310, left = 56, right = 20, top = 22, bottom = 44;
-  const x = i => left + i * ((width - left - right) / Math.max(1, rows.length - 1));
+  const rangeStartMs = Date.parse(cutoffDate + 'T00:00:00Z');
+  const rangeEndMs = Date.parse(anchorDate + 'T00:00:00Z');
+  const x = isoDate => left + ((Date.parse(isoDate + 'T00:00:00Z') - rangeStartMs) / Math.max(1, rangeEndMs - rangeStartMs)) * (width - left - right);
   const y = v => top + (hi - v) * ((height - top - bottom) / Math.max(1, hi - lo));
-  const points = rows.map((r, i) => [x(i), y(r.metrics[selectedMetric]), r]);
+  const points = rows.map(r => [x(r.date), y(r.metrics[selectedMetric]), r]);
   const path = points.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
   const targetPoints = selectedMetric === 'weightKg'
-    ? rows.map((r, i) => [x(i), expectedWeightForDate(r.date)]).filter(([, v]) => v != null).map(([px, v, r]) => [px, y(v), r])
+    ? rows.map(r => [x(r.date), expectedWeightForDate(r.date)]).filter(([, v]) => v != null).map(([px, v, r]) => [px, y(v), r])
     : [];
   const targetPath = targetPoints.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
   const area = path + ' L' + points.at(-1)[0].toFixed(1) + ',' + (height - bottom) + ' L' + points[0][0].toFixed(1) + ',' + (height - bottom) + ' Z';
-  const labels = rows.map((r, i) => i % Math.ceil(rows.length / 8) === 0 || i === rows.length - 1 ? '<text x="' + x(i) + '" y="' + (height - 13) + '" text-anchor="middle" font-size="11" fill="#66736d">' + r.date.slice(5) + '</text>' : '').join('');
+  const labels = Array.from({ length: 6 }, (_, index) => {
+    const ratio = index / 5;
+    const tickMs = rangeStartMs + (rangeEndMs - rangeStartMs) * ratio;
+    const tickDate = new Date(tickMs).toISOString().slice(0, 10);
+    const tickX = left + ratio * (width - left - right);
+    return '<line x1="' + tickX + '" y1="' + top + '" x2="' + tickX + '" y2="' + (height - bottom) + '" stroke="#e8ecef" stroke-dasharray="3 6"/><text x="' + tickX + '" y="' + (height - 13) + '" text-anchor="middle" font-size="11" fill="#66736d">' + tickDate.slice(5) + '</text>';
+  }).join('');
   chart.innerHTML = '<svg viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="' + meta.label + ' chart">' +
     '<line x1="' + left + '" y1="' + top + '" x2="' + left + '" y2="' + (height - bottom) + '" stroke="#dfe6df"/>' +
     '<line x1="' + left + '" y1="' + (height - bottom) + '" x2="' + (width - right) + '" y2="' + (height - bottom) + '" stroke="#dfe6df"/>' +
-    '<path d="' + area + '" fill="' + meta.color + '" opacity=".11"/>' +
+    '<path class="chart-area" d="' + area + '" fill="' + meta.color + '"/>' +
     (targetPath ? '<path d="' + targetPath + '" fill="none" stroke="#ff593d" stroke-width="2.5" stroke-dasharray="8 7"/><text x="' + (width - right - 126) + '" y="' + (top + 18) + '" font-size="12" font-weight="800" fill="#ff593d">目標ペース</text>' : '') +
-    '<path d="' + path + '" fill="none" stroke="' + meta.color + '" stroke-width="3.5"/>' +
-    points.map(([cx, cy, r]) => '<circle cx="' + cx + '" cy="' + cy + '" r="4.5" fill="#fff" stroke="' + meta.color + '" stroke-width="3"><title>' + r.date + ': ' + meta.format(r.metrics[selectedMetric]) + '</title></circle>').join('') +
+    '<path class="chart-line" d="' + path + '" fill="none" stroke="' + meta.color + '" stroke-width="3.5"/>' +
+    points.map(([cx, cy, r], index) => '<circle class="chart-point" style="animation-delay:' + Math.min(.8, index * .025).toFixed(2) + 's" cx="' + cx + '" cy="' + cy + '" r="4.5" fill="#fff" stroke="' + meta.color + '" stroke-width="3"><title>' + r.date + ': ' + meta.format(r.metrics[selectedMetric]) + '</title></circle>').join('') +
     '<text x="8" y="' + (top + 6) + '" font-size="11" fill="#66736d">' + meta.format(max) + '</text>' +
     '<text x="8" y="' + (height - bottom) + '" font-size="11" fill="#66736d">' + meta.format(min) + '</text>' + labels + '</svg>';
 }
@@ -1266,6 +1368,42 @@ function hours(value) { if (value == null || !Number.isFinite(Number(value))) re
 function todayIso() { return isoFromDate(new Date()); }
 function isoFromDate(date) {
   return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+}
+function shiftIsoDate(isoDate, dayOffset) {
+  const date = new Date(isoDate + 'T00:00:00Z');
+  date.setUTCDate(date.getUTCDate() + dayOffset);
+  return date.toISOString().slice(0, 10);
+}
+function counterStrong(value, decimals, suffix) {
+  if (value == null || !Number.isFinite(Number(value))) return '<strong>-</strong>';
+  const number = Number(value);
+  return '<strong class="count-up" data-count="' + number + '" data-decimals="' + decimals + '" data-suffix="' + suffix + '">' + formatCounter(number, decimals, suffix) + '</strong>';
+}
+function animateCounters() {
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.count-up').forEach((element, index) => {
+    if (element.dataset.animated === 'true') return;
+    element.dataset.animated = 'true';
+    const target = Number(element.dataset.count);
+    const decimals = Number(element.dataset.decimals || 0);
+    const suffix = element.dataset.suffix || '';
+    if (reducedMotion || !Number.isFinite(target)) {
+      element.textContent = formatCounter(target, decimals, suffix);
+      return;
+    }
+    const duration = 850 + index * 90;
+    const startedAt = performance.now();
+    const tick = now => {
+      const progress = Math.min(1, (now - startedAt) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      element.textContent = formatCounter(target * eased, decimals, suffix);
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+}
+function formatCounter(value, decimals, suffix) {
+  return Number(value).toLocaleString('ja-JP', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
 }
 function clamp(value, min, max) { return Math.max(min, Math.min(max, Number(value) || 0)); }
 function round1(value) { return Math.round(Number(value) * 10) / 10; }

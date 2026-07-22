@@ -33,9 +33,13 @@
           <span class="streak alt">毎朝2km走る習慣をつくる</span>
         </div>
       </div>
-      <div class="hero-scoreboard">
-        <p class="scoreboard-label">PROJECT STATUS</p>
-        <div id="goalOverview"></div>
+      <div class="hero-portrait">
+        <img src="./assets/image-2.jpg" alt="自己規律改善プロジェクトのメインビジュアル">
+        <span class="photo-scan" aria-hidden="true"></span>
+        <div class="hero-scoreboard">
+          <p class="scoreboard-label">PROJECT STATUS</p>
+          <div id="goalOverview"></div>
+        </div>
       </div>
     </section>
 
@@ -129,8 +133,12 @@
             <p class="eyebrow">Performance Trend</p>
             <h2>数字で見る変化</h2>
           </div>
-          <div class="tabs" id="metricTabs"></div>
+          <div class="trend-controls">
+            <span class="range-pill">直近90日</span>
+            <div class="tabs" id="metricTabs"></div>
+          </div>
         </div>
+        <div class="forecast-strip" id="weightForecast"></div>
         <div class="chart" id="chart"></div>
       </section>
       <section class="panel campaign-progress-panel">
