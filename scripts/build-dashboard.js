@@ -7,8 +7,8 @@ const healthPlanetDir = join(root, 'data', 'healthplanet');
 const outputDir = join(root, 'docs');
 
 const GOALS = {
-  weightKg: 79,
-  deadline: '2026-07-31',
+  weightKg: 62,
+  deadline: '2028-07-22',
   steps: 8000,
   sleepHours: 6.5,
   activeEnergyKcal: 650,
@@ -24,10 +24,7 @@ async function main() {
     goals: GOALS,
     records,
   });
-  await writeFile(join(outputDir, 'index.html'), dashboardHtml(), 'utf8');
-  await writeFile(join(outputDir, 'styles.css'), dashboardCss(), 'utf8');
-  await writeFile(join(outputDir, 'app.js'), dashboardJs(), 'utf8');
-  console.log(`Dashboard built: ${join(outputDir, 'index.html')}`);
+  console.log(`Dashboard data refreshed: ${join(outputDir, 'health-data.json')}`);
   console.log(`Records: ${records.length}`);
 }
 

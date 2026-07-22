@@ -1,686 +1,184 @@
-const DEFAULT_GOALS = { startWeightKg: 81.7, startDate: '2026-07-22', weightKg: 76, deadline: '2026-10-31', steps: 8000, sleepHours: 6.5, activeEnergyKcal: 650, bodyFatPercent: 25 };
-let GOALS = { ...DEFAULT_GOALS };
-const metrics = {
-  weightKg: { label: '体重', color: '#3567e8', format: v => v == null ? '-' : v.toFixed(1) + 'kg' },
-  bodyFatPercent: { label: '体脂肪率', color: '#df4b4b', format: v => v == null ? '-' : v.toFixed(1) + '%' },
-  sleepHours: { label: '睡眠', color: '#7c5cff', format: v => v == null ? '-' : hours(v) },
-  steps: { label: '歩数', color: '#15956b', format: v => v == null ? '-' : Math.round(v).toLocaleString('ja-JP') + '歩' },
-  activeEnergyKcal: { label: '活動kcal', color: '#f29f3d', format: v => v == null ? '-' : Math.round(v) + 'kcal' },
-};
-const TASK_TITLES = ['活動量', '筋トレ', '食事', '減量ペース'];
-let records = [];
-let selectedMetric = 'weightKg';
-let latestRecord = null;
-let todayPlan = [];
-let dayState = null;
-let themeStore = null;
-let dashboardData = null;
+const WEIGHT_VALUES = [80.7, 81.9, 80.2, 81.7, 82.2, 81.2, 80.7, 82.7, 80.4, 81.7, 82.6, 81.7];
+const RECORDS = [
+  ['07.22', '—', '—', '81.7', '27.7'],
+  ['07.19', '6,545', '1,052', '82.6', '27.5'],
+  ['07.17', '4,110', '383', '81.7', '28.2'],
+  ['07.16', '3,677', '309', '81.2', '27.0'],
+  ['07.14', '—', '—', '80.4', '27.8'],
+  ['07.12', '4,338', '183', '82.7', '28.4'],
+];
 
-fetch('./health-data.json')
-  .then(res => res.json())
-  .then(data => {
-    dashboardData = data;
-    records = data.records || [];
-    latestRecord = [...records].reverse().find(r => hasAnyMetric(r)) || records.at(-1);
-    dayState = loadDayState(latestRecord?.date || todayIso());
-    themeStore = loadThemeStore();
-    render(data);
-  });
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function render(data) {
-  const m = latestRecord?.metrics || {};
-  const kgLeft = m.weightKg == null ? null : m.weightKg - GOALS.weightKg;
-  todayPlan = buildTodayPlan(latestRecord);
-  document.getElementById('heroLead').textContent = data.generatedAt
-    ? '更新: ' + new Date(data.generatedAt).toLocaleString('ja-JP') + ' / ' + data.recordCount + '日分。最初の到達点は2026年10月31日の76kgと毎朝2km。'
-    : '';
-  renderHeroMetrics(latestRecord, kgLeft);
-  renderGoalManager(latestRecord);
-  renderCampaignProgress(latestRecord);
-  renderCoaching();
-  renderRadar(latestRecord);
-  renderKpis(latestRecord);
-  renderTabs();
-  renderWeightForecast();
-  renderChart();
-  renderWeightGoal(latestRecord);
-  renderTable();
-  requestAnimationFrame(animateCounters);
-}
-
-function buildTodayPlan(record) {
-  const actions = record?.coaching?.actions?.length ? record.coaching.actions : ['体重・睡眠・歩数のデータ取得状態を確認する。'];
-  const m = record?.metrics || {};
-  const tired = m.sleepHours == null || m.sleepHours < 6;
-  const strengthItems = tired
-    ? [
-        ['回復日メニュー', 'スクワット10回 x 2、壁腕立て10回 x 2、プランク20秒 x 2'],
-        ['フォーム確認', '息が上がりすぎない強度で、動きを丁寧に確認する'],
-      ]
-    : [
-        ['下半身', 'スクワット10回 x 3、ヒップヒンジ12回 x 3'],
-        ['上半身', '腕立て8回 x 3、ローイング12回 x 3'],
-        ['体幹', 'プランク30秒 x 3、デッドバグ左右10回 x 2'],
-      ];
-  const dietItems = [
-    ['朝', 'たんぱく質を先に入れる。卵・ヨーグルト・鶏肉・魚のどれかを選ぶ'],
-    ['昼', '主食はゼロにしない。量を固定して、揚げ物と甘い飲み物を避ける'],
-    ['夜', '遅い時間は脂質を軽くする。米を減らすより、間食を先に削る'],
-    ['今日の調整', m.steps == null || m.steps < GOALS.steps ? '夜の間食はなし。歩数不足は食事で取り返す' : '無理な食事制限をしない。たんぱく質を優先'],
-  ];
-  return [
-    ...actions.map((text, i) => ({ id: 'coach-' + i, group: 'today', title: TASK_TITLES[i] || '今日の指示', text })),
-    ...strengthItems.map(([title, text], i) => ({ id: 'strength-' + i, group: 'strength', title, text })),
-    ...dietItems.map(([title, text], i) => ({ id: 'diet-' + i, group: 'diet', title, text })),
-  ];
-}
-
-function renderHeroMetrics(record, kgLeft) {
-  const m = record?.metrics || {};
-  const seven = record?.coaching?.sevenDay || {};
-  const cards = [
-    ['現在体重', metrics.weightKg.format(m.weightKg), kgLeft == null ? targetDeadlineText() : '76kgまであと' + Math.max(0, kgLeft).toFixed(1) + 'kg'],
-    ['体脂肪率', metrics.bodyFatPercent.format(m.bodyFatPercent), seven.bodyFatPercent == null ? '7日平均なし' : '7日平均 ' + seven.bodyFatPercent.toFixed(1) + '%'],
-    ['睡眠', metrics.sleepHours.format(m.sleepHours), seven.sleepHours == null ? '7日平均なし' : '7日平均 ' + hours(seven.sleepHours)],
-    ['歩数', metrics.steps.format(m.steps), seven.steps == null ? '7日平均なし' : '7日平均 ' + Math.round(seven.steps).toLocaleString('ja-JP') + '歩'],
-  ];
-  document.getElementById('heroMetrics').innerHTML = cards.map(([label, value, sub]) =>
-    '<div class="hero-card"><span>' + label + '</span><strong>' + value + '</strong><small>' + sub + '</small></div>'
-  ).join('');
-}
-
-function renderGoalManager(record) {
-  const m = record?.metrics || {};
-  const weight = m.weightKg;
-  const kgLeft = weight == null ? null : round1(weight - GOALS.weightKg);
-  const daysLeft = daysUntil(GOALS.deadline);
-  const pace = kgLeft == null || daysLeft == null || kgLeft <= 0 ? null : round2(kgLeft / Math.max(1, daysLeft) * 7);
-  const progress = weight == null ? 0 : clamp(((GOALS.startWeightKg - weight) / Math.max(.1, GOALS.startWeightKg - GOALS.weightKg)) * 100, 0, 100);
-  document.getElementById('goalOverview').innerHTML =
-    '<div class="goal-overview-grid">' +
-    '<div class="goal-stat primary"><span>現在</span>' + counterStrong(weight, 1, 'kg') + '<small>目標 ' + GOALS.weightKg.toFixed(1) + 'kg</small></div>' +
-    '<div class="goal-stat"><span>残り</span>' + counterStrong(kgLeft == null ? null : Math.max(0, kgLeft), 1, 'kg') + '<small>' + targetDeadlineText() + '</small></div>' +
-    '<div class="goal-stat"><span>期限</span>' + counterStrong(daysLeft, 0, '日') + '<small>' + (pace == null ? '達成後は維持フェーズ' : '週' + pace.toFixed(2) + 'kgペース') + '</small></div>' +
-    '<div class="goal-progress"><span style="width:' + progress + '%"></span></div>' +
-    '</div>';
-}
-
-function renderCampaignProgress(record) {
-  const current = record?.metrics?.weightKg;
-  const start = GOALS.startWeightKg;
-  const target = GOALS.weightKg;
-  const totalDays = dateDiffDays(GOALS.startDate, GOALS.deadline);
-  const elapsedDays = Math.min(totalDays ?? 0, Math.max(0, dateDiffDays(GOALS.startDate, todayIso()) ?? 0));
-  const daysLeft = daysUntil(GOALS.deadline);
-  const reduced = current == null ? null : round1(start - current);
-  const remaining = current == null ? null : round1(current - target);
-  const requiredPace = current == null || daysLeft == null || daysLeft <= 0 ? null : round3(Math.max(0, current - target) / daysLeft);
-  const currentPace = current == null || elapsedDays <= 0 ? null : round3(Math.max(0, start - current) / elapsedDays);
-  const expected = expectedWeightForDate(todayIso());
-  const delay = current == null || expected == null ? null : round1(current - expected);
-  document.getElementById('campaignTitle').textContent = '目指せ' + target.toFixed(1) + 'kg 自己規律改善プロジェクト';
-  document.getElementById('heroGoalBadge').textContent = target.toFixed(1) + ' KG';
-  document.getElementById('campaignPeriod').textContent = formatDateJa(GOALS.startDate) + ' - ' + formatDateJa(GOALS.deadline);
-  const paceStatus = requiredPace == null || currentPace == null
-    ? 'データ待ち'
-    : currentPace >= requiredPace ? '予定以上' : '要ペースアップ';
-  const delayText = delay == null
-    ? '目標ペース比較なし'
-    : delay <= 0 ? '目標ペースより' + Math.abs(delay).toFixed(1) + 'kg先行' : '目標ペースより' + delay.toFixed(1) + 'kg遅れ';
-  const cards = [
-    ['現在体重', metrics.weightKg.format(current), latestRecord?.date ? latestRecord.date + ' 時点 / ' + delayText : delayText],
-    ['減量済み', reduced == null ? '-' : reduced.toFixed(1) + 'kg', 'START ' + start.toFixed(1) + 'kg'],
-    ['ゴールまで残り', remaining == null ? '-' : Math.max(0, remaining).toFixed(1) + 'kg', 'GOAL ' + target.toFixed(1) + 'kg'],
-    ['残り日数', daysLeft == null ? '-' : daysLeft + '日', totalDays ? '全' + totalDays + '日中 ' + elapsedDays + '日経過' : '期間未設定'],
-    ['必要ペース', requiredPace == null ? '-' : requiredPace.toFixed(3) + 'kg/日', '今日から期限まで'],
-    ['現状ペース', currentPace == null ? '-' : currentPace.toFixed(3) + 'kg/日', paceStatus],
-  ];
-  document.getElementById('campaignStats').innerHTML =
-    '<div class="campaign-stat-grid">' + cards.map(([label, value, sub], index) =>
-      '<div class="campaign-stat ' + (index === 0 ? 'featured' : '') + '"><span>' + label + '</span><strong>' + value + '</strong><small>' + sub + '</small></div>'
-    ).join('') + '</div>';
-}
-
-function renderMilestones() {
-  const rows = buildMilestones();
-  document.getElementById('milestones').innerHTML =
-    '<div class="table-wrap"><table><thead><tr><th>月</th><th>目標</th><th>実績</th><th>状況</th></tr></thead><tbody>' +
-    rows.map(row => '<tr><td>' + row.month + '</td><td>' + row.target + '</td><td>' + row.actual + '</td><td><span class="' + row.className + '">' + row.status + '</span></td></tr>').join('') +
-    '</tbody></table></div>';
-}
-
-function renderCompletionSummary() {
-  const rate = completionRate();
-  const completed = completedCount();
-  const total = todayPlan.length;
-  const activeTheme = currentThemeText();
-  document.getElementById('todayScore').textContent = '今日の指示 ' + completed + '/' + total + ' 完了';
-  document.getElementById('motivationLine').textContent = activeTheme || (rate >= 80 ? '最高です。この調子でいこう。' : rate >= 40 ? 'かなり進んでいます。あと少し。' : 'まず1つ押そう。流れができます。');
-  document.getElementById('victoryTitle').textContent = rate >= 100 ? '今日の指示 ' + completed + '/' + total + ' 完了。素晴らしいです！' : '今日の指示 ' + completed + '/' + total + ' 完了';
-  document.getElementById('completionRing').innerHTML = ringSvg(rate);
-}
-
-function renderCoaching() {
-  document.getElementById('topPriority').textContent = latestRecord?.coaching?.topPriority || 'データ確認';
-  const weight = latestRecord?.metrics?.weightKg;
-  const remaining = weight == null ? null : Math.max(0, weight - GOALS.weightKg);
-  document.getElementById('coachActions').innerHTML =
-    '<div class="summary-grid">' +
-    '<div class="summary-card"><span>今日の最優先</span><strong>' + escapeHtml(latestRecord?.coaching?.topPriority || 'データ確認') + '</strong><small>健康データを基準に、今日いちばん重要なこと。</small></div>' +
-    '<div class="summary-card"><span>3か月後</span><strong>76kg</strong><small>2026年10月31日まで。現在から' + (remaining == null ? '-' : remaining.toFixed(1) + 'kg') + '。</small></div>' +
-    '<div class="summary-card"><span>朝の習慣</span><strong>2km</strong><small>毎朝走ることを、最初の自己規律の基準にする。</small></div>' +
-    '</div>';
-}
-
-function renderActionDetails() {
-  const items = todayPlan.filter(item => item.group === 'today');
-  const done = items.filter(item => dayState.tasks[item.id]).length;
-  document.getElementById('actionDetailCount').textContent = done + '/' + items.length + ' 完了';
-  document.getElementById('actionDetails').innerHTML = items.length
-    ? '<div class="action-detail-grid">' + items.map(item => taskCard(item)).join('') + '</div>'
-    : '<div class="status-list"><div class="status-item"><span>実行項目</span><strong>データ更新待ち</strong></div></div>';
-  bindTaskButtons();
-}
-
-function renderStrengthPlan() {
-  const items = todayPlan.filter(item => item.group === 'strength');
-  document.getElementById('strengthPlan').innerHTML = '<div class="plan-stack">' + items.map(item => taskCard(item, true)).join('') + '</div>';
-  bindTaskButtons();
-}
-
-function renderDietPlan() {
-  const items = todayPlan.filter(item => item.group === 'diet');
-  document.getElementById('dietPlan').innerHTML = '<div class="plan-stack">' + items.map(item => taskCard(item, true)).join('') + '</div>';
-  bindTaskButtons();
-}
-
-function taskCard(item, compact = false) {
-  const done = !!dayState.tasks[item.id];
-  return '<div class="' + (compact ? 'plan-card' : 'task-card') + (done ? ' done' : '') + '" data-task-id="' + item.id + '">' +
-    '<div class="task-row">' +
-    '<button class="check-button" type="button" data-task-id="' + item.id + '" aria-label="' + escapeHtml(item.title) + 'を完了">' + (done ? '✓' : '') + '</button>' +
-    '<div><strong>' + escapeHtml(item.title) + '</strong><p>' + escapeHtml(item.text) + '</p></div>' +
-    '<span class="tag">' + (done ? '完了' : '未完了') + '</span>' +
-    '</div></div>';
-}
-
-function bindTaskButtons() {
-  document.querySelectorAll('.task-card[data-task-id], .plan-card[data-task-id]').forEach(card => {
-    card.onclick = () => toggleTask(card.dataset.taskId);
-  });
-  document.querySelectorAll('.check-button').forEach(button => {
-    button.onclick = event => {
-      event.stopPropagation();
-      toggleTask(button.dataset.taskId);
-    };
-  });
-}
-
-function toggleTask(id) {
-  dayState.tasks[id] = !dayState.tasks[id];
-  saveDayState();
-  showFeedback(dayState.tasks[id] ? '素晴らしいです！1つ前進しました。' : '未完了に戻しました。調整OKです。');
-  renderAfterStateChange();
-}
-
-function renderAfterStateChange() {
-  renderCompletionSummary();
-  renderHeroMetrics(latestRecord, latestRecord?.metrics?.weightKg == null ? null : latestRecord.metrics.weightKg - GOALS.weightKg);
-  renderCoaching();
-  renderActionDetails();
-  renderStrengthPlan();
-  renderDietPlan();
-  renderCompletionLog();
-  renderTable();
-}
-
-function renderMemo() {
-  const memo = document.getElementById('workoutMemo');
-  memo.value = dayState.memo || '';
-  memo.oninput = () => {
-    dayState.memo = memo.value;
-    saveDayState();
-    document.getElementById('memoSaved').textContent = '保存しました ' + new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
-    renderCompletionLog();
-  };
-}
-
-function bindReset() {
-  document.getElementById('clearToday').onclick = () => {
-    dayState = { date: dayState.date, tasks: {}, memo: '' };
-    saveDayState();
-    render(dataPlaceholder());
-    showFeedback('今日のチェックをリセットしました。');
-  };
-}
-
-function renderThemeStock() {
-  const themes = themeStore?.themes || [];
-  const activeId = themeStore?.activeId || null;
-  document.getElementById('themeCount').textContent = themes.length + '件ストック';
-  document.getElementById('themeStock').innerHTML = themes.length
-    ? '<div class="theme-list">' + themes.map(theme => (
-      '<div class="theme-card ' + (theme.id === activeId ? 'active' : '') + '" data-theme-id="' + theme.id + '">' +
-      '<div><strong>' + escapeHtml(theme.text) + '</strong><small>' + new Date(theme.createdAt).toLocaleString('ja-JP') + (theme.id === activeId ? ' / 今のテーマ' : '') + '</small></div>' +
-      '<div class="theme-actions">' +
-      '<button class="primary" type="button" data-theme-action="activate" data-theme-id="' + theme.id + '">今のテーマにする</button>' +
-      '<button type="button" data-theme-action="delete" data-theme-id="' + theme.id + '">削除</button>' +
-      '</div></div>'
-    )).join('') + '</div>'
-    : '<div class="status-list"><div class="status-item"><span>ストック</span><strong>まだありません</strong></div></div>';
-}
-
-function bindThemeStock() {
-  document.getElementById('addTheme').onclick = () => addThemeFromInput();
-  document.getElementById('themeInput').onkeydown = event => {
-    if (event.key === 'Enter') addThemeFromInput();
-  };
-  document.querySelectorAll('[data-theme-action]').forEach(button => {
-    button.onclick = () => {
-      if (button.dataset.themeAction === 'activate') activateTheme(button.dataset.themeId);
-      if (button.dataset.themeAction === 'delete') deleteTheme(button.dataset.themeId);
-    };
-  });
-}
-
-function addThemeFromInput() {
-  const input = document.getElementById('themeInput');
-  const text = input.value.trim();
-  if (!text) return;
-  const theme = { id: 'theme-' + Date.now(), text, createdAt: new Date().toISOString() };
-  themeStore.themes.unshift(theme);
-  themeStore.activeId = theme.id;
-  saveThemeStore();
-  input.value = '';
-  showFeedback('今後のテーマとしてストックしました。');
-  renderCompletionSummary();
-  renderThemeStock();
-  bindThemeStock();
-}
-
-function activateTheme(id) {
-  themeStore.activeId = id;
-  saveThemeStore();
-  showFeedback('今のテーマに設定しました。');
-  renderCompletionSummary();
-  renderThemeStock();
-  bindThemeStock();
-}
-
-function deleteTheme(id) {
-  themeStore.themes = themeStore.themes.filter(theme => theme.id !== id);
-  if (themeStore.activeId === id) themeStore.activeId = themeStore.themes[0]?.id || null;
-  saveThemeStore();
-  showFeedback('テーマを削除しました。');
-  renderCompletionSummary();
-  renderThemeStock();
-  bindThemeStock();
-}
-
-function currentThemeText() {
-  const active = (themeStore?.themes || []).find(theme => theme.id === themeStore.activeId);
-  return active ? '今のテーマ: ' + active.text : '';
-}
-
-function renderCompletionLog() {
-  const doneItems = todayPlan.filter(item => dayState.tasks[item.id]);
-  document.getElementById('completionLog').innerHTML =
-    '<div class="status-list">' +
-    '<div class="status-item"><span>今日の実績</span><strong>' + completedCount() + '/' + todayPlan.length + ' 完了</strong></div>' +
-    '<div class="status-item"><span>達成率</span><strong>' + completionRate() + '%</strong></div>' +
-    '<div class="status-item"><span>完了項目</span><strong>' + (doneItems.length ? doneItems.map(i => i.title).join('、') : 'まだなし') + '</strong></div>' +
-    '<div class="status-item"><span>筋トレメモ</span><strong>' + (dayState.memo ? escapeHtml(dayState.memo.slice(0, 42)) : '未入力') + '</strong></div>' +
-    '</div>';
-}
-
-function renderRadar(record) {
-  const scores = buildScores(record);
-  const labels = scores.map(s => s.label);
-  const values = scores.map(s => s.score);
-  const cx = 150, cy = 150, maxR = 104;
-  const points = values.map((score, i) => point(cx, cy, maxR * score / 100, i, values.length));
-  const grid = [20,40,60,80,100].map(level => '<polygon points="' + values.map((_, i) => point(cx, cy, maxR * level / 100, i, values.length).join(',')).join(' ') + '" fill="none" stroke="#dfe6df" stroke-width="1"/>').join('');
-  const axis = labels.map((label, i) => {
-    const end = point(cx, cy, maxR, i, labels.length);
-    const text = point(cx, cy, maxR + 22, i, labels.length);
-    return '<line x1="' + cx + '" y1="' + cy + '" x2="' + end[0] + '" y2="' + end[1] + '" stroke="#dfe6df"/><text x="' + text[0] + '" y="' + text[1] + '" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#66736d">' + label + '</text>';
-  }).join('');
-  document.getElementById('radar').innerHTML =
-    '<div class="radar-layout"><svg viewBox="0 0 300 300" role="img" aria-label="5角形パラメータ">' + grid + axis +
-    '<polygon points="' + points.map(p => p.join(',')).join(' ') + '" fill="rgba(21,149,107,.24)" stroke="#15956b" stroke-width="3"/>' +
-    points.map(p => '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="4" fill="#12261f"/>').join('') +
-    '</svg><div class="score-list">' + scores.map(s => '<div class="score-row"><span>' + s.label + '</span><div class="mini-bar"><span style="width:' + s.score + '%"></span></div><strong>' + s.score + '</strong></div>').join('') + '</div></div>';
-}
-
-function buildScores(record) {
-  const m = record?.metrics || {};
-  const seven = record?.coaching?.sevenDay || {};
-  const stepHabit = clamp(((seven.steps ?? 0) / GOALS.steps) * 100, 0, 100);
-  const sleepHabit = clamp(((seven.sleepHours ?? 0) / GOALS.sleepHours) * 100, 0, 100);
-  return [
-    { label: '減量', score: clamp(100 - Math.max(0, (m.weightKg ?? 84) - GOALS.weightKg) * 12, 0, 100) },
-    { label: '活動', score: clamp(((m.steps ?? 0) / GOALS.steps) * 100, 0, 100) },
-    { label: '睡眠', score: clamp(((m.sleepHours ?? 0) / GOALS.sleepHours) * 100, 0, 100) },
-    { label: '体脂肪', score: clamp(100 - Math.max(0, (m.bodyFatPercent ?? 32) - GOALS.bodyFatPercent) * 9, 0, 100) },
-    { label: '習慣', score: (stepHabit + sleepHabit) / 2 },
-  ].map(s => ({ ...s, score: Math.round(s.score) }));
-}
-
-function renderKpis(record) {
-  const m = record?.metrics || {};
-  const c = record?.coaching || {};
-  const items = [
-    ['体重', metrics.weightKg.format(m.weightKg), goalText(m.weightKg, GOALS.weightKg, 'kg')],
-    ['体脂肪率', metrics.bodyFatPercent.format(m.bodyFatPercent), deltaText(c.deltas?.bodyFatPercent, '%')],
-    ['睡眠', metrics.sleepHours.format(m.sleepHours), deltaText(c.deltas?.sleepHours, 'h')],
-    ['歩数', metrics.steps.format(m.steps), targetText(m.steps, GOALS.steps, '歩')],
-    ['活動量', metrics.activeEnergyKcal.format(m.activeEnergyKcal), targetText(m.activeEnergyKcal, GOALS.activeEnergyKcal, 'kcal')],
-  ];
-  document.getElementById('kpis').innerHTML = items.map(([label, value, sub]) =>
-    '<div class="kpi"><div class="label">' + label + '</div><div class="value">' + value + '</div><div class="sub">' + sub + '</div></div>'
-  ).join('');
-}
-
-function renderTabs() {
-  document.getElementById('metricTabs').innerHTML = Object.entries(metrics).map(([key, meta]) =>
-    '<button class="tab ' + (key === selectedMetric ? 'active' : '') + '" data-key="' + key + '">' + meta.label + '</button>'
-  ).join('');
-  document.querySelectorAll('.tab').forEach(btn => {
-    btn.addEventListener('click', () => { selectedMetric = btn.dataset.key; renderTabs(); renderChart(); });
-  });
-}
-
-function renderWeightForecast() {
-  const forecast = buildWeightForecast();
-  const host = document.getElementById('weightForecast');
-  if (!forecast) {
-    host.innerHTML = '<div class="forecast-block primary"><span>ネクストゴール時の予測</span><strong>-</strong><small>体重記録が5件以上になると表示</small></div>';
+function setupReveals() {
+  const elements = [...document.querySelectorAll('[data-reveal]')];
+  if (reduceMotion) {
+    elements.forEach(element => element.classList.add('is-visible'));
     return;
   }
-  const gap = round1(forecast.predictedKg - GOALS.weightKg);
-  const monthly = round1(forecast.dailySlope * 30);
-  const gapClass = gap > 0 ? ' alert' : '';
-  const trendLabel = monthly > 0 ? '+' + monthly.toFixed(1) : monthly.toFixed(1);
-  host.innerHTML =
-    '<div class="forecast-block primary"><span>ネクストゴール時の予測</span>' + counterStrong(forecast.predictedKg, 1, 'kg') + '<small>' + formatDateJa(GOALS.deadline) + ' 時点</small></div>' +
-    '<div class="forecast-block"><span>ネクストゴール</span>' + counterStrong(GOALS.weightKg, 1, 'kg') + '<small>毎朝2kmを習慣化</small></div>' +
-    '<div class="forecast-block' + gapClass + '"><span>予測と目標の差</span>' + counterStrong(Math.abs(gap), 1, 'kg') + '<small>' + (gap > 0 ? '目標より上振れ' : '目標達成圏内') + '</small></div>' +
-    '<div class="forecast-block"><span>現状トレンド</span><strong>' + trendLabel + 'kg/月</strong><small>直近30日・' + forecast.sampleCount + '件から推定</small></div>';
-}
-
-function buildWeightForecast() {
-  const weightRows = records.filter(r => r.metrics?.weightKg != null);
-  const latest = weightRows.at(-1);
-  if (!latest) return null;
-  const cutoff = shiftIsoDate(latest.date, -29);
-  const sample = weightRows.filter(r => r.date >= cutoff && r.date <= latest.date);
-  if (sample.length < 5) return null;
-  const baseMs = Date.parse(sample[0].date + 'T00:00:00Z');
-  const points = sample.map(r => ({ x: (Date.parse(r.date + 'T00:00:00Z') - baseMs) / 86400000, y: Number(r.metrics.weightKg) }));
-  const slopes = [];
-  for (let i = 0; i < points.length; i += 1) {
-    for (let j = i + 1; j < points.length; j += 1) {
-      const dayGap = points[j].x - points[i].x;
-      if (dayGap > 0) slopes.push((points[j].y - points[i].y) / dayGap);
-    }
-  }
-  if (!slopes.length) return null;
-  const dailySlope = clamp(median(slopes), -0.05, 0.05);
-  const intercept = median(points.map(point => point.y - dailySlope * point.x));
-  const goalX = (Date.parse(GOALS.deadline + 'T00:00:00Z') - baseMs) / 86400000;
-  const predictedKg = clamp(intercept + dailySlope * goalX, 40, 180);
-  return { predictedKg: round1(predictedKg), dailySlope, sampleCount: sample.length };
-}
-
-function median(values) {
-  const sorted = [...values].sort((a, b) => a - b);
-  const middle = Math.floor(sorted.length / 2);
-  return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
-}
-
-function renderChart() {
-  const meta = metrics[selectedMetric];
-  const anchorDate = latestRecord?.date || todayIso();
-  const cutoffDate = shiftIsoDate(anchorDate, -89);
-  const rows = records.filter(r => r.date >= cutoffDate && r.date <= anchorDate && r.metrics?.[selectedMetric] != null);
-  const values = rows.map(r => r.metrics[selectedMetric]);
-  const targetValues = selectedMetric === 'weightKg' ? rows.map(r => expectedWeightForDate(r.date)).filter(v => v != null) : [];
-  const chart = document.getElementById('chart');
-  if (!values.length) { chart.innerHTML = '<p class="bad">この項目のデータがありません</p>'; return; }
-  const min = Math.min(...values, ...targetValues), max = Math.max(...values, ...targetValues);
-  const pad = max === min ? 1 : (max - min) * 0.15;
-  const lo = min - pad, hi = max + pad;
-  const width = 940, height = 310, left = 56, right = 20, top = 22, bottom = 44;
-  const rangeStartMs = Date.parse(cutoffDate + 'T00:00:00Z');
-  const rangeEndMs = Date.parse(anchorDate + 'T00:00:00Z');
-  const x = isoDate => left + ((Date.parse(isoDate + 'T00:00:00Z') - rangeStartMs) / Math.max(1, rangeEndMs - rangeStartMs)) * (width - left - right);
-  const y = v => top + (hi - v) * ((height - top - bottom) / Math.max(1, hi - lo));
-  const points = rows.map(r => [x(r.date), y(r.metrics[selectedMetric]), r]);
-  const path = points.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
-  const targetPoints = selectedMetric === 'weightKg'
-    ? rows.map(r => [x(r.date), expectedWeightForDate(r.date)]).filter(([, v]) => v != null).map(([px, v, r]) => [px, y(v), r])
-    : [];
-  const targetPath = targetPoints.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
-  const area = path + ' L' + points.at(-1)[0].toFixed(1) + ',' + (height - bottom) + ' L' + points[0][0].toFixed(1) + ',' + (height - bottom) + ' Z';
-  const labels = Array.from({ length: 6 }, (_, index) => {
-    const ratio = index / 5;
-    const tickMs = rangeStartMs + (rangeEndMs - rangeStartMs) * ratio;
-    const tickDate = new Date(tickMs).toISOString().slice(0, 10);
-    const tickX = left + ratio * (width - left - right);
-    return '<line x1="' + tickX + '" y1="' + top + '" x2="' + tickX + '" y2="' + (height - bottom) + '" stroke="#e8ecef" stroke-dasharray="3 6"/><text x="' + tickX + '" y="' + (height - 13) + '" text-anchor="middle" font-size="11" fill="#66736d">' + tickDate.slice(5) + '</text>';
-  }).join('');
-  chart.innerHTML = '<svg viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="' + meta.label + ' chart">' +
-    '<line x1="' + left + '" y1="' + top + '" x2="' + left + '" y2="' + (height - bottom) + '" stroke="#dfe6df"/>' +
-    '<line x1="' + left + '" y1="' + (height - bottom) + '" x2="' + (width - right) + '" y2="' + (height - bottom) + '" stroke="#dfe6df"/>' +
-    '<path class="chart-area" d="' + area + '" fill="' + meta.color + '"/>' +
-    (targetPath ? '<path d="' + targetPath + '" fill="none" stroke="#ff593d" stroke-width="2.5" stroke-dasharray="8 7"/><text x="' + (width - right - 126) + '" y="' + (top + 18) + '" font-size="12" font-weight="800" fill="#ff593d">目標ペース</text>' : '') +
-    '<path class="chart-line" d="' + path + '" fill="none" stroke="' + meta.color + '" stroke-width="3.5"/>' +
-    points.map(([cx, cy, r], index) => '<circle class="chart-point" style="animation-delay:' + Math.min(.8, index * .025).toFixed(2) + 's" cx="' + cx + '" cy="' + cy + '" r="4.5" fill="#fff" stroke="' + meta.color + '" stroke-width="3"><title>' + r.date + ': ' + meta.format(r.metrics[selectedMetric]) + '</title></circle>').join('') +
-    '<text x="8" y="' + (top + 6) + '" font-size="11" fill="#66736d">' + meta.format(max) + '</text>' +
-    '<text x="8" y="' + (height - bottom) + '" font-size="11" fill="#66736d">' + meta.format(min) + '</text>' + labels + '</svg>';
-}
-
-function renderWeightGoal(record) {
-  const weight = record?.metrics?.weightKg;
-  const target = GOALS.weightKg;
-  const start = Math.max(weight || target, GOALS.startWeightKg);
-  const progress = weight == null ? 0 : Math.max(0, Math.min(100, ((start - weight) / Math.max(.1, start - target)) * 100));
-  document.getElementById('weightGoal').innerHTML =
-    '<div class="status-list">' +
-    '<div class="status-item"><span>現在</span><strong>' + metrics.weightKg.format(weight) + '</strong></div>' +
-    '<div class="status-item"><span>目標</span><strong>' + target.toFixed(1) + 'kg</strong></div>' +
-    '<div class="status-item"><span>期限</span><strong>' + targetDeadlineText() + '</strong></div>' +
-    '<div class="status-item"><span>残り</span><strong>' + (weight == null ? '-' : (weight - target).toFixed(1) + 'kg') + '</strong></div>' +
-    '<div class="status-item"><span>推奨ペース</span><strong>2週間で1kg減</strong></div>' +
-    '<div class="progress"><span style="width:' + progress + '%"></span></div>' +
-    '</div>';
-}
-
-function renderTable() {
-  document.getElementById('dailyRows').innerHTML = [...records].reverse().map(r => {
-    return '<tr><td>' + r.date + '</td><td>' + metrics.sleepHours.format(r.metrics.sleepHours) + '</td><td>' + metrics.steps.format(r.metrics.steps) + '</td><td>' + metrics.activeEnergyKcal.format(r.metrics.activeEnergyKcal) + '</td><td>' + metrics.weightKg.format(r.metrics.weightKg) + '</td><td>' + metrics.bodyFatPercent.format(r.metrics.bodyFatPercent) + '</td><td>' + (r.metrics.bodyMassIndex == null ? '-' : r.metrics.bodyMassIndex.toFixed(1)) + '</td></tr>';
-  }).join('');
-}
-
-function loadDayState(date) {
-  try {
-    const raw = localStorage.getItem('dietCoach:' + date);
-    return raw ? { date, tasks: {}, memo: '', ...JSON.parse(raw) } : { date, tasks: {}, memo: '' };
-  } catch {
-    return { date, tasks: {}, memo: '' };
-  }
-}
-function saveDayState() { localStorage.setItem('dietCoach:' + dayState.date, JSON.stringify(dayState)); }
-function loadThemeStore() {
-  try {
-    const raw = localStorage.getItem('dietCoach:themes');
-    return raw ? { themes: [], activeId: null, ...JSON.parse(raw) } : { themes: [], activeId: null };
-  } catch {
-    return { themes: [], activeId: null };
-  }
-}
-function saveThemeStore() { localStorage.setItem('dietCoach:themes', JSON.stringify(themeStore)); }
-function loadGoalSettings() {
-  try {
-    const raw = localStorage.getItem('dietCoach:goals');
-    return raw ? { ...DEFAULT_GOALS, ...JSON.parse(raw) } : { ...DEFAULT_GOALS };
-  } catch {
-    return { ...DEFAULT_GOALS };
-  }
-}
-function saveGoalsFromInputs() {
-  GOALS = {
-    startWeightKg: numberFromInput('goalStartWeightInput', DEFAULT_GOALS.startWeightKg),
-    startDate: document.getElementById('goalStartDateInput').value || DEFAULT_GOALS.startDate,
-    weightKg: numberFromInput('goalWeightInput', DEFAULT_GOALS.weightKg),
-    deadline: document.getElementById('goalDeadlineInput').value || DEFAULT_GOALS.deadline,
-    steps: Math.round(numberFromInput('goalStepsInput', DEFAULT_GOALS.steps)),
-    sleepHours: numberFromInput('goalSleepInput', DEFAULT_GOALS.sleepHours),
-    activeEnergyKcal: DEFAULT_GOALS.activeEnergyKcal,
-    bodyFatPercent: numberFromInput('goalBodyFatInput', DEFAULT_GOALS.bodyFatPercent),
-  };
-  localStorage.setItem('dietCoach:goals', JSON.stringify(GOALS));
-  document.getElementById('goalSaveStatus').textContent = '保存済み';
-  todayPlan = buildTodayPlan(latestRecord);
-  render(dashboardData || dataPlaceholder());
-  showFeedback('目標値を保存して反映しました。');
-}
-function resetGoals() {
-  GOALS = { ...DEFAULT_GOALS };
-  localStorage.removeItem('dietCoach:goals');
-  document.getElementById('goalSaveStatus').textContent = '初期値に戻しました';
-  todayPlan = buildTodayPlan(latestRecord);
-  render(dashboardData || dataPlaceholder());
-  showFeedback('目標値を初期値に戻しました。');
-}
-function numberFromInput(id, fallback) {
-  const value = Number(document.getElementById(id).value);
-  return Number.isFinite(value) ? value : fallback;
-}
-function buildMilestones() {
-  const rows = [];
-  const start = new Date(GOALS.startDate + 'T00:00:00+09:00');
-  const end = new Date(GOALS.deadline + 'T00:00:00+09:00');
-  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) return rows;
-  let cursor = new Date(start);
-  cursor.setDate(1);
-  const latest = latestRecord?.date || todayIso();
-  while (cursor <= end) {
-    const monthStart = new Date(cursor);
-    const monthEnd = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0);
-    const periodStartIso = isoFromDate(monthStart < start ? start : monthStart);
-    const periodEndIso = isoFromDate(monthEnd > end ? end : monthEnd);
-    const targetStart = expectedWeightForDate(periodStartIso);
-    const targetEnd = expectedWeightForDate(periodEndIso);
-    const actual = latestWeightOnOrBefore(periodEndIso);
-    const isPast = periodEndIso < latest;
-    const isCurrent = periodStartIso <= latest && latest <= periodEndIso;
-    const achieved = actual != null && targetEnd != null && actual <= targetEnd;
-    rows.push({
-      month: String(cursor.getMonth() + 1) + '月',
-      target: targetStart == null || targetEnd == null ? '-' : targetStart.toFixed(1) + 'kg → ' + targetEnd.toFixed(1) + 'kg',
-      actual: actual == null ? '-' : actual.toFixed(1) + 'kg',
-      status: achieved ? '達成' : isCurrent ? '進行中' : isPast ? '未達' : '予定',
-      className: achieved ? 'ok' : isCurrent ? 'warn' : isPast ? 'bad' : '',
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
     });
-    cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
+  }, { threshold: 0.14, rootMargin: '0px 0px -6%' });
+  elements.forEach(element => observer.observe(element));
+}
+
+function setupCounters() {
+  const counters = [...document.querySelectorAll('.count-up')];
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const element = entry.target;
+      observer.unobserve(element);
+      animateCounter(element);
+    });
+  }, { threshold: 0.55 });
+  counters.forEach(counter => observer.observe(counter));
+}
+
+function animateCounter(element) {
+  const target = Number(element.dataset.count);
+  const decimals = Number(element.dataset.decimals || 0);
+  const suffix = element.dataset.suffix || '';
+  const format = value => Math.max(0, value).toLocaleString('ja-JP', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }) + suffix;
+  if (reduceMotion || !Number.isFinite(target)) {
+    element.textContent = format(target);
+    return;
   }
-  return rows;
+  const start = performance.now();
+  const duration = 1050;
+  element.classList.add('is-popping');
+  const tick = now => {
+    const progress = Math.min((now - start) / duration, 1);
+    const c1 = 1.55;
+    const c3 = c1 + 1;
+    const eased = 1 + c3 * Math.pow(progress - 1, 3) + c1 * Math.pow(progress - 1, 2);
+    element.textContent = format(target * eased);
+    if (progress < 1) requestAnimationFrame(tick);
+    else {
+      element.textContent = format(target);
+      window.setTimeout(() => element.classList.remove('is-popping'), 420);
+    }
+  };
+  requestAnimationFrame(tick);
 }
-function latestWeightOnOrBefore(isoDate) {
-  const row = [...records].reverse().find(r => r.date <= isoDate && r.metrics?.weightKg != null);
-  return row?.metrics?.weightKg ?? null;
-}
-function expectedWeightForDate(isoDate) {
-  const total = dateDiffDays(GOALS.startDate, GOALS.deadline);
-  const elapsed = dateDiffDays(GOALS.startDate, isoDate);
-  if (total == null || elapsed == null || total <= 0) return null;
-  const ratio = clamp(elapsed / total, 0, 1);
-  return round2(GOALS.startWeightKg + (GOALS.weightKg - GOALS.startWeightKg) * ratio);
-}
-function completedCount() { return Object.values(dayState?.tasks || {}).filter(Boolean).length; }
-function completionRate() { return todayPlan.length ? Math.round((completedCount() / todayPlan.length) * 100) : 0; }
-function nextTaskLabel() {
-  const next = todayPlan.find(item => !dayState?.tasks?.[item.id]);
-  return next ? next.title : '全部完了';
-}
-function targetDeadlineText() { return formatDateJa(GOALS.deadline) + 'までに' + GOALS.weightKg.toFixed(1) + 'kg'; }
-function dateDiffDays(startIso, endIso) {
-  const start = new Date(startIso + 'T00:00:00+09:00');
-  const end = new Date(endIso + 'T00:00:00+09:00');
-  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return null;
-  return Math.max(0, Math.round((end - start) / 86400000));
-}
-function daysUntil(isoDate) {
-  const target = new Date(isoDate + 'T00:00:00+09:00');
-  const now = new Date();
-  if (Number.isNaN(target.getTime())) return null;
-  return Math.max(0, Math.ceil((target - now) / 86400000));
-}
-function formatDateJa(isoDate) {
-  const date = new Date(isoDate + 'T00:00:00+09:00');
-  return Number.isNaN(date.getTime()) ? isoDate : date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric' });
-}
-function showFeedback(text) {
-  const toast = document.getElementById('feedbackToast');
-  toast.textContent = text;
-  toast.classList.add('show');
-  clearTimeout(showFeedback.timer);
-  showFeedback.timer = setTimeout(() => toast.classList.remove('show'), 1800);
-}
-function ringSvg(rate) {
-  const r = 52, c = Math.PI * 2 * r, offset = c * (1 - rate / 100);
-  return '<svg viewBox="0 0 138 138"><circle cx="69" cy="69" r="' + r + '" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="13"/><circle cx="69" cy="69" r="' + r + '" fill="none" stroke="#c8f55e" stroke-width="13" stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + offset + '" transform="rotate(-90 69 69)"/><text x="69" y="65" text-anchor="middle" font-size="28" font-weight="900" fill="#ffffff">' + rate + '%</text><text x="69" y="88" text-anchor="middle" font-size="12" font-weight="800" fill="rgba(255,255,255,.78)">完了</text></svg>';
-}
-function dataPlaceholder() { return { generatedAt: new Date().toISOString(), recordCount: records.length }; }
-function point(cx, cy, r, index, total) { const angle = -Math.PI / 2 + index * 2 * Math.PI / total; return [Math.round((cx + Math.cos(angle) * r) * 10) / 10, Math.round((cy + Math.sin(angle) * r) * 10) / 10]; }
-function goalText(value, target, unit) { if (value == null) return '目標 ' + target + unit; const diff = value - target; return diff <= 0 ? '目標達成' : '目標まであと' + diff.toFixed(1) + unit; }
-function targetText(value, target, unit) { if (value == null) return '目標 ' + target.toLocaleString('ja-JP') + unit; const diff = value - target; return diff >= 0 ? '目標比 +' + Math.round(diff).toLocaleString('ja-JP') + unit : '目標まで ' + Math.abs(Math.round(diff)).toLocaleString('ja-JP') + unit; }
-function deltaText(value, unit) { if (value == null) return '前回比データなし'; const sign = value > 0 ? '+' : ''; if (unit === 'h') return '前回比 ' + sign + value.toFixed(2) + '時間'; return '前回比 ' + sign + value.toFixed(unit === '%' ? 1 : 0) + unit; }
-function hasAnyMetric(record) { return record && Object.values(record.metrics || {}).some(v => v != null); }
-function hours(value) { if (value == null || !Number.isFinite(Number(value))) return '-'; const mins = Math.round(Number(value) * 60); return Math.floor(mins / 60) + '時間' + String(mins % 60).padStart(2, '0') + '分'; }
-function todayIso() { return isoFromDate(new Date()); }
-function isoFromDate(date) {
-  return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
-}
-function shiftIsoDate(isoDate, dayOffset) {
-  const date = new Date(isoDate + 'T00:00:00Z');
-  date.setUTCDate(date.getUTCDate() + dayOffset);
-  return date.toISOString().slice(0, 10);
-}
-function counterStrong(value, decimals, suffix) {
-  if (value == null || !Number.isFinite(Number(value))) return '<strong>-</strong>';
-  const number = Number(value);
-  return '<strong class="count-up" data-count="' + number + '" data-decimals="' + decimals + '" data-suffix="' + suffix + '">' + formatCounter(number, decimals, suffix) + '</strong>';
-}
-function animateCounters() {
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  document.querySelectorAll('.count-up').forEach((element, index) => {
-    if (element.dataset.animated === 'true') return;
-    element.dataset.animated = 'true';
-    const target = Number(element.dataset.count);
-    const decimals = Number(element.dataset.decimals || 0);
-    const suffix = element.dataset.suffix || '';
-    if (reducedMotion || !Number.isFinite(target)) {
-      element.textContent = formatCounter(target, decimals, suffix);
+
+function setupWeightChart() {
+  const canvas = document.getElementById('weightTrendCanvas');
+  if (!canvas) return;
+  let frame = 0;
+  let finished = false;
+
+  const draw = progress => {
+    const rect = canvas.getBoundingClientRect();
+    const width = Math.max(1, rect.width);
+    const height = Math.max(1, rect.height);
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(width * pixelRatio);
+    canvas.height = Math.round(height * pixelRatio);
+    const context = canvas.getContext('2d');
+    if (!context) return;
+    context.scale(pixelRatio, pixelRatio);
+    context.clearRect(0, 0, width, height);
+    context.save();
+    context.beginPath();
+    context.rect(0, 0, width, height);
+    context.clip();
+
+    const yMin = 79.8;
+    const yMax = 83;
+    const points = WEIGHT_VALUES.map((value, index) => ({
+      x: (index / (WEIGHT_VALUES.length - 1)) * width,
+      y: Math.max(0, Math.min(height, ((yMax - value) / (yMax - yMin)) * height)),
+    }));
+    const travel = Math.min(Math.max(progress, 0), 1) * (points.length - 1);
+    const whole = Math.floor(travel);
+    const fraction = travel - whole;
+    const visible = points.slice(0, whole + 1);
+    if (whole < points.length - 1) {
+      const current = points[whole];
+      const next = points[whole + 1];
+      visible.push({
+        x: current.x + (next.x - current.x) * fraction,
+        y: current.y + (next.y - current.y) * fraction,
+      });
+    }
+
+    context.beginPath();
+    visible.forEach((point, index) => index ? context.lineTo(point.x, point.y) : context.moveTo(point.x, point.y));
+    const last = visible[visible.length - 1];
+    context.lineTo(last.x, height);
+    context.lineTo(visible[0].x, height);
+    context.closePath();
+    const fill = context.createLinearGradient(0, 0, 0, height);
+    fill.addColorStop(0, 'rgba(93, 92, 246, .30)');
+    fill.addColorStop(1, 'rgba(93, 92, 246, 0)');
+    context.fillStyle = fill;
+    context.fill();
+
+    context.beginPath();
+    visible.forEach((point, index) => index ? context.lineTo(point.x, point.y) : context.moveTo(point.x, point.y));
+    context.strokeStyle = '#5d5cf6';
+    context.lineWidth = 4;
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
+    context.stroke();
+
+    points.slice(0, Math.min(whole + 1, points.length)).forEach((point, index) => {
+      context.beginPath();
+      context.arc(point.x, point.y, index === points.length - 1 ? 7 : 5, 0, Math.PI * 2);
+      context.fillStyle = index === points.length - 1 ? '#c8ff35' : '#fffdf8';
+      context.fill();
+      context.strokeStyle = index === points.length - 1 ? '#101115' : '#5d5cf6';
+      context.lineWidth = 3;
+      context.stroke();
+    });
+    context.restore();
+  };
+
+  const resizeObserver = new ResizeObserver(() => draw(finished ? 1 : 0));
+  resizeObserver.observe(canvas);
+  const observer = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    observer.disconnect();
+    if (reduceMotion) {
+      finished = true;
+      draw(1);
       return;
     }
-    const duration = 850 + index * 90;
-    const startedAt = performance.now();
-    const tick = now => {
-      const progress = Math.min(1, (now - startedAt) / duration);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      element.textContent = formatCounter(target * eased, decimals, suffix);
-      if (progress < 1) requestAnimationFrame(tick);
+    const start = performance.now();
+    const animate = now => {
+      const progress = Math.min((now - start) / 1200, 1);
+      draw(1 - Math.pow(1 - progress, 3));
+      if (progress < 1) frame = requestAnimationFrame(animate);
+      else finished = true;
     };
-    requestAnimationFrame(tick);
-  });
+    frame = requestAnimationFrame(animate);
+  }, { threshold: 0.35 });
+  observer.observe(canvas);
 }
-function formatCounter(value, decimals, suffix) {
-  return Number(value).toLocaleString('ja-JP', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
+
+function renderRecords() {
+  const container = document.getElementById('recordsTable');
+  if (!container) return;
+  const header = '<div class="record-row record-header"><span>DATE</span><span>STEPS</span><span>ACTIVE KCAL</span><span>WEIGHT</span><span>BODY FAT</span></div>';
+  const rows = RECORDS.map(record => '<div class="record-row">' +
+    '<span data-label="DATE"><b>2026.</b>' + record[0] + '</span>' +
+    '<span data-label="STEPS">' + record[1] + '</span>' +
+    '<span data-label="ACTIVE KCAL">' + record[2] + '</span>' +
+    '<span data-label="WEIGHT"><strong>' + record[3] + '</strong> kg</span>' +
+    '<span data-label="BODY FAT">' + record[4] + ' %</span>' +
+    '</div>').join('');
+  container.innerHTML = header + rows;
 }
-function clamp(value, min, max) { return Math.max(min, Math.min(max, Number(value) || 0)); }
-function round1(value) { return Math.round(Number(value) * 10) / 10; }
-function round2(value) { return Math.round(Number(value) * 100) / 100; }
-function round3(value) { return Math.round(Number(value) * 1000) / 1000; }
-function escapeHtml(value) { return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;'); }
+
+renderRecords();
+setupReveals();
+setupCounters();
+setupWeightChart();

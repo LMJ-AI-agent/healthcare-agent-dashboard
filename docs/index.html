@@ -3,190 +3,135 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Diet Coach Dashboard</title>
+  <meta name="theme-color" content="#101115">
+  <title>62 PROJECT | 目標62kgへの自己変革ダッシュボード</title>
+  <meta name="description" content="次のゲートは76kg。毎朝の行動と身体の変化を可視化する62プロジェクト。">
+  <meta property="og:title" content="62 PROJECT — 今日の一歩が、62をつくる。">
+  <meta property="og:description" content="NEXT GATE 76kg。動ける自分を、毎朝つくる。">
+  <meta property="og:image" content="https://lmj-ai-agent.github.io/healthcare-agent-dashboard/assets/og.png">
+  <meta property="og:type" content="website">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <main class="shell">
-    <header class="app-header">
-      <a class="brand" href="#top" aria-label="ダイエットダッシュボードの先頭へ">
-        <span class="brand-mark">76</span>
-        <span><strong>BODY PROJECT</strong><small>Diet coach dashboard</small></span>
+  <main id="top">
+    <header class="topbar">
+      <a href="#top" class="brand" aria-label="62プロジェクトの先頭へ">
+        <span class="brand-mark">62</span>
+        <span class="brand-copy"><strong>PROJECT</strong><small>PERSONAL TRANSFORMATION</small></span>
       </a>
-      <nav class="section-nav" aria-label="ページ内ナビゲーション">
-        <a href="#today">今日</a>
-        <a href="#roadmap">ロードマップ</a>
-        <a href="#trend">推移</a>
-        <a href="#records">記録</a>
+      <nav aria-label="ページ内ナビゲーション">
+        <a href="#today">TODAY</a><a href="#roadmap">ROADMAP</a><a href="#trend">PROGRESS</a>
       </nav>
-      <span class="live-badge"><i></i> HEALTH DATA LIVE</span>
+      <a class="next-pill" href="#roadmap"><span>NEXT</span>76.0 KG <i class="arrow-icon">↗</i></a>
     </header>
 
-    <section class="hero" id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-orbit orbit-one" aria-hidden="true"></div>
+      <div class="hero-orbit orbit-two" aria-hidden="true"></div>
       <div class="hero-copy">
-        <p class="hero-kicker">PERSONAL TRANSFORMATION / 2026</p>
-        <h1 id="campaignTitle">目指せ76.0kg 自己規律改善プロジェクト</h1>
-        <div class="goal-lockup">NEXT GOAL <strong id="heroGoalBadge">76.0 KG</strong></div>
-        <p class="lead" id="heroLead"></p>
+        <p class="eyebrow hero-eyebrow"><span class="live-dot"></span>SELF DISCIPLINE · 2026</p>
+        <h1 id="hero-title"><span>62</span><em>PROJECT</em></h1>
+        <p class="hero-lead">ゴールは、ただ痩せることじゃない。<br>動ける自分を、毎朝つくる。</p>
         <div class="hero-actions">
-          <span class="streak">2026.10.31までに76kg</span>
-          <span class="streak alt">毎朝2km走る習慣をつくる</span>
+          <a href="#today" class="button button-primary">今日のミッション <i class="arrow-icon">↗</i></a>
+          <a href="#roadmap" class="button button-ghost">全体ロードマップ</a>
+        </div>
+        <div class="hero-signal" aria-label="62kgまでの道のり">
+          <span>START <strong>81.7</strong></span><i><b></b></i><span>FINAL <strong>62.0</strong></span>
         </div>
       </div>
-      <div class="hero-portrait">
-        <img src="./assets/image-2.jpg" alt="自己規律改善プロジェクトのメインビジュアル">
-        <span class="photo-scan" aria-hidden="true"></span>
-        <div class="hero-scoreboard">
-          <p class="scoreboard-label">PROJECT STATUS</p>
-          <div id="goalOverview"></div>
+      <div class="hero-visual">
+        <div class="photo-frame">
+          <img src="./assets/image-2.jpg" alt="笑顔で立つ62プロジェクトの挑戦者">
+          <span class="photo-stamp">KEEP<br>MOVING</span>
         </div>
-      </div>
-    </section>
-
-    <section class="hero-metrics" id="heroMetrics" aria-label="本日の主要指標"></section>
-
-    <section class="panel roadmap-panel" id="roadmap">
-      <div class="roadmap-intro">
-        <div>
-          <p class="eyebrow">Discipline Roadmap</p>
-          <h2>3年後までの自己規律ロードマップ</h2>
-        </div>
-        <p>2026年7月22日、81.7kgから開始。体重だけでなく、毎朝走ることを当たり前にする。</p>
-      </div>
-      <div class="roadmap-start">
-        <span>START</span>
-        <strong>2026.07.22</strong>
-        <b>81.7kg</b>
-      </div>
-      <div class="roadmap-track">
-        <article class="roadmap-step current">
-          <span class="roadmap-index">01</span>
-          <small>3か月後</small>
-          <time datetime="2026-10-31">2026.10.31</time>
-          <strong>76kg</strong>
-          <b>毎朝 2km</b>
-          <p>自己規律が改善され、毎朝走る生活を定着させる。</p>
+        <article class="next-gate-card">
+          <div class="gate-top"><span>NEXT GATE</span><small>2026.10.31</small></div>
+          <div class="gate-weight"><strong>76.0</strong><em>KG</em></div>
+          <div class="gate-progress"><i></i></div>
+          <div class="gate-bottom"><span>現在 81.7kg</span><span>あと 5.7kg</span></div>
         </article>
-        <article class="roadmap-step">
-          <span class="roadmap-index">02</span>
-          <small>半年後</small>
-          <time datetime="2027-01-22">2027.01.22</time>
-          <strong>70kg</strong>
-          <b>毎朝 4km</b>
-          <p>さらに自己規律を高め、朝4kmを継続できる状態にする。</p>
-        </article>
-        <article class="roadmap-step">
-          <span class="roadmap-index">03</span>
-          <small>1年後</small>
-          <time datetime="2027-07-22">2027.07.22</time>
-          <strong>65kg</strong>
-          <b>毎朝 5km</b>
-          <p>毎朝5kmを生活の基準にし、65kgまで体を整える。</p>
-        </article>
-        <article class="roadmap-step">
-          <span class="roadmap-index">04</span>
-          <small>2年後</small>
-          <time datetime="2028-07-22">2028.07.22</time>
-          <strong>62kg</strong>
-          <b>毎朝 5km</b>
-          <p>高い自己規律を確立し、62kgの体を完成させる。</p>
-        </article>
-        <article class="roadmap-step final">
-          <span class="roadmap-index">05</span>
-          <small>3年後</small>
-          <time datetime="2029-07-22">2029.07.22</time>
-          <strong>62kg維持</strong>
-          <b>毎朝 5km</b>
-          <p>高い自己規律を保ち、62kgと朝5kmを維持する。</p>
-        </article>
+        <div class="float-chip float-chip-one"><span>AM RUN</span><strong>2KM</strong></div>
+        <div class="float-chip float-chip-two"><span>STREAK</span><strong>DAY 01</strong></div>
       </div>
     </section>
 
-    <section class="today-layout" id="today">
-      <section class="panel command-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Daily Briefing</p>
-            <h2>今日の指示</h2>
-          </div>
-          <span class="pill" id="topPriority"></span>
-        </div>
-        <div id="coachActions"></div>
-      </section>
-      <section class="panel radar-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Condition Pentagon</p>
-            <h2>コンディション</h2>
-          </div>
-        </div>
-        <div id="radar"></div>
-      </section>
+    <div class="motion-strip" aria-label="プロジェクト目標"><div>
+      <span>62KG FINAL FORM</span><b>✦</b><span>NEXT GATE 76KG</span><b>✦</b><span>RUN EVERY MORNING</span><b>✦</b>
+      <span>62KG FINAL FORM</span><b>✦</b><span>NEXT GATE 76KG</span><b>✦</b><span>RUN EVERY MORNING</span><b>✦</b>
+    </div></div>
+
+    <section class="metrics-wrap" aria-label="現在の主要指標" data-reveal>
+      <article class="metric metric-dark"><span>NOW / WEIGHT</span><strong><span class="count-up" data-count="81.7" data-decimals="1" data-suffix="kg">0.0kg</span></strong><small>76kgまであと5.7kg</small></article>
+      <article class="metric"><span>BODY FAT</span><strong><span class="count-up" data-count="27.7" data-decimals="1" data-suffix="%">0.0%</span></strong><small>7日平均 27.6%</small></article>
+      <article class="metric"><span>WEEKLY PACE</span><strong><span class="count-up" data-count="0.4" data-decimals="2" data-suffix="kg">0.00kg</span></strong><small>必要な減量ペース</small></article>
+      <article class="metric metric-lime"><span>DAYS TO GATE</span><strong><span class="count-up" data-count="100" data-decimals="0" data-suffix="日">0日</span></strong><small>一歩ずつ、前へ</small></article>
     </section>
 
-    <section class="kpis" id="kpis"></section>
-
-    <section class="progress-layout" id="trend">
-      <section class="panel chart-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Performance Trend</p>
-            <h2>数字で見る変化</h2>
-          </div>
-          <div class="trend-controls">
-            <span class="range-pill">直近90日</span>
-            <div class="tabs" id="metricTabs"></div>
-          </div>
-        </div>
-        <div class="forecast-strip" id="weightForecast"></div>
-        <div class="chart" id="chart"></div>
-      </section>
-      <section class="panel campaign-progress-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Race to Goal</p>
-            <h2>76kgまでの現在地</h2>
-          </div>
-          <span class="pill" id="campaignPeriod"></span>
-        </div>
-        <div id="campaignStats"></div>
-      </section>
-    </section>
-
-    <section class="panel goal-analysis-panel">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Goal Analysis</p>
-          <h2>10月31日までの目標ペース</h2>
-        </div>
+    <section id="today" class="section today-section">
+      <div class="section-heading" data-reveal>
+        <div><p class="eyebrow">DAILY IGNITION</p><h2>今日を、<br><span>動かせ。</span></h2></div>
+        <p>完璧より、行動。今日の3つをクリアして、<br>62kgの自分に近づく。</p>
       </div>
-      <div id="weightGoal"></div>
-    </section>
-
-    <section class="panel records-panel" id="records">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Health Records</p>
-          <h2>日別データ</h2>
-        </div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>日付</th>
-              <th>睡眠</th>
-              <th>歩数</th>
-              <th>活動kcal</th>
-              <th>体重</th>
-              <th>体脂肪</th>
-              <th>BMI</th>
-            </tr>
-          </thead>
-          <tbody id="dailyRows"></tbody>
-        </table>
+      <div class="mission-grid">
+        <article class="mission-card mission-primary" data-reveal><div class="mission-index">01</div><p>FIRST MOVE</p><h3>朝、外へ出る</h3><strong>2<span>KM</span></strong><small>速さは関係ない。玄関を出たら勝ち。</small><div class="mission-arrow">→</div></article>
+        <article class="mission-card" data-reveal><div class="mission-index">02</div><p>DATA CHECK</p><h3>朝の体重を記録</h3><strong>81.7<span>KG</span></strong><small>結果ではなく、変化を見るための記録。</small><div class="mission-arrow">→</div></article>
+        <article class="mission-card mission-photo" data-reveal><div class="mission-index">03</div><p>RECOVER</p><h3>今夜は早く眠る</h3><strong>7<span>HOUR</span></strong><small>明日のスタートを、今夜からつくる。</small><div class="mission-arrow">→</div></article>
       </div>
     </section>
+
+    <section id="roadmap" class="section roadmap-section">
+      <div class="section-heading light" data-reveal>
+        <div><p class="eyebrow">THE LONG RUN</p><h2>62kgまでの<br><span>突破ルート。</span></h2></div>
+        <p>76kgはゴールではなく、最初のゲート。<br>5つの通過点を、走り抜ける。</p>
+      </div>
+      <div class="roadmap-track" data-reveal>
+        <div class="track-line"><i></i></div>
+        <article class="milestone is-active"><div class="milestone-dot"><span>01</span></div><p>NEXT GATE</p><time>2026.10.31</time><strong>76kg</strong><em>毎朝 2km</em></article>
+        <article class="milestone"><div class="milestone-dot"><span>02</span></div><p>6 MONTHS</p><time>2027.01.22</time><strong>70kg</strong><em>毎朝 4km</em></article>
+        <article class="milestone"><div class="milestone-dot"><span>03</span></div><p>1 YEAR</p><time>2027.07.22</time><strong>65kg</strong><em>毎朝 5km</em></article>
+        <article class="milestone"><div class="milestone-dot"><span>04</span></div><p>FINAL FORM</p><time>2028.07.22</time><strong>62kg</strong><em>毎朝 5km</em></article>
+        <article class="milestone"><div class="milestone-dot"><span>05</span></div><p>KEEP GOING</p><time>2029.07.22</time><strong>62kg維持</strong><em>毎朝 5km</em></article>
+      </div>
+      <div class="gate-callout" data-reveal>
+        <span class="gate-callout-label">FIRST CHECKPOINT</span><div><strong>76</strong><em>KG</em></div>
+        <p>100日で -5.7kg。<br>毎朝2kmを「特別」から「普通」へ。</p>
+        <div class="gate-callout-ring"><i>29%</i><span>OF THE<br>JOURNEY</span></div>
+      </div>
+    </section>
+
+    <section id="trend" class="section progress-section">
+      <div class="section-heading" data-reveal>
+        <div><p class="eyebrow">PROGRESS LAB</p><h2>数字は、<br><span>動き出す。</span></h2></div>
+        <p>グラフは実寸座標で正確に描画。<br>76kgは表示レンジ外として分離しています。</p>
+      </div>
+      <div class="progress-grid">
+        <article class="chart-card" data-reveal>
+          <div class="card-heading"><div><small>WEIGHT TREND / 42 DAYS</small><h3>体重の推移</h3></div><span class="status-chip"><i></i>LIVE</span></div>
+          <div class="chart-summary"><strong><span class="count-up" data-count="81.7" data-decimals="1" data-suffix="kg">0.0kg</span></strong><span>LAST UPDATE<br><b>2026.07.22</b></span></div>
+          <div class="trend-chart" role="img" aria-label="6月から7月までの体重推移。最新は81.7kg。">
+            <canvas id="weightTrendCanvas" class="chart-canvas"></canvas>
+            <span class="chart-y chart-y-top">83.0</span><span class="chart-y chart-y-bottom">79.8kg</span>
+            <div class="chart-x"><span>JUN 11</span><span>JUN 29</span><span>JUL 22</span></div>
+            <div class="chart-offscale"><span>NEXT GATE / 表示レンジ外</span><strong>76.0kg ↓</strong></div>
+          </div>
+        </article>
+        <aside class="score-stack">
+          <article class="score-card score-orange" data-reveal><span>NEXT GATE GAP</span><strong><span class="count-up" data-count="5.7" data-decimals="1" data-suffix="kg">0.0kg</span></strong><small>次のゲートまで</small></article>
+          <article class="score-card score-indigo" data-reveal><span>MORNING HABIT</span><strong><span class="count-up" data-count="2" data-decimals="0" data-suffix="km">0km</span></strong><small>毎朝の新しい基準</small></article>
+          <article class="score-card score-dark" data-reveal><span>FINAL TARGET</span><strong><span class="count-up" data-count="62" data-decimals="0" data-suffix="kg">0kg</span></strong><small>2028.07.22</small></article>
+        </aside>
+      </div>
+    </section>
+
+    <section id="records" class="section records-section">
+      <div class="records-head" data-reveal><div><p class="eyebrow">RECENT LOG</p><h2>積み上げた記録。</h2></div><span>JUN — JUL 2026</span></div>
+      <div class="records-table" id="recordsTable" data-reveal></div>
+    </section>
+
+    <section class="closing-cta"><div class="closing-orbit" aria-hidden="true"></div><p class="eyebrow">NO ZERO DAYS</p><h2>今日の一歩が、<br><span>62</span>をつくる。</h2><a href="#top" class="button button-primary">もう一度、今日から <i class="arrow-icon">↗</i></a></section>
+    <footer><a href="#top" class="footer-brand">62 PROJECT</a><p>PERSONAL TRANSFORMATION DASHBOARD · 2026</p><a href="#top">BACK TO TOP ↑</a></footer>
+    <nav class="mobile-dock" aria-label="スマートフォン用ナビゲーション"><a href="#today"><span>●</span>TODAY</a><a href="#roadmap"><span>↗</span>ROADMAP</a><a href="#trend"><span>⌁</span>PROGRESS</a></nav>
   </main>
   <script src="./app.js"></script>
 </body>
