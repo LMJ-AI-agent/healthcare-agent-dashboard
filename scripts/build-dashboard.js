@@ -178,6 +178,36 @@ function dashboardHtml() {
       <div class="hero-metrics" id="heroMetrics"></div>
     </section>
 
+    <section class="goal-command-panel">
+      <div class="goal-hero-card panel">
+        <div>
+          <p class="eyebrow">Goal Control</p>
+          <h2>目標管理</h2>
+        </div>
+        <div id="goalOverview"></div>
+      </div>
+      <section class="panel goal-settings-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Target Settings</p>
+            <h2>目標値を編集</h2>
+          </div>
+          <span class="pill" id="goalSaveStatus">未保存の変更なし</span>
+        </div>
+        <div class="goal-form">
+          <label>目標体重<input id="goalWeightInput" type="number" step="0.1" min="35" max="160"></label>
+          <label>期限<input id="goalDeadlineInput" type="date"></label>
+          <label>歩数目標<input id="goalStepsInput" type="number" step="500" min="1000" max="30000"></label>
+          <label>睡眠目標<input id="goalSleepInput" type="number" step="0.25" min="3" max="10"></label>
+          <label>体脂肪率目標<input id="goalBodyFatInput" type="number" step="0.1" min="5" max="45"></label>
+        </div>
+        <div class="goal-buttons">
+          <button class="primary-button" id="saveGoals" type="button">保存して反映</button>
+          <button class="ghost-button" id="resetGoals" type="button">初期値に戻す</button>
+        </div>
+      </section>
+    </section>
+
     <section class="panel victory-panel">
       <div>
         <p class="eyebrow">Today's Progress</p>
@@ -331,19 +361,21 @@ function dashboardHtml() {
 
 function dashboardCss() {
   return `:root {
-  color-scheme: light;
-  --bg: #f3f5f1;
-  --panel: rgba(255, 255, 255, .92);
-  --ink: #15201c;
-  --muted: #66736d;
-  --line: #dfe6df;
-  --green: #15956b;
-  --lime: #b7e35f;
-  --teal: #1bb3a6;
-  --blue: #3567e8;
-  --orange: #f29f3d;
-  --red: #df4b4b;
-  --shadow: 0 18px 50px rgba(24, 41, 34, .12);
+  color-scheme: dark;
+  --bg: #101114;
+  --panel: rgba(24, 27, 32, .88);
+  --panel-strong: #f6f1e8;
+  --ink: #f7f2e8;
+  --ink-dark: #181b20;
+  --muted: #9aa39c;
+  --line: #30363a;
+  --green: #3ee084;
+  --lime: #d9ff5f;
+  --teal: #38d2c0;
+  --blue: #7aa7ff;
+  --orange: #ffb454;
+  --red: #ff6f6f;
+  --shadow: 0 22px 70px rgba(0, 0, 0, .34);
 }
 * { box-sizing: border-box; }
 body {
@@ -351,30 +383,34 @@ body {
   min-height: 100vh;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background:
-    radial-gradient(circle at 10% 8%, rgba(183, 227, 95, .24), transparent 28%),
-    radial-gradient(circle at 90% 0%, rgba(27, 179, 166, .18), transparent 26%),
-    linear-gradient(180deg, #fbfcf8 0%, var(--bg) 54%, #eef3ee 100%);
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(135deg, #111317 0%, #171a1f 45%, #0d0f12 100%);
+  background-size: 44px 44px, 44px 44px, auto;
   color: var(--ink);
 }
-.shell { width: min(1240px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 40px; }
+.shell { width: min(1380px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 40px; }
 .hero {
   min-height: 300px;
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(360px, .9fr);
   align-items: end;
   gap: 22px;
-  padding: 32px;
+  padding: 34px;
   border-radius: 8px;
-  background: linear-gradient(135deg, rgba(18, 38, 31, .96), rgba(25, 102, 76, .92));
-  color: white;
+  border: 1px solid rgba(217,255,95,.24);
+  background:
+    linear-gradient(120deg, rgba(23, 26, 31, .98), rgba(31, 42, 36, .96)),
+    linear-gradient(90deg, rgba(217,255,95,.18), transparent);
+  color: var(--ink);
   box-shadow: var(--shadow);
 }
 .eyebrow { margin: 0 0 8px; color: var(--muted); font-size: 12px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
-.hero .eyebrow { color: rgba(255,255,255,.7); }
+.hero .eyebrow { color: rgba(217,255,95,.82); }
 h1, h2, h3 { margin: 0; letter-spacing: 0; }
 h1 { max-width: 760px; font-size: clamp(36px, 5vw, 66px); line-height: 1.03; }
 h2 { font-size: 20px; }
-.lead { max-width: 720px; margin: 18px 0 0; color: rgba(255,255,255,.78); font-size: 16px; line-height: 1.7; }
+.lead { max-width: 720px; margin: 18px 0 0; color: rgba(247,242,232,.72); font-size: 16px; line-height: 1.7; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
 .streak {
   display: inline-flex;
@@ -382,23 +418,23 @@ h2 { font-size: 20px; }
   min-height: 38px;
   padding: 8px 13px;
   border-radius: 999px;
-  background: rgba(183, 227, 95, .18);
-  border: 1px solid rgba(255,255,255,.18);
-  color: #faffec;
+  background: rgba(217, 255, 95, .16);
+  border: 1px solid rgba(217,255,95,.28);
+  color: #f7ffd1;
   font-weight: 850;
 }
-.streak.alt { background: rgba(255,255,255,.1); color: rgba(255,255,255,.82); }
+.streak.alt { background: rgba(255,255,255,.08); color: rgba(247,242,232,.82); }
 .hero-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.hero-card { padding: 14px; min-height: 96px; border: 1px solid rgba(255,255,255,.16); border-radius: 8px; background: rgba(255,255,255,.1); }
-.hero-card span { color: rgba(255,255,255,.66); font-size: 12px; }
+.hero-card { padding: 15px; min-height: 104px; border: 1px solid rgba(247,242,232,.14); border-radius: 8px; background: rgba(255,255,255,.07); }
+.hero-card span { color: rgba(247,242,232,.66); font-size: 12px; }
 .hero-card strong { display: block; margin-top: 8px; font-size: 26px; }
-.hero-card small { display: block; margin-top: 4px; color: rgba(255,255,255,.68); }
+.hero-card small { display: block; margin-top: 4px; color: rgba(247,242,232,.68); }
 .panel, .kpi {
-  border: 1px solid rgba(223,230,223,.9);
+  border: 1px solid rgba(255,255,255,.09);
   border-radius: 8px;
   background: var(--panel);
-  box-shadow: 0 10px 34px rgba(24, 41, 34, .07);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 14px 45px rgba(0, 0, 0, .21);
+  backdrop-filter: blur(16px);
 }
 .panel { padding: 18px; margin-top: 16px; }
 .victory-panel {
@@ -419,17 +455,41 @@ h2 { font-size: 20px; }
   transition: .25s ease;
   padding: 10px 13px;
   border-radius: 999px;
-  color: #064832;
-  background: #ddf8e9;
+  color: #102017;
+  background: var(--lime);
   font-weight: 850;
 }
 .toast.show { opacity: 1; transform: translateY(0); }
+.goal-command-panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(440px, .75fr); gap: 16px; }
+.goal-hero-card { display: grid; grid-template-columns: minmax(0, .28fr) minmax(0, 1fr); gap: 18px; align-items: center; }
+.goal-overview-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; align-items: stretch; }
+.goal-stat { min-height: 118px; padding: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.055); }
+.goal-stat.primary { color: var(--ink-dark); background: linear-gradient(135deg, var(--lime), #f8ffd2); border: 0; }
+.goal-stat span { display: block; color: inherit; opacity: .68; font-size: 12px; font-weight: 850; }
+.goal-stat strong { display: block; margin-top: 9px; font-size: 34px; line-height: 1; }
+.goal-stat small { display: block; margin-top: 9px; color: inherit; opacity: .72; line-height: 1.45; }
+.goal-progress { grid-column: 1 / -1; height: 12px; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,.11); }
+.goal-progress span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--lime), var(--teal), var(--blue)); }
+.goal-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.goal-form label { display: grid; gap: 7px; color: var(--muted); font-size: 12px; font-weight: 850; }
+.goal-form input {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 8px;
+  padding: 9px 11px;
+  background: rgba(255,255,255,.06);
+  color: var(--ink);
+  font: inherit;
+}
+.goal-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.primary-button { border: 0; border-radius: 8px; padding: 10px 14px; background: var(--lime); color: var(--ink-dark); font-weight: 950; cursor: pointer; }
 .command-grid, .workout-grid, .lower-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(340px, .8fr); gap: 16px; }
 .section-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
-.pill { display: inline-flex; align-items: center; min-height: 30px; padding: 6px 11px; border-radius: 999px; background: #e6f8ef; color: #086343; font-size: 13px; font-weight: 850; white-space: nowrap; }
+.pill { display: inline-flex; align-items: center; min-height: 30px; padding: 6px 11px; border-radius: 999px; background: rgba(217,255,95,.14); color: var(--lime); border: 1px solid rgba(217,255,95,.2); font-size: 13px; font-weight: 850; white-space: nowrap; }
 .task-list, .plan-stack, .status-list, .score-list { display: grid; gap: 10px; }
 .summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.summary-card { min-height: 104px; padding: 14px; border: 1px solid #e4ece5; border-radius: 8px; background: #fff; }
+.summary-card { min-height: 112px; padding: 15px; border: 1px solid rgba(255,255,255,.08); border-radius: 8px; background: rgba(255,255,255,.055); }
 .summary-card span { display: block; color: var(--muted); font-size: 12px; font-weight: 800; }
 .summary-card strong { display: block; margin-top: 8px; font-size: 30px; line-height: 1; }
 .summary-card small { display: block; margin-top: 8px; color: var(--muted); line-height: 1.45; }
@@ -437,59 +497,59 @@ h2 { font-size: 20px; }
 .task-card, .plan-card {
   position: relative;
   padding: 14px;
-  border: 1px solid #e4ece5;
+  border: 1px solid rgba(255,255,255,.08);
   border-radius: 8px;
-  background: #fff;
+  background: rgba(255,255,255,.055);
   cursor: pointer;
 }
-.task-card.done, .plan-card.done { border-color: rgba(21,149,107,.35); background: #f0fbf5; }
+.task-card.done, .plan-card.done { border-color: rgba(217,255,95,.36); background: rgba(217,255,95,.11); }
 .task-row, .plan-card .top { display: grid; grid-template-columns: 42px 1fr auto; gap: 12px; align-items: center; }
 .check-button {
   width: 42px;
   height: 42px;
   border-radius: 999px;
-  border: 1px solid #d7e2d9;
-  background: #f7faf6;
-  color: #819089;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  color: var(--muted);
   cursor: pointer;
   font-size: 19px;
   font-weight: 950;
 }
-.done .check-button { color: white; background: var(--green); border-color: var(--green); }
+.done .check-button { color: var(--ink-dark); background: var(--lime); border-color: var(--lime); }
 .inline-memo { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
 .task-card strong, .plan-card h3 { display: block; font-size: 15px; }
 .task-card p { margin: 4px 0 0; color: var(--muted); line-height: 1.55; }
-.tag { padding: 5px 8px; border-radius: 999px; background: #f0f5ef; color: #4f5f56; font-size: 12px; font-weight: 850; }
+.tag { padding: 5px 8px; border-radius: 999px; background: rgba(255,255,255,.08); color: var(--muted); font-size: 12px; font-weight: 850; }
 .plan-card ul { margin: 12px 0 0; padding-left: 18px; color: var(--muted); line-height: 1.55; }
-.memo-box { width: 100%; resize: vertical; border: 1px solid var(--line); border-radius: 8px; padding: 13px; font: inherit; line-height: 1.6; color: var(--ink); background: #fff; }
+.memo-box { width: 100%; resize: vertical; border: 1px solid var(--line); border-radius: 8px; padding: 13px; font: inherit; line-height: 1.6; color: var(--ink); background: rgba(255,255,255,.055); }
 .memo-foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 10px; color: var(--muted); font-size: 13px; }
-.ghost-button { border: 1px solid var(--line); background: #fff; color: var(--muted); border-radius: 999px; padding: 8px 12px; cursor: pointer; font-weight: 800; }
+.ghost-button { border: 1px solid var(--line); background: rgba(255,255,255,.055); color: var(--muted); border-radius: 999px; padding: 8px 12px; cursor: pointer; font-weight: 800; }
 .theme-input { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; margin-bottom: 12px; }
-.theme-input input { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 12px 13px; font: inherit; background: #fff; color: var(--ink); }
-.theme-input button { border: 0; border-radius: 8px; padding: 0 16px; background: #12261f; color: white; font-weight: 900; cursor: pointer; }
+.theme-input input { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 12px 13px; font: inherit; background: rgba(255,255,255,.055); color: var(--ink); }
+.theme-input button { border: 0; border-radius: 8px; padding: 0 16px; background: var(--lime); color: var(--ink-dark); font-weight: 900; cursor: pointer; }
 .theme-list { display: grid; gap: 10px; }
-.theme-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 13px; border: 1px solid #e4ece5; border-radius: 8px; background: #fff; }
-.theme-card.active { border-color: rgba(21,149,107,.4); background: #f0fbf5; }
+.theme-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 13px; border: 1px solid rgba(255,255,255,.08); border-radius: 8px; background: rgba(255,255,255,.055); }
+.theme-card.active { border-color: rgba(217,255,95,.36); background: rgba(217,255,95,.11); }
 .theme-card strong { display: block; margin-bottom: 4px; font-size: 15px; }
 .theme-card small { color: var(--muted); }
 .theme-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
-.theme-actions button { border: 1px solid var(--line); border-radius: 999px; padding: 7px 10px; background: #fff; color: var(--muted); font-weight: 800; cursor: pointer; }
-.theme-actions .primary { border-color: rgba(21,149,107,.25); background: #e6f8ef; color: #086343; }
+.theme-actions button { border: 1px solid var(--line); border-radius: 999px; padding: 7px 10px; background: rgba(255,255,255,.055); color: var(--muted); font-weight: 800; cursor: pointer; }
+.theme-actions .primary { border-color: rgba(217,255,95,.25); background: rgba(217,255,95,.14); color: var(--lime); }
 .radar-layout { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(170px, .7fr); gap: 12px; align-items: center; }
 .radar-layout svg { width: 100%; max-height: 300px; }
 .score-row { display: grid; grid-template-columns: 76px 1fr 42px; gap: 8px; align-items: center; font-size: 13px; }
-.mini-bar, .progress { overflow: hidden; border-radius: 999px; background: #e8eee8; }
+.mini-bar, .progress { overflow: hidden; border-radius: 999px; background: rgba(255,255,255,.1); }
 .mini-bar { height: 8px; }
 .progress { height: 14px; }
 .mini-bar span, .progress span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--green), var(--lime)); }
 .kpis { display: grid; grid-template-columns: repeat(5, minmax(150px, 1fr)); gap: 12px; margin-top: 16px; }
-.kpi { padding: 15px; }
+.kpi { padding: 16px; min-height: 126px; }
 .kpi .label { color: var(--muted); font-size: 13px; font-weight: 750; }
-.kpi .value { margin-top: 8px; font-size: 28px; font-weight: 950; }
+.kpi .value { margin-top: 8px; font-size: 30px; font-weight: 950; color: var(--ink); }
 .kpi .sub { margin-top: 6px; min-height: 34px; color: var(--muted); font-size: 12px; line-height: 1.45; }
 .tabs { display: flex; flex-wrap: wrap; gap: 6px; }
-.tab { border: 1px solid var(--line); background: #fff; color: var(--muted); border-radius: 999px; padding: 8px 11px; cursor: pointer; font-weight: 750; }
-.tab.active { color: #fff; border-color: #12261f; background: #12261f; }
+.tab { border: 1px solid var(--line); background: rgba(255,255,255,.055); color: var(--muted); border-radius: 999px; padding: 8px 11px; cursor: pointer; font-weight: 750; }
+.tab.active { color: var(--ink-dark); border-color: var(--lime); background: var(--lime); }
 .chart { min-height: 310px; }
 .chart svg { width: 100%; height: 310px; display: block; }
 .status-item { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
@@ -502,24 +562,28 @@ table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th, td { padding: 11px 8px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
 th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
 @media (max-width: 1040px) {
-  .hero, .command-grid, .workout-grid, .lower-grid { grid-template-columns: 1fr; }
+  .hero, .goal-command-panel, .goal-hero-card, .command-grid, .workout-grid, .lower-grid { grid-template-columns: 1fr; }
   .kpis { grid-template-columns: repeat(3, minmax(140px, 1fr)); }
 }
 @media (max-width: 720px) {
   .shell { width: min(100% - 20px, 1240px); padding-top: 10px; }
   .hero { padding: 20px; min-height: 0; }
   h1 { font-size: 36px; }
-  .hero-metrics, .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero-metrics, .goal-overview-grid, .goal-form, .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .summary-grid, .action-detail-grid { grid-template-columns: 1fr; }
   .radar-layout, .victory-panel { grid-template-columns: 1fr; }
   .theme-input, .theme-card { grid-template-columns: 1fr; }
   .theme-actions { justify-content: flex-start; }
   .section-head { flex-direction: column; }
+}
+@media (max-width: 520px) {
+  .hero-metrics, .goal-overview-grid, .goal-form, .kpis { grid-template-columns: 1fr; }
 }`;
 }
 
 function dashboardJs() {
-  return `const GOALS = { weightKg: 79, deadline: '2026-07-31', steps: 8000, sleepHours: 6.5, activeEnergyKcal: 650, bodyFatPercent: 25 };
+  return `const DEFAULT_GOALS = { weightKg: 79, deadline: '2026-07-31', steps: 8000, sleepHours: 6.5, activeEnergyKcal: 650, bodyFatPercent: 25 };
+let GOALS = loadGoalSettings();
 const metrics = {
   weightKg: { label: '体重', color: '#3567e8', format: v => v == null ? '-' : v.toFixed(1) + 'kg' },
   bodyFatPercent: { label: '体脂肪率', color: '#df4b4b', format: v => v == null ? '-' : v.toFixed(1) + '%' },
@@ -534,10 +598,12 @@ let latestRecord = null;
 let todayPlan = [];
 let dayState = null;
 let themeStore = null;
+let dashboardData = null;
 
 fetch('./health-data.json')
   .then(res => res.json())
   .then(data => {
+    dashboardData = data;
     records = data.records || [];
     latestRecord = [...records].reverse().find(r => hasAnyMetric(r)) || records.at(-1);
     dayState = loadDayState(latestRecord?.date || todayIso());
@@ -553,6 +619,7 @@ function render(data) {
     ? '更新: ' + new Date(data.generatedAt).toLocaleString('ja-JP') + ' / ' + data.recordCount + '日分。チェックして進めるほど、今日のログと達成率が育ちます。'
     : '';
   renderHeroMetrics(latestRecord, kgLeft);
+  renderGoalManager(latestRecord);
   renderCompletionSummary();
   renderCoaching();
   renderActionDetails();
@@ -612,6 +679,32 @@ function renderHeroMetrics(record, kgLeft) {
   document.getElementById('heroMetrics').innerHTML = cards.map(([label, value, sub]) =>
     '<div class="hero-card"><span>' + label + '</span><strong>' + value + '</strong><small>' + sub + '</small></div>'
   ).join('');
+}
+
+function renderGoalManager(record) {
+  const m = record?.metrics || {};
+  const weight = m.weightKg;
+  const kgLeft = weight == null ? null : round1(weight - GOALS.weightKg);
+  const daysLeft = daysUntil(GOALS.deadline);
+  const pace = kgLeft == null || daysLeft == null || kgLeft <= 0 ? null : round2(kgLeft / Math.max(1, daysLeft) * 7);
+  const progress = weight == null ? 0 : clamp(((84 - weight) / Math.max(.1, 84 - GOALS.weightKg)) * 100, 0, 100);
+  document.getElementById('goalOverview').innerHTML =
+    '<div class="goal-overview-grid">' +
+    '<div class="goal-stat primary"><span>現在</span><strong>' + metrics.weightKg.format(weight) + '</strong><small>目標 ' + GOALS.weightKg.toFixed(1) + 'kg</small></div>' +
+    '<div class="goal-stat"><span>残り</span><strong>' + (kgLeft == null ? '-' : Math.max(0, kgLeft).toFixed(1) + 'kg') + '</strong><small>' + targetDeadlineText() + '</small></div>' +
+    '<div class="goal-stat"><span>期限</span><strong>' + (daysLeft == null ? '-' : daysLeft + '日') + '</strong><small>' + (pace == null ? '達成後は維持フェーズ' : '週' + pace.toFixed(2) + 'kgペース') + '</small></div>' +
+    '<div class="goal-progress"><span style="width:' + progress + '%"></span></div>' +
+    '</div>';
+  document.getElementById('goalWeightInput').value = GOALS.weightKg;
+  document.getElementById('goalDeadlineInput').value = GOALS.deadline;
+  document.getElementById('goalStepsInput').value = GOALS.steps;
+  document.getElementById('goalSleepInput').value = GOALS.sleepHours;
+  document.getElementById('goalBodyFatInput').value = GOALS.bodyFatPercent;
+  document.querySelectorAll('.goal-form input').forEach(input => {
+    input.oninput = () => { document.getElementById('goalSaveStatus').textContent = '未保存の変更あり'; };
+  });
+  document.getElementById('saveGoals').onclick = saveGoalsFromInputs;
+  document.getElementById('resetGoals').onclick = resetGoals;
 }
 
 function renderCompletionSummary() {
@@ -883,7 +976,7 @@ function renderChart() {
 
 function renderWeightGoal(record) {
   const weight = record?.metrics?.weightKg;
-  const target = record?.goal?.weightTargetKg || GOALS.weightKg;
+  const target = GOALS.weightKg;
   const start = Math.max(weight || target, 84);
   const progress = weight == null ? 0 : Math.max(0, Math.min(100, ((start - weight) / Math.max(.1, start - target)) * 100));
   document.getElementById('weightGoal').innerHTML =
@@ -924,6 +1017,41 @@ function loadThemeStore() {
   }
 }
 function saveThemeStore() { localStorage.setItem('dietCoach:themes', JSON.stringify(themeStore)); }
+function loadGoalSettings() {
+  try {
+    const raw = localStorage.getItem('dietCoach:goals');
+    return raw ? { ...DEFAULT_GOALS, ...JSON.parse(raw) } : { ...DEFAULT_GOALS };
+  } catch {
+    return { ...DEFAULT_GOALS };
+  }
+}
+function saveGoalsFromInputs() {
+  GOALS = {
+    weightKg: numberFromInput('goalWeightInput', DEFAULT_GOALS.weightKg),
+    deadline: document.getElementById('goalDeadlineInput').value || DEFAULT_GOALS.deadline,
+    steps: Math.round(numberFromInput('goalStepsInput', DEFAULT_GOALS.steps)),
+    sleepHours: numberFromInput('goalSleepInput', DEFAULT_GOALS.sleepHours),
+    activeEnergyKcal: DEFAULT_GOALS.activeEnergyKcal,
+    bodyFatPercent: numberFromInput('goalBodyFatInput', DEFAULT_GOALS.bodyFatPercent),
+  };
+  localStorage.setItem('dietCoach:goals', JSON.stringify(GOALS));
+  document.getElementById('goalSaveStatus').textContent = '保存済み';
+  todayPlan = buildTodayPlan(latestRecord);
+  render(dashboardData || dataPlaceholder());
+  showFeedback('目標値を保存して反映しました。');
+}
+function resetGoals() {
+  GOALS = { ...DEFAULT_GOALS };
+  localStorage.removeItem('dietCoach:goals');
+  document.getElementById('goalSaveStatus').textContent = '初期値に戻しました';
+  todayPlan = buildTodayPlan(latestRecord);
+  render(dashboardData || dataPlaceholder());
+  showFeedback('目標値を初期値に戻しました。');
+}
+function numberFromInput(id, fallback) {
+  const value = Number(document.getElementById(id).value);
+  return Number.isFinite(value) ? value : fallback;
+}
 function completedCount() { return Object.values(dayState?.tasks || {}).filter(Boolean).length; }
 function completionRate() { return todayPlan.length ? Math.round((completedCount() / todayPlan.length) * 100) : 0; }
 function nextTaskLabel() {
@@ -931,6 +1059,12 @@ function nextTaskLabel() {
   return next ? next.title : '全部完了';
 }
 function targetDeadlineText() { return formatDateJa(GOALS.deadline) + 'までに' + GOALS.weightKg.toFixed(1) + 'kg'; }
+function daysUntil(isoDate) {
+  const target = new Date(isoDate + 'T00:00:00+09:00');
+  const now = new Date();
+  if (Number.isNaN(target.getTime())) return null;
+  return Math.max(0, Math.ceil((target - now) / 86400000));
+}
 function formatDateJa(isoDate) {
   const date = new Date(isoDate + 'T00:00:00+09:00');
   return Number.isNaN(date.getTime()) ? isoDate : date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric' });
@@ -955,6 +1089,8 @@ function hasAnyMetric(record) { return record && Object.values(record.metrics ||
 function hours(value) { if (value == null || !Number.isFinite(Number(value))) return '-'; const mins = Math.round(Number(value) * 60); return Math.floor(mins / 60) + '時間' + String(mins % 60).padStart(2, '0') + '分'; }
 function todayIso() { return new Date().toISOString().slice(0, 10); }
 function clamp(value, min, max) { return Math.max(min, Math.min(max, Number(value) || 0)); }
+function round1(value) { return Math.round(Number(value) * 10) / 10; }
+function round2(value) { return Math.round(Number(value) * 100) / 100; }
 function escapeHtml(value) { return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;'); }`;
 }
 

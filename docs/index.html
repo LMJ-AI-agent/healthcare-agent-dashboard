@@ -21,6 +21,36 @@
       <div class="hero-metrics" id="heroMetrics"></div>
     </section>
 
+    <section class="goal-command-panel">
+      <div class="goal-hero-card panel">
+        <div>
+          <p class="eyebrow">Goal Control</p>
+          <h2>目標管理</h2>
+        </div>
+        <div id="goalOverview"></div>
+      </div>
+      <section class="panel goal-settings-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Target Settings</p>
+            <h2>目標値を編集</h2>
+          </div>
+          <span class="pill" id="goalSaveStatus">未保存の変更なし</span>
+        </div>
+        <div class="goal-form">
+          <label>目標体重<input id="goalWeightInput" type="number" step="0.1" min="35" max="160"></label>
+          <label>期限<input id="goalDeadlineInput" type="date"></label>
+          <label>歩数目標<input id="goalStepsInput" type="number" step="500" min="1000" max="30000"></label>
+          <label>睡眠目標<input id="goalSleepInput" type="number" step="0.25" min="3" max="10"></label>
+          <label>体脂肪率目標<input id="goalBodyFatInput" type="number" step="0.1" min="5" max="45"></label>
+        </div>
+        <div class="goal-buttons">
+          <button class="primary-button" id="saveGoals" type="button">保存して反映</button>
+          <button class="ghost-button" id="resetGoals" type="button">初期値に戻す</button>
+        </div>
+      </section>
+    </section>
+
     <section class="panel victory-panel">
       <div>
         <p class="eyebrow">Today's Progress</p>

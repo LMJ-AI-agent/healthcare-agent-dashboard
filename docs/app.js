@@ -1,4 +1,5 @@
-const GOALS = { weightKg: 79, deadline: '2026-07-31', steps: 8000, sleepHours: 6.5, activeEnergyKcal: 650, bodyFatPercent: 25 };
+const DEFAULT_GOALS = { weightKg: 79, deadline: '2026-07-31', steps: 8000, sleepHours: 6.5, activeEnergyKcal: 650, bodyFatPercent: 25 };
+let GOALS = loadGoalSettings();
 const metrics = {
   weightKg: { label: '体重', color: '#3567e8', format: v => v == null ? '-' : v.toFixed(1) + 'kg' },
   bodyFatPercent: { label: '体脂肪率', color: '#df4b4b', format: v => v == null ? '-' : v.toFixed(1) + '%' },
@@ -13,10 +14,12 @@ let latestRecord = null;
 let todayPlan = [];
 let dayState = null;
 let themeStore = null;
+let dashboardData = null;
 
 fetch('./health-data.json')
   .then(res => res.json())
   .then(data => {
+    dashboardData = data;
     records = data.records || [];
     latestRecord = [...records].reverse().find(r => hasAnyMetric(r)) || records.at(-1);
     dayState = loadDayState(latestRecord?.date || todayIso());
@@ -32,6 +35,7 @@ function render(data) {
     ? '更新: ' + new Date(data.generatedAt).toLocaleString('ja-JP') + ' / ' + data.recordCount + '日分。チェックして進めるほど、今日のログと達成率が育ちます。'
     : '';
   renderHeroMetrics(latestRecord, kgLeft);
+  renderGoalManager(latestRecord);
   renderCompletionSummary();
   renderCoaching();
   renderActionDetails();
@@ -91,6 +95,32 @@ function renderHeroMetrics(record, kgLeft) {
   document.getElementById('heroMetrics').innerHTML = cards.map(([label, value, sub]) =>
     '<div class="hero-card"><span>' + label + '</span><strong>' + value + '</strong><small>' + sub + '</small></div>'
   ).join('');
+}
+
+function renderGoalManager(record) {
+  const m = record?.metrics || {};
+  const weight = m.weightKg;
+  const kgLeft = weight == null ? null : round1(weight - GOALS.weightKg);
+  const daysLeft = daysUntil(GOALS.deadline);
+  const pace = kgLeft == null || daysLeft == null || kgLeft <= 0 ? null : round2(kgLeft / Math.max(1, daysLeft) * 7);
+  const progress = weight == null ? 0 : clamp(((84 - weight) / Math.max(.1, 84 - GOALS.weightKg)) * 100, 0, 100);
+  document.getElementById('goalOverview').innerHTML =
+    '<div class="goal-overview-grid">' +
+    '<div class="goal-stat primary"><span>現在</span><strong>' + metrics.weightKg.format(weight) + '</strong><small>目標 ' + GOALS.weightKg.toFixed(1) + 'kg</small></div>' +
+    '<div class="goal-stat"><span>残り</span><strong>' + (kgLeft == null ? '-' : Math.max(0, kgLeft).toFixed(1) + 'kg') + '</strong><small>' + targetDeadlineText() + '</small></div>' +
+    '<div class="goal-stat"><span>期限</span><strong>' + (daysLeft == null ? '-' : daysLeft + '日') + '</strong><small>' + (pace == null ? '達成後は維持フェーズ' : '週' + pace.toFixed(2) + 'kgペース') + '</small></div>' +
+    '<div class="goal-progress"><span style="width:' + progress + '%"></span></div>' +
+    '</div>';
+  document.getElementById('goalWeightInput').value = GOALS.weightKg;
+  document.getElementById('goalDeadlineInput').value = GOALS.deadline;
+  document.getElementById('goalStepsInput').value = GOALS.steps;
+  document.getElementById('goalSleepInput').value = GOALS.sleepHours;
+  document.getElementById('goalBodyFatInput').value = GOALS.bodyFatPercent;
+  document.querySelectorAll('.goal-form input').forEach(input => {
+    input.oninput = () => { document.getElementById('goalSaveStatus').textContent = '未保存の変更あり'; };
+  });
+  document.getElementById('saveGoals').onclick = saveGoalsFromInputs;
+  document.getElementById('resetGoals').onclick = resetGoals;
 }
 
 function renderCompletionSummary() {
@@ -362,7 +392,7 @@ function renderChart() {
 
 function renderWeightGoal(record) {
   const weight = record?.metrics?.weightKg;
-  const target = record?.goal?.weightTargetKg || GOALS.weightKg;
+  const target = GOALS.weightKg;
   const start = Math.max(weight || target, 84);
   const progress = weight == null ? 0 : Math.max(0, Math.min(100, ((start - weight) / Math.max(.1, start - target)) * 100));
   document.getElementById('weightGoal').innerHTML =
@@ -403,6 +433,41 @@ function loadThemeStore() {
   }
 }
 function saveThemeStore() { localStorage.setItem('dietCoach:themes', JSON.stringify(themeStore)); }
+function loadGoalSettings() {
+  try {
+    const raw = localStorage.getItem('dietCoach:goals');
+    return raw ? { ...DEFAULT_GOALS, ...JSON.parse(raw) } : { ...DEFAULT_GOALS };
+  } catch {
+    return { ...DEFAULT_GOALS };
+  }
+}
+function saveGoalsFromInputs() {
+  GOALS = {
+    weightKg: numberFromInput('goalWeightInput', DEFAULT_GOALS.weightKg),
+    deadline: document.getElementById('goalDeadlineInput').value || DEFAULT_GOALS.deadline,
+    steps: Math.round(numberFromInput('goalStepsInput', DEFAULT_GOALS.steps)),
+    sleepHours: numberFromInput('goalSleepInput', DEFAULT_GOALS.sleepHours),
+    activeEnergyKcal: DEFAULT_GOALS.activeEnergyKcal,
+    bodyFatPercent: numberFromInput('goalBodyFatInput', DEFAULT_GOALS.bodyFatPercent),
+  };
+  localStorage.setItem('dietCoach:goals', JSON.stringify(GOALS));
+  document.getElementById('goalSaveStatus').textContent = '保存済み';
+  todayPlan = buildTodayPlan(latestRecord);
+  render(dashboardData || dataPlaceholder());
+  showFeedback('目標値を保存して反映しました。');
+}
+function resetGoals() {
+  GOALS = { ...DEFAULT_GOALS };
+  localStorage.removeItem('dietCoach:goals');
+  document.getElementById('goalSaveStatus').textContent = '初期値に戻しました';
+  todayPlan = buildTodayPlan(latestRecord);
+  render(dashboardData || dataPlaceholder());
+  showFeedback('目標値を初期値に戻しました。');
+}
+function numberFromInput(id, fallback) {
+  const value = Number(document.getElementById(id).value);
+  return Number.isFinite(value) ? value : fallback;
+}
 function completedCount() { return Object.values(dayState?.tasks || {}).filter(Boolean).length; }
 function completionRate() { return todayPlan.length ? Math.round((completedCount() / todayPlan.length) * 100) : 0; }
 function nextTaskLabel() {
@@ -410,6 +475,12 @@ function nextTaskLabel() {
   return next ? next.title : '全部完了';
 }
 function targetDeadlineText() { return formatDateJa(GOALS.deadline) + 'までに' + GOALS.weightKg.toFixed(1) + 'kg'; }
+function daysUntil(isoDate) {
+  const target = new Date(isoDate + 'T00:00:00+09:00');
+  const now = new Date();
+  if (Number.isNaN(target.getTime())) return null;
+  return Math.max(0, Math.ceil((target - now) / 86400000));
+}
 function formatDateJa(isoDate) {
   const date = new Date(isoDate + 'T00:00:00+09:00');
   return Number.isNaN(date.getTime()) ? isoDate : date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric' });
@@ -434,4 +505,6 @@ function hasAnyMetric(record) { return record && Object.values(record.metrics ||
 function hours(value) { if (value == null || !Number.isFinite(Number(value))) return '-'; const mins = Math.round(Number(value) * 60); return Math.floor(mins / 60) + '時間' + String(mins % 60).padStart(2, '0') + '分'; }
 function todayIso() { return new Date().toISOString().slice(0, 10); }
 function clamp(value, min, max) { return Math.max(min, Math.min(max, Number(value) || 0)); }
+function round1(value) { return Math.round(Number(value) * 10) / 10; }
+function round2(value) { return Math.round(Number(value) * 100) / 100; }
 function escapeHtml(value) { return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;'); }
