@@ -90,9 +90,9 @@ function renderHeroMetrics(record, kgLeft) {
   const total = todayPlan.length;
   const cards = [
     ['今日の完了', completed + '/' + total, completionRate() + '% 達成'],
-    ['現在体重', metrics.weightKg.format(m.weightKg), kgLeft == null ? targetDeadlineText() : targetDeadlineText() + ' / 残り' + kgLeft.toFixed(1) + 'kg'],
     ['体脂肪率', metrics.bodyFatPercent.format(m.bodyFatPercent), seven.bodyFatPercent == null ? '7日平均なし' : '7日平均 ' + seven.bodyFatPercent.toFixed(1) + '%'],
     ['睡眠', metrics.sleepHours.format(m.sleepHours), seven.sleepHours == null ? '7日平均なし' : '7日平均 ' + hours(seven.sleepHours)],
+    ['歩数', metrics.steps.format(m.steps), seven.steps == null ? '7日平均なし' : '7日平均 ' + Math.round(seven.steps).toLocaleString('ja-JP') + '歩'],
   ];
   document.getElementById('heroMetrics').innerHTML = cards.map(([label, value, sub]) =>
     '<div class="hero-card"><span>' + label + '</span><strong>' + value + '</strong><small>' + sub + '</small></div>'
@@ -105,7 +105,7 @@ function renderGoalManager(record) {
   const kgLeft = weight == null ? null : round1(weight - GOALS.weightKg);
   const daysLeft = daysUntil(GOALS.deadline);
   const pace = kgLeft == null || daysLeft == null || kgLeft <= 0 ? null : round2(kgLeft / Math.max(1, daysLeft) * 7);
-  const progress = weight == null ? 0 : clamp(((84 - weight) / Math.max(.1, 84 - GOALS.weightKg)) * 100, 0, 100);
+  const progress = weight == null ? 0 : clamp(((GOALS.startWeightKg - weight) / Math.max(.1, GOALS.startWeightKg - GOALS.weightKg)) * 100, 0, 100);
   document.getElementById('goalOverview').innerHTML =
     '<div class="goal-overview-grid">' +
     '<div class="goal-stat primary"><span>現在</span><strong>' + metrics.weightKg.format(weight) + '</strong><small>目標 ' + GOALS.weightKg.toFixed(1) + 'kg</small></div>' +
@@ -134,13 +134,14 @@ function renderCampaignProgress(record) {
   const totalDays = dateDiffDays(GOALS.startDate, GOALS.deadline);
   const elapsedDays = Math.min(totalDays ?? 0, Math.max(0, dateDiffDays(GOALS.startDate, todayIso()) ?? 0));
   const daysLeft = daysUntil(GOALS.deadline);
-  const reduced = current == null ? null : round1(current - start);
+  const reduced = current == null ? null : round1(start - current);
   const remaining = current == null ? null : round1(current - target);
   const requiredPace = current == null || daysLeft == null || daysLeft <= 0 ? null : round3(Math.max(0, current - target) / daysLeft);
   const currentPace = current == null || elapsedDays <= 0 ? null : round3(Math.max(0, start - current) / elapsedDays);
   const expected = expectedWeightForDate(todayIso());
   const delay = current == null || expected == null ? null : round1(current - expected);
   document.getElementById('campaignTitle').textContent = '目指せ' + target.toFixed(1) + 'kg ダイエット企画';
+  document.getElementById('heroGoalBadge').textContent = target.toFixed(1) + ' KG';
   document.getElementById('campaignPeriod').textContent = formatDateJa(GOALS.startDate) + ' - ' + formatDateJa(GOALS.deadline);
   const paceStatus = requiredPace == null || currentPace == null
     ? 'データ待ち'
@@ -436,7 +437,7 @@ function renderChart() {
     '<line x1="' + left + '" y1="' + top + '" x2="' + left + '" y2="' + (height - bottom) + '" stroke="#dfe6df"/>' +
     '<line x1="' + left + '" y1="' + (height - bottom) + '" x2="' + (width - right) + '" y2="' + (height - bottom) + '" stroke="#dfe6df"/>' +
     '<path d="' + area + '" fill="' + meta.color + '" opacity=".11"/>' +
-    (targetPath ? '<path d="' + targetPath + '" fill="none" stroke="#d9ff5f" stroke-width="2.5" stroke-dasharray="8 7"/><text x="' + (width - right - 126) + '" y="' + (top + 18) + '" font-size="12" font-weight="800" fill="#d9ff5f">目標ペース</text>' : '') +
+    (targetPath ? '<path d="' + targetPath + '" fill="none" stroke="#ff593d" stroke-width="2.5" stroke-dasharray="8 7"/><text x="' + (width - right - 126) + '" y="' + (top + 18) + '" font-size="12" font-weight="800" fill="#ff593d">目標ペース</text>' : '') +
     '<path d="' + path + '" fill="none" stroke="' + meta.color + '" stroke-width="3.5"/>' +
     points.map(([cx, cy, r]) => '<circle cx="' + cx + '" cy="' + cy + '" r="4.5" fill="#fff" stroke="' + meta.color + '" stroke-width="3"><title>' + r.date + ': ' + meta.format(r.metrics[selectedMetric]) + '</title></circle>').join('') +
     '<text x="8" y="' + (top + 6) + '" font-size="11" fill="#66736d">' + meta.format(max) + '</text>' +
@@ -446,7 +447,7 @@ function renderChart() {
 function renderWeightGoal(record) {
   const weight = record?.metrics?.weightKg;
   const target = GOALS.weightKg;
-  const start = Math.max(weight || target, 84);
+  const start = Math.max(weight || target, GOALS.startWeightKg);
   const progress = weight == null ? 0 : Math.max(0, Math.min(100, ((start - weight) / Math.max(.1, start - target)) * 100));
   document.getElementById('weightGoal').innerHTML =
     '<div class="status-list">' +
@@ -596,7 +597,7 @@ function showFeedback(text) {
 }
 function ringSvg(rate) {
   const r = 52, c = Math.PI * 2 * r, offset = c * (1 - rate / 100);
-  return '<svg viewBox="0 0 138 138"><circle cx="69" cy="69" r="' + r + '" fill="none" stroke="#e8eee8" stroke-width="13"/><circle cx="69" cy="69" r="' + r + '" fill="none" stroke="#15956b" stroke-width="13" stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + offset + '" transform="rotate(-90 69 69)"/><text x="69" y="65" text-anchor="middle" font-size="28" font-weight="900" fill="#15201c">' + rate + '%</text><text x="69" y="88" text-anchor="middle" font-size="12" font-weight="800" fill="#66736d">完了</text></svg>';
+  return '<svg viewBox="0 0 138 138"><circle cx="69" cy="69" r="' + r + '" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="13"/><circle cx="69" cy="69" r="' + r + '" fill="none" stroke="#c8f55e" stroke-width="13" stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + offset + '" transform="rotate(-90 69 69)"/><text x="69" y="65" text-anchor="middle" font-size="28" font-weight="900" fill="#ffffff">' + rate + '%</text><text x="69" y="88" text-anchor="middle" font-size="12" font-weight="800" fill="rgba(255,255,255,.78)">完了</text></svg>';
 }
 function dataPlaceholder() { return { generatedAt: new Date().toISOString(), recordCount: records.length }; }
 function point(cx, cy, r, index, total) { const angle = -Math.PI / 2 + index * 2 * Math.PI / total; return [Math.round((cx + Math.cos(angle) * r) * 10) / 10, Math.round((cy + Math.sin(angle) * r) * 10) / 10]; }
@@ -605,7 +606,7 @@ function targetText(value, target, unit) { if (value == null) return '目標 ' +
 function deltaText(value, unit) { if (value == null) return '前回比データなし'; const sign = value > 0 ? '+' : ''; if (unit === 'h') return '前回比 ' + sign + value.toFixed(2) + '時間'; return '前回比 ' + sign + value.toFixed(unit === '%' ? 1 : 0) + unit; }
 function hasAnyMetric(record) { return record && Object.values(record.metrics || {}).some(v => v != null); }
 function hours(value) { if (value == null || !Number.isFinite(Number(value))) return '-'; const mins = Math.round(Number(value) * 60); return Math.floor(mins / 60) + '時間' + String(mins % 60).padStart(2, '0') + '分'; }
-function todayIso() { return new Date().toISOString().slice(0, 10); }
+function todayIso() { return isoFromDate(new Date()); }
 function isoFromDate(date) {
   return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
 }

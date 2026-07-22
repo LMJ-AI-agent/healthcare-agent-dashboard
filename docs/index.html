@@ -8,35 +8,190 @@
 </head>
 <body>
   <main class="shell">
-    <section class="hero">
+    <header class="app-header">
+      <a class="brand" href="#top" aria-label="ダイエットダッシュボードの先頭へ">
+        <span class="brand-mark">79</span>
+        <span><strong>BODY PROJECT</strong><small>Diet coach dashboard</small></span>
+      </a>
+      <nav class="section-nav" aria-label="ページ内ナビゲーション">
+        <a href="#today">今日</a>
+        <a href="#training">筋トレ</a>
+        <a href="#trend">推移</a>
+        <a href="#records">記録</a>
+      </nav>
+      <span class="live-badge"><i></i> HEALTH DATA LIVE</span>
+    </header>
+
+    <section class="hero" id="top">
       <div class="hero-copy">
-        <p class="eyebrow">Diet Coach / Personal Trainer</p>
+        <p class="hero-kicker">PERSONAL TRANSFORMATION / 2026</p>
         <h1 id="campaignTitle">今日も一つ完了。79kgへ、体を作っていこう。</h1>
+        <div class="goal-lockup">GOAL <strong id="heroGoalBadge">79.0 KG</strong></div>
         <p class="lead" id="heroLead"></p>
         <div class="hero-actions">
           <span class="streak" id="todayScore"></span>
           <span class="streak alt" id="motivationLine"></span>
         </div>
       </div>
-      <div class="hero-metrics" id="heroMetrics"></div>
-    </section>
-
-    <section class="goal-command-panel">
-      <div class="goal-hero-card panel">
-        <div>
-          <p class="eyebrow">Goal Control</p>
-          <h2>目標管理</h2>
-        </div>
+      <div class="hero-scoreboard">
+        <p class="scoreboard-label">PROJECT STATUS</p>
         <div id="goalOverview"></div>
       </div>
-      <section class="panel goal-settings-panel">
+    </section>
+
+    <section class="hero-metrics" id="heroMetrics" aria-label="本日の主要指標"></section>
+
+    <section class="today-layout" id="today">
+      <section class="panel victory-panel">
+        <div>
+          <p class="eyebrow">Today's Score</p>
+          <h2 id="victoryTitle">今日の達成状況</h2>
+          <p class="section-note">押した項目は、そのまま今日の実績になります。</p>
+        </div>
+        <div class="completion-ring" id="completionRing"></div>
+        <div class="toast" id="feedbackToast" role="status" aria-live="polite"></div>
+      </section>
+      <section class="panel command-panel">
         <div class="section-head">
           <div>
-            <p class="eyebrow">Target Settings</p>
-            <h2>目標値を編集</h2>
+            <p class="eyebrow">Daily Briefing</p>
+            <h2>今日の指示</h2>
           </div>
-          <span class="pill" id="goalSaveStatus">未保存の変更なし</span>
+          <span class="pill" id="topPriority"></span>
         </div>
+        <div id="coachActions"></div>
+      </section>
+      <section class="panel radar-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Condition Pentagon</p>
+            <h2>コンディション</h2>
+          </div>
+        </div>
+        <div id="radar"></div>
+      </section>
+    </section>
+
+    <section class="panel action-details-panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Do It Today</p>
+          <h2>今日、やり切ること</h2>
+        </div>
+        <span class="pill" id="actionDetailCount"></span>
+      </div>
+      <div id="actionDetails"></div>
+    </section>
+
+    <section class="kpis" id="kpis"></section>
+
+    <section class="workout-grid" id="training">
+      <section class="panel training-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Strength Training</p>
+            <h2>今日の筋トレ</h2>
+          </div>
+          <span class="category-chip strength-chip">BODY MAKE</span>
+        </div>
+        <div id="strengthPlan"></div>
+        <div class="inline-memo">
+          <p class="eyebrow">Training Log</p>
+          <textarea id="workoutMemo" class="memo-box" rows="4" placeholder="例: スクワット 10回 x 3、腕立て 8回 x 2。きつさ7/10。"></textarea>
+          <div class="memo-foot">
+            <span id="memoSaved"></span>
+            <button class="ghost-button" id="clearToday">今日のチェックをリセット</button>
+          </div>
+        </div>
+      </section>
+      <section class="panel diet-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Nutrition</p>
+            <h2>今日の食事ルール</h2>
+          </div>
+          <span class="category-chip diet-chip">FAT LOSS</span>
+        </div>
+        <div id="dietPlan"></div>
+      </section>
+    </section>
+
+    <section class="progress-layout" id="trend">
+      <section class="panel chart-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Performance Trend</p>
+            <h2>数字で見る変化</h2>
+          </div>
+          <div class="tabs" id="metricTabs"></div>
+        </div>
+        <div class="chart" id="chart"></div>
+      </section>
+      <section class="panel campaign-progress-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Race to Goal</p>
+            <h2>79kgまでの現在地</h2>
+          </div>
+          <span class="pill" id="campaignPeriod"></span>
+        </div>
+        <div id="campaignStats"></div>
+      </section>
+    </section>
+
+    <section class="lower-grid">
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Goal Analysis</p>
+            <h2>目標ペース</h2>
+          </div>
+        </div>
+        <div id="weightGoal"></div>
+      </section>
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Today's Log</p>
+            <h2>今日の実績</h2>
+          </div>
+        </div>
+        <div id="completionLog"></div>
+      </section>
+    </section>
+
+    <section class="planning-grid">
+      <section class="panel milestone-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Milestones</p>
+            <h2>月別マイルストーン</h2>
+          </div>
+        </div>
+        <div id="milestones"></div>
+      </section>
+      <section class="panel theme-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Focus Stock</p>
+            <h2>今後のテーマ</h2>
+          </div>
+          <span class="pill" id="themeCount"></span>
+        </div>
+        <div class="theme-input">
+          <input id="themeInput" type="text" placeholder="例: 夜の間食をなくす">
+          <button id="addTheme" type="button">追加</button>
+        </div>
+        <div id="themeStock"></div>
+      </section>
+    </section>
+
+    <details class="panel goal-settings-panel">
+      <summary>
+        <span><small>PROJECT SETTINGS</small><strong>目標値を編集</strong></span>
+        <span class="pill" id="goalSaveStatus">未保存の変更なし</span>
+      </summary>
+      <div class="goal-settings-body">
         <div class="goal-form">
           <label>目標体重<input id="goalWeightInput" type="number" step="0.1" min="35" max="160"></label>
           <label>期限<input id="goalDeadlineInput" type="date"></label>
@@ -50,154 +205,13 @@
           <button class="primary-button" id="saveGoals" type="button">保存して反映</button>
           <button class="ghost-button" id="resetGoals" type="button">初期値に戻す</button>
         </div>
-      </section>
-    </section>
+      </div>
+    </details>
 
-    <section class="panel campaign-progress-panel">
+    <section class="panel records-panel" id="records">
       <div class="section-head">
         <div>
-          <p class="eyebrow">Progress</p>
-          <h2>減量企画の進捗</h2>
-        </div>
-        <span class="pill" id="campaignPeriod"></span>
-      </div>
-      <div id="campaignStats"></div>
-    </section>
-
-    <section class="panel milestone-panel">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Milestones</p>
-          <h2>月別マイルストーン</h2>
-        </div>
-      </div>
-      <div id="milestones"></div>
-    </section>
-
-    <section class="panel victory-panel">
-      <div>
-        <p class="eyebrow">Today's Progress</p>
-        <h2 id="victoryTitle">今日の達成状況</h2>
-      </div>
-      <div class="completion-ring" id="completionRing"></div>
-      <div class="toast" id="feedbackToast" role="status" aria-live="polite"></div>
-    </section>
-
-    <section class="command-grid">
-      <section class="panel command-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Today</p>
-            <h2>今日の指示</h2>
-          </div>
-          <span class="pill" id="topPriority"></span>
-        </div>
-        <div id="coachActions"></div>
-      </section>
-      <section class="panel radar-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Condition Pentagon</p>
-            <h2>5角形パラメータ</h2>
-          </div>
-        </div>
-        <div id="radar"></div>
-      </section>
-    </section>
-
-    <section class="panel action-details-panel">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Action Details</p>
-          <h2>実行項目</h2>
-        </div>
-        <span class="pill" id="actionDetailCount"></span>
-      </div>
-      <div id="actionDetails"></div>
-    </section>
-
-    <section class="kpis" id="kpis"></section>
-
-    <section class="workout-grid">
-      <section class="panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Training</p>
-            <h2>筋トレ実績</h2>
-          </div>
-        </div>
-        <div id="strengthPlan"></div>
-        <div class="inline-memo">
-          <p class="eyebrow">Workout Memo</p>
-          <textarea id="workoutMemo" class="memo-box" rows="4" placeholder="例: スクワット 10回 x 3、腕立て 8回 x 2。きつさ7/10。"></textarea>
-          <div class="memo-foot">
-            <span id="memoSaved"></span>
-            <button class="ghost-button" id="clearToday">今日のチェックをリセット</button>
-          </div>
-        </div>
-      </section>
-      <section class="panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Diet</p>
-            <h2>食事ルール</h2>
-          </div>
-        </div>
-        <div id="dietPlan"></div>
-      </section>
-    </section>
-
-    <section class="panel chart-panel">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Trend</p>
-          <h2>推移グラフ</h2>
-        </div>
-        <div class="tabs" id="metricTabs"></div>
-      </div>
-      <div class="chart" id="chart"></div>
-    </section>
-
-    <section class="lower-grid">
-      <section class="panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Goal</p>
-            <h2>79kg目標</h2>
-          </div>
-        </div>
-        <div id="weightGoal"></div>
-      </section>
-      <section class="panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Log</p>
-            <h2>完了ログ</h2>
-          </div>
-        </div>
-        <div id="completionLog"></div>
-      </section>
-    </section>
-
-    <section class="panel">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Theme Stock</p>
-          <h2>今後のテーマ</h2>
-        </div>
-        <span class="pill" id="themeCount"></span>
-      </div>
-      <div class="theme-input">
-        <input id="themeInput" type="text" placeholder="例: 体脂肪率を下げるために夜の間食をなくす">
-        <button id="addTheme" type="button">ストック</button>
-      </div>
-      <div id="themeStock"></div>
-    </section>
-
-    <section class="panel">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Daily Log</p>
+          <p class="eyebrow">Health Records</p>
           <h2>日別データ</h2>
         </div>
       </div>

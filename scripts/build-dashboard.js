@@ -165,35 +165,190 @@ function dashboardHtml() {
 </head>
 <body>
   <main class="shell">
-    <section class="hero">
+    <header class="app-header">
+      <a class="brand" href="#top" aria-label="ダイエットダッシュボードの先頭へ">
+        <span class="brand-mark">79</span>
+        <span><strong>BODY PROJECT</strong><small>Diet coach dashboard</small></span>
+      </a>
+      <nav class="section-nav" aria-label="ページ内ナビゲーション">
+        <a href="#today">今日</a>
+        <a href="#training">筋トレ</a>
+        <a href="#trend">推移</a>
+        <a href="#records">記録</a>
+      </nav>
+      <span class="live-badge"><i></i> HEALTH DATA LIVE</span>
+    </header>
+
+    <section class="hero" id="top">
       <div class="hero-copy">
-        <p class="eyebrow">Diet Coach / Personal Trainer</p>
+        <p class="hero-kicker">PERSONAL TRANSFORMATION / 2026</p>
         <h1 id="campaignTitle">今日も一つ完了。79kgへ、体を作っていこう。</h1>
+        <div class="goal-lockup">GOAL <strong id="heroGoalBadge">79.0 KG</strong></div>
         <p class="lead" id="heroLead"></p>
         <div class="hero-actions">
           <span class="streak" id="todayScore"></span>
           <span class="streak alt" id="motivationLine"></span>
         </div>
       </div>
-      <div class="hero-metrics" id="heroMetrics"></div>
-    </section>
-
-    <section class="goal-command-panel">
-      <div class="goal-hero-card panel">
-        <div>
-          <p class="eyebrow">Goal Control</p>
-          <h2>目標管理</h2>
-        </div>
+      <div class="hero-scoreboard">
+        <p class="scoreboard-label">PROJECT STATUS</p>
         <div id="goalOverview"></div>
       </div>
-      <section class="panel goal-settings-panel">
+    </section>
+
+    <section class="hero-metrics" id="heroMetrics" aria-label="本日の主要指標"></section>
+
+    <section class="today-layout" id="today">
+      <section class="panel victory-panel">
+        <div>
+          <p class="eyebrow">Today's Score</p>
+          <h2 id="victoryTitle">今日の達成状況</h2>
+          <p class="section-note">押した項目は、そのまま今日の実績になります。</p>
+        </div>
+        <div class="completion-ring" id="completionRing"></div>
+        <div class="toast" id="feedbackToast" role="status" aria-live="polite"></div>
+      </section>
+      <section class="panel command-panel">
         <div class="section-head">
           <div>
-            <p class="eyebrow">Target Settings</p>
-            <h2>目標値を編集</h2>
+            <p class="eyebrow">Daily Briefing</p>
+            <h2>今日の指示</h2>
           </div>
-          <span class="pill" id="goalSaveStatus">未保存の変更なし</span>
+          <span class="pill" id="topPriority"></span>
         </div>
+        <div id="coachActions"></div>
+      </section>
+      <section class="panel radar-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Condition Pentagon</p>
+            <h2>コンディション</h2>
+          </div>
+        </div>
+        <div id="radar"></div>
+      </section>
+    </section>
+
+    <section class="panel action-details-panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Do It Today</p>
+          <h2>今日、やり切ること</h2>
+        </div>
+        <span class="pill" id="actionDetailCount"></span>
+      </div>
+      <div id="actionDetails"></div>
+    </section>
+
+    <section class="kpis" id="kpis"></section>
+
+    <section class="workout-grid" id="training">
+      <section class="panel training-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Strength Training</p>
+            <h2>今日の筋トレ</h2>
+          </div>
+          <span class="category-chip strength-chip">BODY MAKE</span>
+        </div>
+        <div id="strengthPlan"></div>
+        <div class="inline-memo">
+          <p class="eyebrow">Training Log</p>
+          <textarea id="workoutMemo" class="memo-box" rows="4" placeholder="例: スクワット 10回 x 3、腕立て 8回 x 2。きつさ7/10。"></textarea>
+          <div class="memo-foot">
+            <span id="memoSaved"></span>
+            <button class="ghost-button" id="clearToday">今日のチェックをリセット</button>
+          </div>
+        </div>
+      </section>
+      <section class="panel diet-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Nutrition</p>
+            <h2>今日の食事ルール</h2>
+          </div>
+          <span class="category-chip diet-chip">FAT LOSS</span>
+        </div>
+        <div id="dietPlan"></div>
+      </section>
+    </section>
+
+    <section class="progress-layout" id="trend">
+      <section class="panel chart-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Performance Trend</p>
+            <h2>数字で見る変化</h2>
+          </div>
+          <div class="tabs" id="metricTabs"></div>
+        </div>
+        <div class="chart" id="chart"></div>
+      </section>
+      <section class="panel campaign-progress-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Race to Goal</p>
+            <h2>79kgまでの現在地</h2>
+          </div>
+          <span class="pill" id="campaignPeriod"></span>
+        </div>
+        <div id="campaignStats"></div>
+      </section>
+    </section>
+
+    <section class="lower-grid">
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Goal Analysis</p>
+            <h2>目標ペース</h2>
+          </div>
+        </div>
+        <div id="weightGoal"></div>
+      </section>
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Today's Log</p>
+            <h2>今日の実績</h2>
+          </div>
+        </div>
+        <div id="completionLog"></div>
+      </section>
+    </section>
+
+    <section class="planning-grid">
+      <section class="panel milestone-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Milestones</p>
+            <h2>月別マイルストーン</h2>
+          </div>
+        </div>
+        <div id="milestones"></div>
+      </section>
+      <section class="panel theme-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Focus Stock</p>
+            <h2>今後のテーマ</h2>
+          </div>
+          <span class="pill" id="themeCount"></span>
+        </div>
+        <div class="theme-input">
+          <input id="themeInput" type="text" placeholder="例: 夜の間食をなくす">
+          <button id="addTheme" type="button">追加</button>
+        </div>
+        <div id="themeStock"></div>
+      </section>
+    </section>
+
+    <details class="panel goal-settings-panel">
+      <summary>
+        <span><small>PROJECT SETTINGS</small><strong>目標値を編集</strong></span>
+        <span class="pill" id="goalSaveStatus">未保存の変更なし</span>
+      </summary>
+      <div class="goal-settings-body">
         <div class="goal-form">
           <label>目標体重<input id="goalWeightInput" type="number" step="0.1" min="35" max="160"></label>
           <label>期限<input id="goalDeadlineInput" type="date"></label>
@@ -207,154 +362,13 @@ function dashboardHtml() {
           <button class="primary-button" id="saveGoals" type="button">保存して反映</button>
           <button class="ghost-button" id="resetGoals" type="button">初期値に戻す</button>
         </div>
-      </section>
-    </section>
+      </div>
+    </details>
 
-    <section class="panel campaign-progress-panel">
+    <section class="panel records-panel" id="records">
       <div class="section-head">
         <div>
-          <p class="eyebrow">Progress</p>
-          <h2>減量企画の進捗</h2>
-        </div>
-        <span class="pill" id="campaignPeriod"></span>
-      </div>
-      <div id="campaignStats"></div>
-    </section>
-
-    <section class="panel milestone-panel">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Milestones</p>
-          <h2>月別マイルストーン</h2>
-        </div>
-      </div>
-      <div id="milestones"></div>
-    </section>
-
-    <section class="panel victory-panel">
-      <div>
-        <p class="eyebrow">Today's Progress</p>
-        <h2 id="victoryTitle">今日の達成状況</h2>
-      </div>
-      <div class="completion-ring" id="completionRing"></div>
-      <div class="toast" id="feedbackToast" role="status" aria-live="polite"></div>
-    </section>
-
-    <section class="command-grid">
-      <section class="panel command-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Today</p>
-            <h2>今日の指示</h2>
-          </div>
-          <span class="pill" id="topPriority"></span>
-        </div>
-        <div id="coachActions"></div>
-      </section>
-      <section class="panel radar-panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Condition Pentagon</p>
-            <h2>5角形パラメータ</h2>
-          </div>
-        </div>
-        <div id="radar"></div>
-      </section>
-    </section>
-
-    <section class="panel action-details-panel">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Action Details</p>
-          <h2>実行項目</h2>
-        </div>
-        <span class="pill" id="actionDetailCount"></span>
-      </div>
-      <div id="actionDetails"></div>
-    </section>
-
-    <section class="kpis" id="kpis"></section>
-
-    <section class="workout-grid">
-      <section class="panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Training</p>
-            <h2>筋トレ実績</h2>
-          </div>
-        </div>
-        <div id="strengthPlan"></div>
-        <div class="inline-memo">
-          <p class="eyebrow">Workout Memo</p>
-          <textarea id="workoutMemo" class="memo-box" rows="4" placeholder="例: スクワット 10回 x 3、腕立て 8回 x 2。きつさ7/10。"></textarea>
-          <div class="memo-foot">
-            <span id="memoSaved"></span>
-            <button class="ghost-button" id="clearToday">今日のチェックをリセット</button>
-          </div>
-        </div>
-      </section>
-      <section class="panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Diet</p>
-            <h2>食事ルール</h2>
-          </div>
-        </div>
-        <div id="dietPlan"></div>
-      </section>
-    </section>
-
-    <section class="panel chart-panel">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Trend</p>
-          <h2>推移グラフ</h2>
-        </div>
-        <div class="tabs" id="metricTabs"></div>
-      </div>
-      <div class="chart" id="chart"></div>
-    </section>
-
-    <section class="lower-grid">
-      <section class="panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Goal</p>
-            <h2>79kg目標</h2>
-          </div>
-        </div>
-        <div id="weightGoal"></div>
-      </section>
-      <section class="panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Log</p>
-            <h2>完了ログ</h2>
-          </div>
-        </div>
-        <div id="completionLog"></div>
-      </section>
-    </section>
-
-    <section class="panel">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Theme Stock</p>
-          <h2>今後のテーマ</h2>
-        </div>
-        <span class="pill" id="themeCount"></span>
-      </div>
-      <div class="theme-input">
-        <input id="themeInput" type="text" placeholder="例: 体脂肪率を下げるために夜の間食をなくす">
-        <button id="addTheme" type="button">ストック</button>
-      </div>
-      <div id="themeStock"></div>
-    </section>
-
-    <section class="panel">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Daily Log</p>
+          <p class="eyebrow">Health Records</p>
           <h2>日別データ</h2>
         </div>
       </div>
@@ -384,148 +398,195 @@ function dashboardHtml() {
 
 function dashboardCss() {
   return `:root {
-  color-scheme: dark;
-  --bg: #101114;
-  --panel: rgba(24, 27, 32, .88);
-  --panel-strong: #f6f1e8;
-  --ink: #f7f2e8;
-  --ink-dark: #181b20;
-  --muted: #9aa39c;
-  --line: #30363a;
-  --green: #3ee084;
-  --lime: #d9ff5f;
-  --teal: #38d2c0;
-  --blue: #7aa7ff;
-  --orange: #ffb454;
-  --red: #ff6f6f;
-  --shadow: 0 22px 70px rgba(0, 0, 0, .34);
+  color-scheme: light;
+  --page: #eef2f4;
+  --paper: #ffffff;
+  --ink: #11141a;
+  --muted: #68717c;
+  --line: #d8dfe3;
+  --line-dark: #242932;
+  --night: #11151b;
+  --coral: #ff593d;
+  --lime: #c8f55e;
+  --cyan: #39c7d9;
+  --blue: #4c6fff;
+  --green: #1f9f72;
+  --orange: #f29b38;
+  --red: #e64b4b;
+  --shadow: 0 18px 44px rgba(24, 34, 44, .11);
 }
 * { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Arial", "Noto Sans JP", ui-sans-serif, system-ui, sans-serif;
   background:
-    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(255,255,255,.03) 1px, transparent 1px),
-    linear-gradient(135deg, #111317 0%, #171a1f 45%, #0d0f12 100%);
-  background-size: 44px 44px, 44px 44px, auto;
+    linear-gradient(90deg, rgba(17,20,26,.035) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(17,20,26,.035) 1px, transparent 1px),
+    var(--page);
+  background-size: 32px 32px, 32px 32px, auto;
   color: var(--ink);
 }
-.shell { width: min(1380px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 40px; }
-.hero {
-  min-height: 300px;
+.shell { width: min(1440px, calc(100% - 32px)); margin: 0 auto; padding: 16px 0 48px; }
+.app-header {
+  min-height: 62px;
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(360px, .9fr);
-  align-items: end;
-  gap: 22px;
-  padding: 34px;
-  border-radius: 8px;
-  border: 1px solid rgba(217,255,95,.24);
-  background:
-    linear-gradient(120deg, rgba(23, 26, 31, .98), rgba(31, 42, 36, .96)),
-    linear-gradient(90deg, rgba(217,255,95,.18), transparent);
-  color: var(--ink);
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 28px;
+  padding: 0 4px 14px;
+}
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; }
+.brand-mark { display: grid; place-items: center; width: 42px; height: 42px; background: var(--coral); color: #fff; font-size: 21px; font-weight: 950; transform: skew(-8deg); }
+.brand strong, .brand small { display: block; letter-spacing: 0; }
+.brand strong { font-size: 14px; }
+.brand small { margin-top: 2px; color: var(--muted); font-size: 10px; text-transform: uppercase; }
+.section-nav { display: flex; justify-content: center; gap: 6px; }
+.section-nav a { padding: 9px 12px; color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 850; }
+.section-nav a:hover { color: var(--ink); background: #fff; }
+.live-badge { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 11px; font-weight: 900; }
+.live-badge i { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 5px rgba(31,159,114,.13); }
+.hero {
+  min-height: 390px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(390px, .85fr);
+  align-items: stretch;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--night);
+  border-radius: 6px;
+  background: var(--night);
+  color: #fff;
   box-shadow: var(--shadow);
 }
-.eyebrow { margin: 0 0 8px; color: var(--muted); font-size: 12px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
-.hero .eyebrow { color: rgba(217,255,95,.82); }
+.hero-copy { position: relative; padding: 44px 48px 38px; overflow: hidden; }
+.hero-copy::after { content: "79"; position: absolute; right: -12px; bottom: -70px; color: rgba(255,255,255,.035); font-size: 300px; font-weight: 950; line-height: 1; pointer-events: none; }
+.hero-kicker { margin: 0 0 18px; color: var(--cyan); font-size: 11px; font-weight: 950; letter-spacing: .14em; }
+.eyebrow { margin: 0 0 7px; color: var(--muted); font-size: 11px; font-weight: 950; letter-spacing: .12em; text-transform: uppercase; }
 h1, h2, h3 { margin: 0; letter-spacing: 0; }
-h1 { max-width: 760px; font-size: clamp(36px, 5vw, 66px); line-height: 1.03; }
-h2 { font-size: 20px; }
-.lead { max-width: 720px; margin: 18px 0 0; color: rgba(247,242,232,.72); font-size: 16px; line-height: 1.7; }
-.hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+h1 { max-width: 760px; font-size: clamp(38px, 5.2vw, 72px); line-height: 1.04; font-weight: 950; }
+h2 { font-size: 22px; font-weight: 950; }
+.goal-lockup { display: flex; align-items: baseline; gap: 12px; margin-top: 20px; color: rgba(255,255,255,.48); font-size: 12px; font-weight: 950; letter-spacing: .12em; }
+.goal-lockup strong { color: var(--coral); font-size: clamp(34px, 4vw, 58px); letter-spacing: 0; }
+.lead { max-width: 720px; margin: 15px 0 0; color: rgba(255,255,255,.6); font-size: 13px; line-height: 1.65; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
 .streak {
   display: inline-flex;
   align-items: center;
-  min-height: 38px;
-  padding: 8px 13px;
-  border-radius: 999px;
-  background: rgba(217, 255, 95, .16);
-  border: 1px solid rgba(217,255,95,.28);
-  color: #f7ffd1;
-  font-weight: 850;
+  min-height: 34px;
+  padding: 7px 11px;
+  border-radius: 4px;
+  background: var(--lime);
+  border: 1px solid var(--lime);
+  color: var(--night);
+  font-size: 12px;
+  font-weight: 950;
 }
-.streak.alt { background: rgba(255,255,255,.08); color: rgba(247,242,232,.82); }
-.hero-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.hero-card { padding: 15px; min-height: 104px; border: 1px solid rgba(247,242,232,.14); border-radius: 8px; background: rgba(255,255,255,.07); }
-.hero-card span { color: rgba(247,242,232,.66); font-size: 12px; }
-.hero-card strong { display: block; margin-top: 8px; font-size: 26px; }
-.hero-card small { display: block; margin-top: 4px; color: rgba(247,242,232,.68); }
+.streak.alt { border-color: rgba(255,255,255,.16); background: transparent; color: rgba(255,255,255,.72); }
+.hero-scoreboard { padding: 30px; border-left: 1px solid rgba(255,255,255,.14); background: #181d24; }
+.scoreboard-label { margin: 0 0 18px; color: var(--coral); font-size: 11px; font-weight: 950; letter-spacing: .14em; }
+.hero-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line-dark); border-top: 0; background: var(--paper); box-shadow: var(--shadow); }
+.hero-card { position: relative; min-height: 120px; padding: 20px; border-right: 1px solid var(--line); background: #fff; }
+.hero-card:last-child { border-right: 0; }
+.hero-card::before { content: ""; position: absolute; left: 20px; top: 0; width: 44px; height: 4px; background: var(--cyan); }
+.hero-card:nth-child(2)::before { background: var(--coral); }
+.hero-card:nth-child(3)::before { background: var(--blue); }
+.hero-card:nth-child(4)::before { background: var(--lime); }
+.hero-card span { color: var(--muted); font-size: 11px; font-weight: 900; }
+.hero-card strong { display: block; margin-top: 10px; color: var(--ink); font-size: 28px; line-height: 1; }
+.hero-card small { display: block; margin-top: 7px; color: var(--muted); font-size: 12px; line-height: 1.45; }
 .panel, .kpi {
-  border: 1px solid rgba(255,255,255,.09);
-  border-radius: 8px;
-  background: var(--panel);
-  box-shadow: 0 14px 45px rgba(0, 0, 0, .21);
-  backdrop-filter: blur(16px);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  box-shadow: 0 12px 34px rgba(24,34,44,.07);
 }
-.panel { padding: 18px; margin-top: 16px; }
+.panel { padding: 22px; margin-top: 16px; }
+.section-note { margin: 10px 0 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+.today-layout { display: grid; grid-template-columns: minmax(330px, .85fr) minmax(460px, 1.25fr) minmax(360px, 1fr); gap: 14px; }
 .victory-panel {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) 110px;
   gap: 18px;
   align-items: center;
   position: relative;
   overflow: hidden;
+  background: var(--coral);
+  border-color: var(--coral);
+  color: #fff;
 }
-.completion-ring { width: 138px; height: 138px; }
+.victory-panel .eyebrow, .victory-panel .section-note { color: rgba(255,255,255,.74); }
+.completion-ring { width: 110px; height: 110px; }
 .toast {
   position: absolute;
-  right: 18px;
-  bottom: 14px;
+  left: 22px;
+  bottom: 18px;
   opacity: 0;
   transform: translateY(8px);
   transition: .25s ease;
   padding: 10px 13px;
-  border-radius: 999px;
-  color: #102017;
+  border-radius: 4px;
+  color: var(--night);
   background: var(--lime);
-  font-weight: 850;
+  font-size: 12px;
+  font-weight: 950;
 }
 .toast.show { opacity: 1; transform: translateY(0); }
-.goal-command-panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(440px, .75fr); gap: 16px; }
-.goal-hero-card { display: grid; grid-template-columns: minmax(0, .28fr) minmax(0, 1fr); gap: 18px; align-items: center; }
-.goal-overview-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; align-items: stretch; }
-.goal-stat { min-height: 118px; padding: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.055); }
-.goal-stat.primary { color: var(--ink-dark); background: linear-gradient(135deg, var(--lime), #f8ffd2); border: 0; }
-.goal-stat span { display: block; color: inherit; opacity: .68; font-size: 12px; font-weight: 850; }
-.goal-stat strong { display: block; margin-top: 9px; font-size: 34px; line-height: 1; }
-.goal-stat small { display: block; margin-top: 9px; color: inherit; opacity: .72; line-height: 1.45; }
-.goal-progress { grid-column: 1 / -1; height: 12px; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,.11); }
-.goal-progress span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--lime), var(--teal), var(--blue)); }
-.goal-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.goal-overview-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; align-items: stretch; background: rgba(255,255,255,.14); }
+.goal-stat { min-height: 136px; padding: 18px 14px; background: #181d24; }
+.goal-stat.primary { background: var(--lime); color: var(--night); }
+.goal-stat span { display: block; color: inherit; opacity: .62; font-size: 10px; font-weight: 950; text-transform: uppercase; }
+.goal-stat strong { display: block; margin-top: 12px; font-size: 34px; line-height: 1; }
+.goal-stat small { display: block; margin-top: 11px; color: inherit; opacity: .67; font-size: 11px; line-height: 1.45; }
+.goal-progress { grid-column: 1 / -1; height: 10px; overflow: hidden; background: rgba(255,255,255,.09); }
+.goal-progress span { display: block; height: 100%; background: var(--coral); }
+.goal-settings-panel { padding: 0; overflow: hidden; }
+.goal-settings-panel summary { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 22px; cursor: pointer; list-style: none; }
+.goal-settings-panel summary::-webkit-details-marker { display: none; }
+.goal-settings-panel summary small, .goal-settings-panel summary strong { display: block; }
+.goal-settings-panel summary small { margin-bottom: 4px; color: var(--muted); font-size: 10px; font-weight: 950; letter-spacing: .12em; }
+.goal-settings-panel summary strong { font-size: 17px; }
+.goal-settings-body { padding: 0 22px 22px; border-top: 1px solid var(--line); }
+.goal-form { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding-top: 18px; }
 .goal-form label { display: grid; gap: 7px; color: var(--muted); font-size: 12px; font-weight: 850; }
 .goal-form input {
   width: 100%;
   min-height: 42px;
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
   padding: 9px 11px;
-  background: rgba(255,255,255,.06);
+  background: #f7f9fa;
   color: var(--ink);
   font: inherit;
 }
 .goal-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
-.primary-button { border: 0; border-radius: 8px; padding: 10px 14px; background: var(--lime); color: var(--ink-dark); font-weight: 950; cursor: pointer; }
-.campaign-stat-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+.primary-button { border: 0; border-radius: 4px; padding: 10px 14px; background: var(--night); color: #fff; font-weight: 950; cursor: pointer; }
+.progress-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(420px, .65fr); gap: 14px; }
+.campaign-stat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .campaign-stat {
-  min-height: 122px;
+  min-height: 114px;
   padding: 15px;
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 8px;
-  background: rgba(255,255,255,.055);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #f7f9fa;
 }
-.campaign-stat.featured { color: var(--ink-dark); background: linear-gradient(135deg, var(--panel-strong), #ffffff); }
-.campaign-stat span { display: block; color: inherit; opacity: .62; font-size: 12px; font-weight: 850; }
+.campaign-stat.featured { color: #fff; background: var(--night); border-color: var(--night); }
+.campaign-stat span { display: block; color: inherit; opacity: .62; font-size: 11px; font-weight: 900; }
 .campaign-stat strong { display: block; margin-top: 10px; font-size: 28px; line-height: 1; }
-.campaign-stat small { display: block; margin-top: 10px; color: inherit; opacity: .72; line-height: 1.45; }
+.campaign-stat small { display: block; margin-top: 9px; color: inherit; opacity: .7; font-size: 11px; line-height: 1.45; }
 .milestone-panel table td:last-child, .milestone-panel table th:last-child { text-align: center; }
-.command-grid, .workout-grid, .lower-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(340px, .8fr); gap: 16px; }
+.workout-grid, .lower-grid, .planning-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.training-panel { border-top: 6px solid var(--blue); }
+.diet-panel { border-top: 6px solid var(--green); }
+.category-chip { display: inline-flex; align-items: center; min-height: 28px; padding: 5px 9px; border-radius: 3px; font-size: 10px; font-weight: 950; letter-spacing: .08em; }
+.strength-chip { color: #fff; background: var(--blue); }
+.diet-chip { color: #fff; background: var(--green); }
 .section-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
-.pill { display: inline-flex; align-items: center; min-height: 30px; padding: 6px 11px; border-radius: 999px; background: rgba(217,255,95,.14); color: var(--lime); border: 1px solid rgba(217,255,95,.2); font-size: 13px; font-weight: 850; white-space: nowrap; }
+.pill { display: inline-flex; align-items: center; min-height: 29px; padding: 6px 9px; border-radius: 3px; background: #eff4f5; color: var(--muted); border: 1px solid var(--line); font-size: 11px; font-weight: 900; white-space: nowrap; }
 .task-list, .plan-stack, .status-list, .score-list { display: grid; gap: 10px; }
 .summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.summary-card { min-height: 112px; padding: 15px; border: 1px solid rgba(255,255,255,.08); border-radius: 8px; background: rgba(255,255,255,.055); }
+.summary-card { min-height: 112px; padding: 15px; border: 1px solid var(--line); border-radius: 4px; background: #f7f9fa; }
 .summary-card span { display: block; color: var(--muted); font-size: 12px; font-weight: 800; }
 .summary-card strong { display: block; margin-top: 8px; font-size: 30px; line-height: 1; }
 .summary-card small { display: block; margin-top: 8px; color: var(--muted); line-height: 1.45; }
@@ -533,59 +594,67 @@ h2 { font-size: 20px; }
 .task-card, .plan-card {
   position: relative;
   padding: 14px;
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 8px;
-  background: rgba(255,255,255,.055);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #f8fafb;
   cursor: pointer;
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
 }
-.task-card.done, .plan-card.done { border-color: rgba(217,255,95,.36); background: rgba(217,255,95,.11); }
+.task-card:hover, .plan-card:hover { transform: translateY(-2px); border-color: #aeb9c1; }
+.task-card.done, .plan-card.done { border-color: #9dc63f; background: #f2fbdc; }
 .task-row, .plan-card .top { display: grid; grid-template-columns: 42px 1fr auto; gap: 12px; align-items: center; }
 .check-button {
   width: 42px;
   height: 42px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(255,255,255,.06);
+  border-radius: 50%;
+  border: 2px solid #bdc7cd;
+  background: #fff;
   color: var(--muted);
   cursor: pointer;
   font-size: 19px;
   font-weight: 950;
 }
-.done .check-button { color: var(--ink-dark); background: var(--lime); border-color: var(--lime); }
+.done .check-button { color: var(--night); background: var(--lime); border-color: #9fc639; }
 .inline-memo { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
 .task-card strong, .plan-card h3 { display: block; font-size: 15px; }
 .task-card p { margin: 4px 0 0; color: var(--muted); line-height: 1.55; }
-.tag { padding: 5px 8px; border-radius: 999px; background: rgba(255,255,255,.08); color: var(--muted); font-size: 12px; font-weight: 850; }
+.tag { padding: 5px 8px; border-radius: 3px; background: #e9eef1; color: var(--muted); font-size: 11px; font-weight: 850; }
+.done .tag { background: var(--lime); color: var(--night); }
 .plan-card ul { margin: 12px 0 0; padding-left: 18px; color: var(--muted); line-height: 1.55; }
-.memo-box { width: 100%; resize: vertical; border: 1px solid var(--line); border-radius: 8px; padding: 13px; font: inherit; line-height: 1.6; color: var(--ink); background: rgba(255,255,255,.055); }
+.memo-box { width: 100%; resize: vertical; border: 1px solid var(--line); border-radius: 4px; padding: 13px; font: inherit; line-height: 1.6; color: var(--ink); background: #f8fafb; }
 .memo-foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 10px; color: var(--muted); font-size: 13px; }
-.ghost-button { border: 1px solid var(--line); background: rgba(255,255,255,.055); color: var(--muted); border-radius: 999px; padding: 8px 12px; cursor: pointer; font-weight: 800; }
+.ghost-button { border: 1px solid var(--line); background: #fff; color: var(--muted); border-radius: 4px; padding: 8px 12px; cursor: pointer; font-weight: 800; }
 .theme-input { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; margin-bottom: 12px; }
-.theme-input input { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 12px 13px; font: inherit; background: rgba(255,255,255,.055); color: var(--ink); }
-.theme-input button { border: 0; border-radius: 8px; padding: 0 16px; background: var(--lime); color: var(--ink-dark); font-weight: 900; cursor: pointer; }
+.theme-input input { width: 100%; border: 1px solid var(--line); border-radius: 4px; padding: 12px 13px; font: inherit; background: #f8fafb; color: var(--ink); }
+.theme-input button { border: 0; border-radius: 4px; padding: 0 16px; background: var(--night); color: #fff; font-weight: 900; cursor: pointer; }
 .theme-list { display: grid; gap: 10px; }
-.theme-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 13px; border: 1px solid rgba(255,255,255,.08); border-radius: 8px; background: rgba(255,255,255,.055); }
-.theme-card.active { border-color: rgba(217,255,95,.36); background: rgba(217,255,95,.11); }
+.theme-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 13px; border: 1px solid var(--line); border-radius: 4px; background: #f8fafb; }
+.theme-card.active { border-color: #9dc63f; background: #f2fbdc; }
 .theme-card strong { display: block; margin-bottom: 4px; font-size: 15px; }
 .theme-card small { color: var(--muted); }
 .theme-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
-.theme-actions button { border: 1px solid var(--line); border-radius: 999px; padding: 7px 10px; background: rgba(255,255,255,.055); color: var(--muted); font-weight: 800; cursor: pointer; }
-.theme-actions .primary { border-color: rgba(217,255,95,.25); background: rgba(217,255,95,.14); color: var(--lime); }
-.radar-layout { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(170px, .7fr); gap: 12px; align-items: center; }
+.theme-actions button { border: 1px solid var(--line); border-radius: 4px; padding: 7px 10px; background: #fff; color: var(--muted); font-weight: 800; cursor: pointer; }
+.theme-actions .primary { border-color: var(--night); background: var(--night); color: #fff; }
+.radar-layout { display: grid; grid-template-columns: minmax(170px, 1fr) minmax(128px, .62fr); gap: 10px; align-items: center; }
 .radar-layout svg { width: 100%; max-height: 300px; }
-.score-row { display: grid; grid-template-columns: 76px 1fr 42px; gap: 8px; align-items: center; font-size: 13px; }
-.mini-bar, .progress { overflow: hidden; border-radius: 999px; background: rgba(255,255,255,.1); }
+.score-row { display: grid; grid-template-columns: 54px 1fr 32px; gap: 6px; align-items: center; font-size: 12px; }
+.mini-bar, .progress { overflow: hidden; border-radius: 2px; background: #e5eaed; }
 .mini-bar { height: 8px; }
 .progress { height: 14px; }
-.mini-bar span, .progress span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--green), var(--lime)); }
+.mini-bar span, .progress span { display: block; height: 100%; background: var(--green); }
 .kpis { display: grid; grid-template-columns: repeat(5, minmax(150px, 1fr)); gap: 12px; margin-top: 16px; }
-.kpi { padding: 16px; min-height: 126px; }
+.kpi { position: relative; padding: 16px; min-height: 126px; overflow: hidden; }
+.kpi::after { content: ""; position: absolute; right: 0; top: 0; width: 5px; height: 100%; background: var(--cyan); }
+.kpi:nth-child(2)::after { background: var(--coral); }
+.kpi:nth-child(3)::after { background: var(--blue); }
+.kpi:nth-child(4)::after { background: var(--green); }
+.kpi:nth-child(5)::after { background: var(--orange); }
 .kpi .label { color: var(--muted); font-size: 13px; font-weight: 750; }
 .kpi .value { margin-top: 8px; font-size: 30px; font-weight: 950; color: var(--ink); }
 .kpi .sub { margin-top: 6px; min-height: 34px; color: var(--muted); font-size: 12px; line-height: 1.45; }
 .tabs { display: flex; flex-wrap: wrap; gap: 6px; }
-.tab { border: 1px solid var(--line); background: rgba(255,255,255,.055); color: var(--muted); border-radius: 999px; padding: 8px 11px; cursor: pointer; font-weight: 750; }
-.tab.active { color: var(--ink-dark); border-color: var(--lime); background: var(--lime); }
+.tab { border: 1px solid var(--line); background: #fff; color: var(--muted); border-radius: 4px; padding: 8px 10px; cursor: pointer; font-weight: 800; }
+.tab.active { color: #fff; border-color: var(--night); background: var(--night); }
 .chart { min-height: 310px; }
 .chart svg { width: 100%; height: 310px; display: block; }
 .status-item { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
@@ -596,24 +665,47 @@ h2 { font-size: 20px; }
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th, td { padding: 11px 8px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+th { color: var(--muted); font-size: 11px; text-transform: uppercase; }
 th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
-@media (max-width: 1040px) {
-  .hero, .goal-command-panel, .goal-hero-card, .command-grid, .workout-grid, .lower-grid { grid-template-columns: 1fr; }
+@media (max-width: 1180px) {
+  .hero, .today-layout, .progress-layout { grid-template-columns: 1fr; }
+  .hero-scoreboard { border-left: 0; border-top: 1px solid rgba(255,255,255,.14); }
+  .goal-form { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .radar-layout { grid-template-columns: minmax(220px, .8fr) 1fr; }
   .campaign-stat-grid, .kpis { grid-template-columns: repeat(3, minmax(140px, 1fr)); }
 }
 @media (max-width: 720px) {
   .shell { width: min(100% - 20px, 1240px); padding-top: 10px; }
-  .hero { padding: 20px; min-height: 0; }
-  h1 { font-size: 36px; }
+  .app-header { grid-template-columns: 1fr auto; }
+  .section-nav { display: none; }
+  .live-badge { font-size: 0; }
+  .hero { min-height: 0; }
+  .hero-copy { padding: 30px 22px; }
+  .hero-copy::after { font-size: 200px; }
+  .hero-scoreboard { padding: 20px; }
+  h1 { font-size: 40px; }
   .hero-metrics, .goal-overview-grid, .goal-form, .campaign-stat-grid, .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero-card:nth-child(2) { border-right: 0; }
+  .hero-card:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  .workout-grid, .lower-grid, .planning-grid { grid-template-columns: 1fr; }
   .summary-grid, .action-detail-grid { grid-template-columns: 1fr; }
-  .radar-layout, .victory-panel { grid-template-columns: 1fr; }
+  .radar-layout { grid-template-columns: 1fr; }
   .theme-input, .theme-card { grid-template-columns: 1fr; }
   .theme-actions { justify-content: flex-start; }
   .section-head { flex-direction: column; }
 }
 @media (max-width: 520px) {
-  .hero-metrics, .goal-overview-grid, .goal-form, .campaign-stat-grid, .kpis { grid-template-columns: 1fr; }
+  .goal-overview-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .goal-stat { min-height: 112px; padding: 14px 9px; }
+  .goal-stat strong { font-size: 24px; }
+  .goal-stat small { font-size: 9px; }
+  .hero-metrics, .goal-form, .campaign-stat-grid, .kpis { grid-template-columns: 1fr; }
+  .hero-card { border-right: 0; border-bottom: 1px solid var(--line); }
+  .victory-panel { grid-template-columns: minmax(0, 1fr) 90px; }
+  .completion-ring { width: 90px; height: 90px; }
+  .panel { padding: 17px; }
+  .task-row { grid-template-columns: 38px minmax(0, 1fr); }
+  .tag { grid-column: 2; width: max-content; }
 }`;
 }
 
@@ -710,9 +802,9 @@ function renderHeroMetrics(record, kgLeft) {
   const total = todayPlan.length;
   const cards = [
     ['今日の完了', completed + '/' + total, completionRate() + '% 達成'],
-    ['現在体重', metrics.weightKg.format(m.weightKg), kgLeft == null ? targetDeadlineText() : targetDeadlineText() + ' / 残り' + kgLeft.toFixed(1) + 'kg'],
     ['体脂肪率', metrics.bodyFatPercent.format(m.bodyFatPercent), seven.bodyFatPercent == null ? '7日平均なし' : '7日平均 ' + seven.bodyFatPercent.toFixed(1) + '%'],
     ['睡眠', metrics.sleepHours.format(m.sleepHours), seven.sleepHours == null ? '7日平均なし' : '7日平均 ' + hours(seven.sleepHours)],
+    ['歩数', metrics.steps.format(m.steps), seven.steps == null ? '7日平均なし' : '7日平均 ' + Math.round(seven.steps).toLocaleString('ja-JP') + '歩'],
   ];
   document.getElementById('heroMetrics').innerHTML = cards.map(([label, value, sub]) =>
     '<div class="hero-card"><span>' + label + '</span><strong>' + value + '</strong><small>' + sub + '</small></div>'
@@ -725,7 +817,7 @@ function renderGoalManager(record) {
   const kgLeft = weight == null ? null : round1(weight - GOALS.weightKg);
   const daysLeft = daysUntil(GOALS.deadline);
   const pace = kgLeft == null || daysLeft == null || kgLeft <= 0 ? null : round2(kgLeft / Math.max(1, daysLeft) * 7);
-  const progress = weight == null ? 0 : clamp(((84 - weight) / Math.max(.1, 84 - GOALS.weightKg)) * 100, 0, 100);
+  const progress = weight == null ? 0 : clamp(((GOALS.startWeightKg - weight) / Math.max(.1, GOALS.startWeightKg - GOALS.weightKg)) * 100, 0, 100);
   document.getElementById('goalOverview').innerHTML =
     '<div class="goal-overview-grid">' +
     '<div class="goal-stat primary"><span>現在</span><strong>' + metrics.weightKg.format(weight) + '</strong><small>目標 ' + GOALS.weightKg.toFixed(1) + 'kg</small></div>' +
@@ -754,13 +846,14 @@ function renderCampaignProgress(record) {
   const totalDays = dateDiffDays(GOALS.startDate, GOALS.deadline);
   const elapsedDays = Math.min(totalDays ?? 0, Math.max(0, dateDiffDays(GOALS.startDate, todayIso()) ?? 0));
   const daysLeft = daysUntil(GOALS.deadline);
-  const reduced = current == null ? null : round1(current - start);
+  const reduced = current == null ? null : round1(start - current);
   const remaining = current == null ? null : round1(current - target);
   const requiredPace = current == null || daysLeft == null || daysLeft <= 0 ? null : round3(Math.max(0, current - target) / daysLeft);
   const currentPace = current == null || elapsedDays <= 0 ? null : round3(Math.max(0, start - current) / elapsedDays);
   const expected = expectedWeightForDate(todayIso());
   const delay = current == null || expected == null ? null : round1(current - expected);
   document.getElementById('campaignTitle').textContent = '目指せ' + target.toFixed(1) + 'kg ダイエット企画';
+  document.getElementById('heroGoalBadge').textContent = target.toFixed(1) + ' KG';
   document.getElementById('campaignPeriod').textContent = formatDateJa(GOALS.startDate) + ' - ' + formatDateJa(GOALS.deadline);
   const paceStatus = requiredPace == null || currentPace == null
     ? 'データ待ち'
@@ -1056,7 +1149,7 @@ function renderChart() {
     '<line x1="' + left + '" y1="' + top + '" x2="' + left + '" y2="' + (height - bottom) + '" stroke="#dfe6df"/>' +
     '<line x1="' + left + '" y1="' + (height - bottom) + '" x2="' + (width - right) + '" y2="' + (height - bottom) + '" stroke="#dfe6df"/>' +
     '<path d="' + area + '" fill="' + meta.color + '" opacity=".11"/>' +
-    (targetPath ? '<path d="' + targetPath + '" fill="none" stroke="#d9ff5f" stroke-width="2.5" stroke-dasharray="8 7"/><text x="' + (width - right - 126) + '" y="' + (top + 18) + '" font-size="12" font-weight="800" fill="#d9ff5f">目標ペース</text>' : '') +
+    (targetPath ? '<path d="' + targetPath + '" fill="none" stroke="#ff593d" stroke-width="2.5" stroke-dasharray="8 7"/><text x="' + (width - right - 126) + '" y="' + (top + 18) + '" font-size="12" font-weight="800" fill="#ff593d">目標ペース</text>' : '') +
     '<path d="' + path + '" fill="none" stroke="' + meta.color + '" stroke-width="3.5"/>' +
     points.map(([cx, cy, r]) => '<circle cx="' + cx + '" cy="' + cy + '" r="4.5" fill="#fff" stroke="' + meta.color + '" stroke-width="3"><title>' + r.date + ': ' + meta.format(r.metrics[selectedMetric]) + '</title></circle>').join('') +
     '<text x="8" y="' + (top + 6) + '" font-size="11" fill="#66736d">' + meta.format(max) + '</text>' +
@@ -1066,7 +1159,7 @@ function renderChart() {
 function renderWeightGoal(record) {
   const weight = record?.metrics?.weightKg;
   const target = GOALS.weightKg;
-  const start = Math.max(weight || target, 84);
+  const start = Math.max(weight || target, GOALS.startWeightKg);
   const progress = weight == null ? 0 : Math.max(0, Math.min(100, ((start - weight) / Math.max(.1, start - target)) * 100));
   document.getElementById('weightGoal').innerHTML =
     '<div class="status-list">' +
@@ -1216,7 +1309,7 @@ function showFeedback(text) {
 }
 function ringSvg(rate) {
   const r = 52, c = Math.PI * 2 * r, offset = c * (1 - rate / 100);
-  return '<svg viewBox="0 0 138 138"><circle cx="69" cy="69" r="' + r + '" fill="none" stroke="#e8eee8" stroke-width="13"/><circle cx="69" cy="69" r="' + r + '" fill="none" stroke="#15956b" stroke-width="13" stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + offset + '" transform="rotate(-90 69 69)"/><text x="69" y="65" text-anchor="middle" font-size="28" font-weight="900" fill="#15201c">' + rate + '%</text><text x="69" y="88" text-anchor="middle" font-size="12" font-weight="800" fill="#66736d">完了</text></svg>';
+  return '<svg viewBox="0 0 138 138"><circle cx="69" cy="69" r="' + r + '" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="13"/><circle cx="69" cy="69" r="' + r + '" fill="none" stroke="#c8f55e" stroke-width="13" stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + offset + '" transform="rotate(-90 69 69)"/><text x="69" y="65" text-anchor="middle" font-size="28" font-weight="900" fill="#ffffff">' + rate + '%</text><text x="69" y="88" text-anchor="middle" font-size="12" font-weight="800" fill="rgba(255,255,255,.78)">完了</text></svg>';
 }
 function dataPlaceholder() { return { generatedAt: new Date().toISOString(), recordCount: records.length }; }
 function point(cx, cy, r, index, total) { const angle = -Math.PI / 2 + index * 2 * Math.PI / total; return [Math.round((cx + Math.cos(angle) * r) * 10) / 10, Math.round((cy + Math.sin(angle) * r) * 10) / 10]; }
@@ -1225,7 +1318,7 @@ function targetText(value, target, unit) { if (value == null) return '目標 ' +
 function deltaText(value, unit) { if (value == null) return '前回比データなし'; const sign = value > 0 ? '+' : ''; if (unit === 'h') return '前回比 ' + sign + value.toFixed(2) + '時間'; return '前回比 ' + sign + value.toFixed(unit === '%' ? 1 : 0) + unit; }
 function hasAnyMetric(record) { return record && Object.values(record.metrics || {}).some(v => v != null); }
 function hours(value) { if (value == null || !Number.isFinite(Number(value))) return '-'; const mins = Math.round(Number(value) * 60); return Math.floor(mins / 60) + '時間' + String(mins % 60).padStart(2, '0') + '分'; }
-function todayIso() { return new Date().toISOString().slice(0, 10); }
+function todayIso() { return isoFromDate(new Date()); }
 function isoFromDate(date) {
   return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
 }
