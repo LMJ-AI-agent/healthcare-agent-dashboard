@@ -11,7 +11,7 @@
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow">Diet Coach / Personal Trainer</p>
-        <h1>今日も一つ完了。79kgへ、体を作っていこう。</h1>
+        <h1 id="campaignTitle">今日も一つ完了。79kgへ、体を作っていこう。</h1>
         <p class="lead" id="heroLead"></p>
         <div class="hero-actions">
           <span class="streak" id="todayScore"></span>
@@ -40,6 +40,8 @@
         <div class="goal-form">
           <label>目標体重<input id="goalWeightInput" type="number" step="0.1" min="35" max="160"></label>
           <label>期限<input id="goalDeadlineInput" type="date"></label>
+          <label>開始体重<input id="goalStartWeightInput" type="number" step="0.1" min="35" max="180"></label>
+          <label>開始日<input id="goalStartDateInput" type="date"></label>
           <label>歩数目標<input id="goalStepsInput" type="number" step="500" min="1000" max="30000"></label>
           <label>睡眠目標<input id="goalSleepInput" type="number" step="0.25" min="3" max="10"></label>
           <label>体脂肪率目標<input id="goalBodyFatInput" type="number" step="0.1" min="5" max="45"></label>
@@ -49,6 +51,27 @@
           <button class="ghost-button" id="resetGoals" type="button">初期値に戻す</button>
         </div>
       </section>
+    </section>
+
+    <section class="panel campaign-progress-panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Progress</p>
+          <h2>減量企画の進捗</h2>
+        </div>
+        <span class="pill" id="campaignPeriod"></span>
+      </div>
+      <div id="campaignStats"></div>
+    </section>
+
+    <section class="panel milestone-panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Milestones</p>
+          <h2>月別マイルストーン</h2>
+        </div>
+      </div>
+      <div id="milestones"></div>
     </section>
 
     <section class="panel victory-panel">

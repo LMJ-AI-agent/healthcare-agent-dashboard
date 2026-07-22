@@ -122,6 +122,19 @@ h2 { font-size: 20px; }
 }
 .goal-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
 .primary-button { border: 0; border-radius: 8px; padding: 10px 14px; background: var(--lime); color: var(--ink-dark); font-weight: 950; cursor: pointer; }
+.campaign-stat-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+.campaign-stat {
+  min-height: 122px;
+  padding: 15px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 8px;
+  background: rgba(255,255,255,.055);
+}
+.campaign-stat.featured { color: var(--ink-dark); background: linear-gradient(135deg, var(--panel-strong), #ffffff); }
+.campaign-stat span { display: block; color: inherit; opacity: .62; font-size: 12px; font-weight: 850; }
+.campaign-stat strong { display: block; margin-top: 10px; font-size: 28px; line-height: 1; }
+.campaign-stat small { display: block; margin-top: 10px; color: inherit; opacity: .72; line-height: 1.45; }
+.milestone-panel table td:last-child, .milestone-panel table th:last-child { text-align: center; }
 .command-grid, .workout-grid, .lower-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(340px, .8fr); gap: 16px; }
 .section-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
 .pill { display: inline-flex; align-items: center; min-height: 30px; padding: 6px 11px; border-radius: 999px; background: rgba(217,255,95,.14); color: var(--lime); border: 1px solid rgba(217,255,95,.2); font-size: 13px; font-weight: 850; white-space: nowrap; }
@@ -201,13 +214,13 @@ th, td { padding: 11px 8px; border-bottom: 1px solid var(--line); text-align: ri
 th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
 @media (max-width: 1040px) {
   .hero, .goal-command-panel, .goal-hero-card, .command-grid, .workout-grid, .lower-grid { grid-template-columns: 1fr; }
-  .kpis { grid-template-columns: repeat(3, minmax(140px, 1fr)); }
+  .campaign-stat-grid, .kpis { grid-template-columns: repeat(3, minmax(140px, 1fr)); }
 }
 @media (max-width: 720px) {
   .shell { width: min(100% - 20px, 1240px); padding-top: 10px; }
   .hero { padding: 20px; min-height: 0; }
   h1 { font-size: 36px; }
-  .hero-metrics, .goal-overview-grid, .goal-form, .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero-metrics, .goal-overview-grid, .goal-form, .campaign-stat-grid, .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .summary-grid, .action-detail-grid { grid-template-columns: 1fr; }
   .radar-layout, .victory-panel { grid-template-columns: 1fr; }
   .theme-input, .theme-card { grid-template-columns: 1fr; }
@@ -215,5 +228,5 @@ th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: l
   .section-head { flex-direction: column; }
 }
 @media (max-width: 520px) {
-  .hero-metrics, .goal-overview-grid, .goal-form, .kpis { grid-template-columns: 1fr; }
+  .hero-metrics, .goal-overview-grid, .goal-form, .campaign-stat-grid, .kpis { grid-template-columns: 1fr; }
 }

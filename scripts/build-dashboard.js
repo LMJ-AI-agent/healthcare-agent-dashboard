@@ -168,7 +168,7 @@ function dashboardHtml() {
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow">Diet Coach / Personal Trainer</p>
-        <h1>今日も一つ完了。79kgへ、体を作っていこう。</h1>
+        <h1 id="campaignTitle">今日も一つ完了。79kgへ、体を作っていこう。</h1>
         <p class="lead" id="heroLead"></p>
         <div class="hero-actions">
           <span class="streak" id="todayScore"></span>
@@ -197,6 +197,8 @@ function dashboardHtml() {
         <div class="goal-form">
           <label>目標体重<input id="goalWeightInput" type="number" step="0.1" min="35" max="160"></label>
           <label>期限<input id="goalDeadlineInput" type="date"></label>
+          <label>開始体重<input id="goalStartWeightInput" type="number" step="0.1" min="35" max="180"></label>
+          <label>開始日<input id="goalStartDateInput" type="date"></label>
           <label>歩数目標<input id="goalStepsInput" type="number" step="500" min="1000" max="30000"></label>
           <label>睡眠目標<input id="goalSleepInput" type="number" step="0.25" min="3" max="10"></label>
           <label>体脂肪率目標<input id="goalBodyFatInput" type="number" step="0.1" min="5" max="45"></label>
@@ -206,6 +208,27 @@ function dashboardHtml() {
           <button class="ghost-button" id="resetGoals" type="button">初期値に戻す</button>
         </div>
       </section>
+    </section>
+
+    <section class="panel campaign-progress-panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Progress</p>
+          <h2>減量企画の進捗</h2>
+        </div>
+        <span class="pill" id="campaignPeriod"></span>
+      </div>
+      <div id="campaignStats"></div>
+    </section>
+
+    <section class="panel milestone-panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Milestones</p>
+          <h2>月別マイルストーン</h2>
+        </div>
+      </div>
+      <div id="milestones"></div>
     </section>
 
     <section class="panel victory-panel">
@@ -484,6 +507,19 @@ h2 { font-size: 20px; }
 }
 .goal-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
 .primary-button { border: 0; border-radius: 8px; padding: 10px 14px; background: var(--lime); color: var(--ink-dark); font-weight: 950; cursor: pointer; }
+.campaign-stat-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+.campaign-stat {
+  min-height: 122px;
+  padding: 15px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 8px;
+  background: rgba(255,255,255,.055);
+}
+.campaign-stat.featured { color: var(--ink-dark); background: linear-gradient(135deg, var(--panel-strong), #ffffff); }
+.campaign-stat span { display: block; color: inherit; opacity: .62; font-size: 12px; font-weight: 850; }
+.campaign-stat strong { display: block; margin-top: 10px; font-size: 28px; line-height: 1; }
+.campaign-stat small { display: block; margin-top: 10px; color: inherit; opacity: .72; line-height: 1.45; }
+.milestone-panel table td:last-child, .milestone-panel table th:last-child { text-align: center; }
 .command-grid, .workout-grid, .lower-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(340px, .8fr); gap: 16px; }
 .section-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
 .pill { display: inline-flex; align-items: center; min-height: 30px; padding: 6px 11px; border-radius: 999px; background: rgba(217,255,95,.14); color: var(--lime); border: 1px solid rgba(217,255,95,.2); font-size: 13px; font-weight: 850; white-space: nowrap; }
@@ -563,13 +599,13 @@ th, td { padding: 11px 8px; border-bottom: 1px solid var(--line); text-align: ri
 th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
 @media (max-width: 1040px) {
   .hero, .goal-command-panel, .goal-hero-card, .command-grid, .workout-grid, .lower-grid { grid-template-columns: 1fr; }
-  .kpis { grid-template-columns: repeat(3, minmax(140px, 1fr)); }
+  .campaign-stat-grid, .kpis { grid-template-columns: repeat(3, minmax(140px, 1fr)); }
 }
 @media (max-width: 720px) {
   .shell { width: min(100% - 20px, 1240px); padding-top: 10px; }
   .hero { padding: 20px; min-height: 0; }
   h1 { font-size: 36px; }
-  .hero-metrics, .goal-overview-grid, .goal-form, .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero-metrics, .goal-overview-grid, .goal-form, .campaign-stat-grid, .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .summary-grid, .action-detail-grid { grid-template-columns: 1fr; }
   .radar-layout, .victory-panel { grid-template-columns: 1fr; }
   .theme-input, .theme-card { grid-template-columns: 1fr; }
@@ -577,12 +613,12 @@ th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: l
   .section-head { flex-direction: column; }
 }
 @media (max-width: 520px) {
-  .hero-metrics, .goal-overview-grid, .goal-form, .kpis { grid-template-columns: 1fr; }
+  .hero-metrics, .goal-overview-grid, .goal-form, .campaign-stat-grid, .kpis { grid-template-columns: 1fr; }
 }`;
 }
 
 function dashboardJs() {
-  return `const DEFAULT_GOALS = { weightKg: 79, deadline: '2026-07-31', steps: 8000, sleepHours: 6.5, activeEnergyKcal: 650, bodyFatPercent: 25 };
+  return `const DEFAULT_GOALS = { startWeightKg: 84, startDate: '2026-06-01', weightKg: 79, deadline: '2026-07-31', steps: 8000, sleepHours: 6.5, activeEnergyKcal: 650, bodyFatPercent: 25 };
 let GOALS = loadGoalSettings();
 const metrics = {
   weightKg: { label: '体重', color: '#3567e8', format: v => v == null ? '-' : v.toFixed(1) + 'kg' },
@@ -620,6 +656,8 @@ function render(data) {
     : '';
   renderHeroMetrics(latestRecord, kgLeft);
   renderGoalManager(latestRecord);
+  renderCampaignProgress(latestRecord);
+  renderMilestones();
   renderCompletionSummary();
   renderCoaching();
   renderActionDetails();
@@ -697,6 +735,8 @@ function renderGoalManager(record) {
     '</div>';
   document.getElementById('goalWeightInput').value = GOALS.weightKg;
   document.getElementById('goalDeadlineInput').value = GOALS.deadline;
+  document.getElementById('goalStartWeightInput').value = GOALS.startWeightKg;
+  document.getElementById('goalStartDateInput').value = GOALS.startDate;
   document.getElementById('goalStepsInput').value = GOALS.steps;
   document.getElementById('goalSleepInput').value = GOALS.sleepHours;
   document.getElementById('goalBodyFatInput').value = GOALS.bodyFatPercent;
@@ -705,6 +745,49 @@ function renderGoalManager(record) {
   });
   document.getElementById('saveGoals').onclick = saveGoalsFromInputs;
   document.getElementById('resetGoals').onclick = resetGoals;
+}
+
+function renderCampaignProgress(record) {
+  const current = record?.metrics?.weightKg;
+  const start = GOALS.startWeightKg;
+  const target = GOALS.weightKg;
+  const totalDays = dateDiffDays(GOALS.startDate, GOALS.deadline);
+  const elapsedDays = Math.min(totalDays ?? 0, Math.max(0, dateDiffDays(GOALS.startDate, todayIso()) ?? 0));
+  const daysLeft = daysUntil(GOALS.deadline);
+  const reduced = current == null ? null : round1(current - start);
+  const remaining = current == null ? null : round1(current - target);
+  const requiredPace = current == null || daysLeft == null || daysLeft <= 0 ? null : round3(Math.max(0, current - target) / daysLeft);
+  const currentPace = current == null || elapsedDays <= 0 ? null : round3(Math.max(0, start - current) / elapsedDays);
+  const expected = expectedWeightForDate(todayIso());
+  const delay = current == null || expected == null ? null : round1(current - expected);
+  document.getElementById('campaignTitle').textContent = '目指せ' + target.toFixed(1) + 'kg ダイエット企画';
+  document.getElementById('campaignPeriod').textContent = formatDateJa(GOALS.startDate) + ' - ' + formatDateJa(GOALS.deadline);
+  const paceStatus = requiredPace == null || currentPace == null
+    ? 'データ待ち'
+    : currentPace >= requiredPace ? '予定以上' : '要ペースアップ';
+  const delayText = delay == null
+    ? '目標ペース比較なし'
+    : delay <= 0 ? '目標ペースより' + Math.abs(delay).toFixed(1) + 'kg先行' : '目標ペースより' + delay.toFixed(1) + 'kg遅れ';
+  const cards = [
+    ['現在体重', metrics.weightKg.format(current), latestRecord?.date ? latestRecord.date + ' 時点 / ' + delayText : delayText],
+    ['減量済み', reduced == null ? '-' : reduced.toFixed(1) + 'kg', 'START ' + start.toFixed(1) + 'kg'],
+    ['ゴールまで残り', remaining == null ? '-' : Math.max(0, remaining).toFixed(1) + 'kg', 'GOAL ' + target.toFixed(1) + 'kg'],
+    ['残り日数', daysLeft == null ? '-' : daysLeft + '日', totalDays ? '全' + totalDays + '日中 ' + elapsedDays + '日経過' : '期間未設定'],
+    ['必要ペース', requiredPace == null ? '-' : requiredPace.toFixed(3) + 'kg/日', '今日から期限まで'],
+    ['現状ペース', currentPace == null ? '-' : currentPace.toFixed(3) + 'kg/日', paceStatus],
+  ];
+  document.getElementById('campaignStats').innerHTML =
+    '<div class="campaign-stat-grid">' + cards.map(([label, value, sub], index) =>
+      '<div class="campaign-stat ' + (index === 0 ? 'featured' : '') + '"><span>' + label + '</span><strong>' + value + '</strong><small>' + sub + '</small></div>'
+    ).join('') + '</div>';
+}
+
+function renderMilestones() {
+  const rows = buildMilestones();
+  document.getElementById('milestones').innerHTML =
+    '<div class="table-wrap"><table><thead><tr><th>月</th><th>目標</th><th>実績</th><th>状況</th></tr></thead><tbody>' +
+    rows.map(row => '<tr><td>' + row.month + '</td><td>' + row.target + '</td><td>' + row.actual + '</td><td><span class="' + row.className + '">' + row.status + '</span></td></tr>').join('') +
+    '</tbody></table></div>';
 }
 
 function renderCompletionSummary() {
@@ -952,9 +1035,10 @@ function renderChart() {
   const meta = metrics[selectedMetric];
   const rows = records.filter(r => r.metrics?.[selectedMetric] != null);
   const values = rows.map(r => r.metrics[selectedMetric]);
+  const targetValues = selectedMetric === 'weightKg' ? rows.map(r => expectedWeightForDate(r.date)).filter(v => v != null) : [];
   const chart = document.getElementById('chart');
   if (!values.length) { chart.innerHTML = '<p class="bad">この項目のデータがありません</p>'; return; }
-  const min = Math.min(...values), max = Math.max(...values);
+  const min = Math.min(...values, ...targetValues), max = Math.max(...values, ...targetValues);
   const pad = max === min ? 1 : (max - min) * 0.15;
   const lo = min - pad, hi = max + pad;
   const width = 940, height = 310, left = 56, right = 20, top = 22, bottom = 44;
@@ -962,12 +1046,17 @@ function renderChart() {
   const y = v => top + (hi - v) * ((height - top - bottom) / Math.max(1, hi - lo));
   const points = rows.map((r, i) => [x(i), y(r.metrics[selectedMetric]), r]);
   const path = points.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+  const targetPoints = selectedMetric === 'weightKg'
+    ? rows.map((r, i) => [x(i), expectedWeightForDate(r.date)]).filter(([, v]) => v != null).map(([px, v, r]) => [px, y(v), r])
+    : [];
+  const targetPath = targetPoints.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
   const area = path + ' L' + points.at(-1)[0].toFixed(1) + ',' + (height - bottom) + ' L' + points[0][0].toFixed(1) + ',' + (height - bottom) + ' Z';
   const labels = rows.map((r, i) => i % Math.ceil(rows.length / 8) === 0 || i === rows.length - 1 ? '<text x="' + x(i) + '" y="' + (height - 13) + '" text-anchor="middle" font-size="11" fill="#66736d">' + r.date.slice(5) + '</text>' : '').join('');
   chart.innerHTML = '<svg viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="' + meta.label + ' chart">' +
     '<line x1="' + left + '" y1="' + top + '" x2="' + left + '" y2="' + (height - bottom) + '" stroke="#dfe6df"/>' +
     '<line x1="' + left + '" y1="' + (height - bottom) + '" x2="' + (width - right) + '" y2="' + (height - bottom) + '" stroke="#dfe6df"/>' +
     '<path d="' + area + '" fill="' + meta.color + '" opacity=".11"/>' +
+    (targetPath ? '<path d="' + targetPath + '" fill="none" stroke="#d9ff5f" stroke-width="2.5" stroke-dasharray="8 7"/><text x="' + (width - right - 126) + '" y="' + (top + 18) + '" font-size="12" font-weight="800" fill="#d9ff5f">目標ペース</text>' : '') +
     '<path d="' + path + '" fill="none" stroke="' + meta.color + '" stroke-width="3.5"/>' +
     points.map(([cx, cy, r]) => '<circle cx="' + cx + '" cy="' + cy + '" r="4.5" fill="#fff" stroke="' + meta.color + '" stroke-width="3"><title>' + r.date + ': ' + meta.format(r.metrics[selectedMetric]) + '</title></circle>').join('') +
     '<text x="8" y="' + (top + 6) + '" font-size="11" fill="#66736d">' + meta.format(max) + '</text>' +
@@ -1027,6 +1116,8 @@ function loadGoalSettings() {
 }
 function saveGoalsFromInputs() {
   GOALS = {
+    startWeightKg: numberFromInput('goalStartWeightInput', DEFAULT_GOALS.startWeightKg),
+    startDate: document.getElementById('goalStartDateInput').value || DEFAULT_GOALS.startDate,
     weightKg: numberFromInput('goalWeightInput', DEFAULT_GOALS.weightKg),
     deadline: document.getElementById('goalDeadlineInput').value || DEFAULT_GOALS.deadline,
     steps: Math.round(numberFromInput('goalStepsInput', DEFAULT_GOALS.steps)),
@@ -1052,6 +1143,47 @@ function numberFromInput(id, fallback) {
   const value = Number(document.getElementById(id).value);
   return Number.isFinite(value) ? value : fallback;
 }
+function buildMilestones() {
+  const rows = [];
+  const start = new Date(GOALS.startDate + 'T00:00:00+09:00');
+  const end = new Date(GOALS.deadline + 'T00:00:00+09:00');
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) return rows;
+  let cursor = new Date(start);
+  cursor.setDate(1);
+  const latest = latestRecord?.date || todayIso();
+  while (cursor <= end) {
+    const monthStart = new Date(cursor);
+    const monthEnd = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0);
+    const periodStartIso = isoFromDate(monthStart < start ? start : monthStart);
+    const periodEndIso = isoFromDate(monthEnd > end ? end : monthEnd);
+    const targetStart = expectedWeightForDate(periodStartIso);
+    const targetEnd = expectedWeightForDate(periodEndIso);
+    const actual = latestWeightOnOrBefore(periodEndIso);
+    const isPast = periodEndIso < latest;
+    const isCurrent = periodStartIso <= latest && latest <= periodEndIso;
+    const achieved = actual != null && targetEnd != null && actual <= targetEnd;
+    rows.push({
+      month: String(cursor.getMonth() + 1) + '月',
+      target: targetStart == null || targetEnd == null ? '-' : targetStart.toFixed(1) + 'kg → ' + targetEnd.toFixed(1) + 'kg',
+      actual: actual == null ? '-' : actual.toFixed(1) + 'kg',
+      status: achieved ? '達成' : isCurrent ? '進行中' : isPast ? '未達' : '予定',
+      className: achieved ? 'ok' : isCurrent ? 'warn' : isPast ? 'bad' : '',
+    });
+    cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
+  }
+  return rows;
+}
+function latestWeightOnOrBefore(isoDate) {
+  const row = [...records].reverse().find(r => r.date <= isoDate && r.metrics?.weightKg != null);
+  return row?.metrics?.weightKg ?? null;
+}
+function expectedWeightForDate(isoDate) {
+  const total = dateDiffDays(GOALS.startDate, GOALS.deadline);
+  const elapsed = dateDiffDays(GOALS.startDate, isoDate);
+  if (total == null || elapsed == null || total <= 0) return null;
+  const ratio = clamp(elapsed / total, 0, 1);
+  return round2(GOALS.startWeightKg + (GOALS.weightKg - GOALS.startWeightKg) * ratio);
+}
 function completedCount() { return Object.values(dayState?.tasks || {}).filter(Boolean).length; }
 function completionRate() { return todayPlan.length ? Math.round((completedCount() / todayPlan.length) * 100) : 0; }
 function nextTaskLabel() {
@@ -1059,6 +1191,12 @@ function nextTaskLabel() {
   return next ? next.title : '全部完了';
 }
 function targetDeadlineText() { return formatDateJa(GOALS.deadline) + 'までに' + GOALS.weightKg.toFixed(1) + 'kg'; }
+function dateDiffDays(startIso, endIso) {
+  const start = new Date(startIso + 'T00:00:00+09:00');
+  const end = new Date(endIso + 'T00:00:00+09:00');
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return null;
+  return Math.max(0, Math.round((end - start) / 86400000));
+}
 function daysUntil(isoDate) {
   const target = new Date(isoDate + 'T00:00:00+09:00');
   const now = new Date();
@@ -1088,9 +1226,13 @@ function deltaText(value, unit) { if (value == null) return '前回比データ�
 function hasAnyMetric(record) { return record && Object.values(record.metrics || {}).some(v => v != null); }
 function hours(value) { if (value == null || !Number.isFinite(Number(value))) return '-'; const mins = Math.round(Number(value) * 60); return Math.floor(mins / 60) + '時間' + String(mins % 60).padStart(2, '0') + '分'; }
 function todayIso() { return new Date().toISOString().slice(0, 10); }
+function isoFromDate(date) {
+  return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+}
 function clamp(value, min, max) { return Math.max(min, Math.min(max, Number(value) || 0)); }
 function round1(value) { return Math.round(Number(value) * 10) / 10; }
 function round2(value) { return Math.round(Number(value) * 100) / 100; }
+function round3(value) { return Math.round(Number(value) * 1000) / 1000; }
 function escapeHtml(value) { return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;'); }`;
 }
 
