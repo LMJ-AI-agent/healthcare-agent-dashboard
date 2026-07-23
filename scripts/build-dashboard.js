@@ -1,10 +1,11 @@
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { dirname, isAbsolute, join } from 'node:path';
 
 const root = process.cwd();
 const reportsDir = join(root, 'data', 'reports');
 const healthPlanetDir = join(root, 'data', 'healthplanet');
 const outputDir = join(root, 'docs');
+const settingsPath = join(root, 'config', 'settings.json');
 
 const GOALS = {
   weightKg: 62,
@@ -46,14 +47,16 @@ async function buildRecords() {
   const healthPlanetDates = (await listFilesSafe(healthPlanetDir))
     .filter((name) => /^\d{4}-\d{2}-\d{2}\.json$/.test(name))
     .map((name) => name.slice(0, 10));
-  const dates = [...new Set([...reportDates, ...healthPlanetDates])].sort();
+  const rawHealthByDate = await buildRawHealthByDate();
+  const dates = [...new Set([...reportDates, ...healthPlanetDates, ...rawHealthByDate.keys()])].sort();
   const records = [];
 
   for (const date of dates) {
     const input = await readJsonIfExists(join(reportsDir, date, 'input-summary.json'));
     const latestSkip = await readLatestReadinessSkip(date);
     const healthPlanet = await readJsonIfExists(join(healthPlanetDir, `${date}.json`));
-    records.push(normalizeRecord({ date, input, latestSkip, healthPlanet }));
+    const rawHealth = rawHealthByDate.get(date) || null;
+    records.push(normalizeRecord({ date, input, latestSkip, healthPlanet, rawHealth }));
   }
 
   return records.map((record, index) => {
@@ -63,7 +66,81 @@ async function buildRecords() {
   });
 }
 
-function normalizeRecord({ date, input, latestSkip, healthPlanet }) {
+async function buildRawHealthByDate() {
+  const healthDataDirs = await resolveHealthDataDirs();
+  const samplesByDate = new Map();
+
+  for (const dir of healthDataDirs) {
+    const files = (await listFilesSafe(dir)).filter((name) => name.toLowerCase().endsWith('.json')).sort();
+    for (const file of files) {
+      const json = await readJsonIfExists(join(dir, file));
+      const metrics = json?.data?.metrics;
+      if (!Array.isArray(metrics)) continue;
+
+      for (const metric of metrics) {
+        if (!RAW_METRIC_NAMES.has(metric?.name) || !Array.isArray(metric?.data)) continue;
+        for (const sample of metric.data) {
+          const date = String(sample?.date || '').slice(0, 10);
+          const qty = numberOrNull(sample?.qty);
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || qty == null) continue;
+          if (!samplesByDate.has(date)) samplesByDate.set(date, new Map());
+          const metricsForDate = samplesByDate.get(date);
+          if (!metricsForDate.has(metric.name)) metricsForDate.set(metric.name, new Map());
+          const source = typeof sample.source === 'string' ? sample.source : JSON.stringify(sample.source || '');
+          const signature = `${sample.date}|${qty}|${source}`;
+          metricsForDate.get(metric.name).set(signature, { date: sample.date, qty });
+        }
+      }
+    }
+  }
+
+  return new Map([...samplesByDate.entries()].map(([date, metrics]) => [date, {
+    steps: round0(sumRawMetric(metrics, 'step_count')),
+    activeEnergyKcal: round0(kjToKcal(sumRawMetric(metrics, 'active_energy'))),
+    weightKg: round1(lastRawMetric(metrics, 'weight_body_mass')),
+    bodyMassIndex: round1(lastRawMetric(metrics, 'body_mass_index')),
+    bodyFatPercent: round1(lastRawMetric(metrics, 'body_fat_percentage')),
+  }]));
+}
+
+const RAW_METRIC_NAMES = new Set([
+  'step_count',
+  'active_energy',
+  'weight_body_mass',
+  'body_mass_index',
+  'body_fat_percentage',
+]);
+
+async function resolveHealthDataDirs() {
+  const fromEnvironment = String(process.env.HEALTH_DATA_DIRS || '')
+    .split(';')
+    .map((value) => value.trim())
+    .filter(Boolean);
+  const settings = await readJsonIfExists(settingsPath);
+  const fromSettings = [
+    ...(Array.isArray(settings?.healthDataDirs) ? settings.healthDataDirs : []),
+    settings?.healthDataDir,
+  ].filter(Boolean);
+  return [...new Set([...fromEnvironment, ...fromSettings])]
+    .map((path) => isAbsolute(path) ? path : join(root, path));
+}
+
+function sumRawMetric(metrics, name) {
+  const values = [...(metrics.get(name)?.values() || [])].map((sample) => sample.qty);
+  return values.length ? values.reduce((sum, value) => sum + value, 0) : null;
+}
+
+function lastRawMetric(metrics, name) {
+  const values = [...(metrics.get(name)?.values() || [])]
+    .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+  return values.at(-1)?.qty ?? null;
+}
+
+function kjToKcal(value) {
+  return value == null ? null : Number(value) / 4.184;
+}
+
+function normalizeRecord({ date, input, latestSkip, healthPlanet, rawHealth }) {
   const target = input?.trendSummary?.target || {};
   const avg7 = input?.trendSummary?.currentSevenDayAverage || {};
   const diff7 = input?.trendSummary?.differenceFromCurrentSevenDayAverage || {};
@@ -80,11 +157,11 @@ function normalizeRecord({ date, input, latestSkip, healthPlanet }) {
     missing: readiness?.missing || [],
     metrics: {
       sleepHours: numberOrNull(target.sleepHours ?? latestSkip?.sleepSummary?.totalSleepHours),
-      steps: numberOrNull(target.steps),
-      activeEnergyKcal: numberOrNull(target.activeEnergyKcal),
-      weightKg: numberOrNull(target.weightKg ?? hp?.weightKg),
-      bodyMassIndex: numberOrNull(target.bodyMassIndex ?? hp?.bodyMassIndex),
-      bodyFatPercent: numberOrNull(target.bodyFatPercent ?? hp?.bodyFatPercent),
+      steps: numberOrNull(target.steps ?? rawHealth?.steps),
+      activeEnergyKcal: numberOrNull(target.activeEnergyKcal ?? rawHealth?.activeEnergyKcal),
+      weightKg: numberOrNull(target.weightKg ?? hp?.weightKg ?? rawHealth?.weightKg),
+      bodyMassIndex: numberOrNull(target.bodyMassIndex ?? hp?.bodyMassIndex ?? rawHealth?.bodyMassIndex),
+      bodyFatPercent: numberOrNull(target.bodyFatPercent ?? hp?.bodyFatPercent ?? rawHealth?.bodyFatPercent),
     },
     average7: {
       sleepHours: numberOrNull(avg7.sleepHours),

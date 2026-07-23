@@ -17,6 +17,7 @@ const FALLBACK_RECORDS = [
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let nextGoalWeight = 76;
 let nextGoalDeadline = '2026-10-31';
+let selectedRecordMonth = null;
 
 function setupReveals() {
   const elements = [...document.querySelectorAll('[data-reveal]')];
@@ -223,16 +224,63 @@ function updateChartLabels(series, yMin, yMax) {
 
 function renderRecords(records) {
   const container = document.getElementById('recordsTable');
-  if (!container) return;
-  const visibleRecords = records.filter(record => hasAnyMetric(record)).slice(-6).reverse();
-  const header = '<div class="record-row record-header"><span>DATE</span><span>STEPS</span><span>ACTIVE KCAL</span><span>WEIGHT</span><span>BODY FAT</span></div>';
-  const rows = visibleRecords.map(record => {
+  const tabs = document.getElementById('recordMonthTabs');
+  const summary = document.getElementById('recordsMonthSummary');
+  if (!container || !tabs || !summary) return;
+
+  const availableRecords = records.filter(record => hasAnyMetric(record));
+  const months = [...new Set(availableRecords.map(record => record.date.slice(0, 7)))].sort().reverse();
+  if (!months.length) return;
+  if (!months.includes(selectedRecordMonth)) selectedRecordMonth = months[0];
+
+  tabs.innerHTML = months.map(month => (
+    '<button type="button" class="record-month-tab" role="tab" aria-selected="' + (month === selectedRecordMonth) + '" data-month="' + month + '">' +
+      monthLabel(month) +
+    '</button>'
+  )).join('');
+  tabs.querySelectorAll('[data-month]').forEach(button => {
+    button.addEventListener('click', () => {
+      selectedRecordMonth = button.dataset.month;
+      renderRecords(records);
+    });
+  });
+
+  const monthRecords = availableRecords
+    .filter(record => record.date.startsWith(selectedRecordMonth))
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const weightByDate = new Map(availableRecords
+    .filter(record => isNumber(record.metrics?.weightKg))
+    .map(record => [record.date, Number(record.metrics.weightKg)]));
+  const monthWeights = monthRecords.filter(record => isNumber(record.metrics?.weightKg));
+  const monthStartWeight = monthWeights[0]?.metrics?.weightKg;
+  const monthLatestWeight = monthWeights.at(-1)?.metrics?.weightKg;
+  const monthChange = isNumber(monthStartWeight) && isNumber(monthLatestWeight)
+    ? Number(monthLatestWeight) - Number(monthStartWeight)
+    : null;
+  const stepValues = monthRecords.map(record => record.metrics?.steps).filter(isNumber).map(Number);
+  const averageSteps = stepValues.length
+    ? stepValues.reduce((sum, value) => sum + value, 0) / stepValues.length
+    : null;
+
+  setText('recordsMonthLabel', monthLabel(selectedRecordMonth).toUpperCase());
+  summary.innerHTML =
+    '<span>MONTH START<strong>' + formatWeight(monthStartWeight) + '</strong></span>' +
+    '<span>MONTH CHANGE<strong>' + formatSignedWeight(monthChange) + '</strong></span>' +
+    '<span>DAILY RECORDS<strong>' + monthRecords.length + '日 / 平均' + formatInteger(averageSteps) + '歩</strong></span>';
+
+  const header = '<div class="record-row record-header"><span>WEIGHT</span><span>前日比</span><span>月初比</span><span>DATE</span><span>STEPS</span><span>BODY FAT</span></div>';
+  const rows = [...monthRecords].reverse().map(record => {
     const metrics = record.metrics || {};
+    const weight = isNumber(metrics.weightKg) ? Number(metrics.weightKg) : null;
+    const previousWeight = weightByDate.get(previousIsoDate(record.date));
+    const previousChange = weight != null && isNumber(previousWeight) ? weight - previousWeight : null;
+    const startChange = weight != null && isNumber(monthStartWeight) ? weight - Number(monthStartWeight) : null;
     return '<div class="record-row">' +
+      '<span data-label="WEIGHT">' + (weight != null ? '<strong>' + weight.toFixed(1) + '</strong> kg' : '—') + '</span>' +
+      '<span data-label="前日比">' + formatDeltaMarkup(previousChange) + '</span>' +
+      '<span data-label="月初比">' + formatDeltaMarkup(startChange) + '</span>' +
       '<span data-label="DATE"><b>' + record.date.slice(0, 5) + '</b>' + record.date.slice(5).replace('-', '.') + '</span>' +
       '<span data-label="STEPS">' + formatInteger(metrics.steps) + '</span>' +
-      '<span data-label="ACTIVE KCAL">' + formatInteger(metrics.activeEnergyKcal) + '</span>' +
-      '<span data-label="WEIGHT">' + (isNumber(metrics.weightKg) ? '<strong>' + metrics.weightKg.toFixed(1) + '</strong> kg' : '—') + '</span>' +
       '<span data-label="BODY FAT">' + (isNumber(metrics.bodyFatPercent) ? metrics.bodyFatPercent.toFixed(1) + ' %' : '—') + '</span>' +
       '</div>';
   }).join('');
@@ -277,6 +325,8 @@ async function refreshDashboard(chart) {
     if (isNumber(bodyFat)) updateCounter('bodyFatCounter', bodyFat, 1, '%');
     if (isNumber(bodyFatAverage)) setText('bodyFatAverageLabel', '7日平均 ' + bodyFatAverage.toFixed(1) + '%');
     updateCounter('weeklyPaceCounter', weeklyPace, 2, 'kg');
+    setText('weeklyPaceLabel', weeklyPace > 0 ? '週' + weeklyPace.toFixed(2) + 'kgを、毎日の動きへ' : '達成後は、心地よく維持');
+    updateMovementEquivalents(weeklyPace, currentWeight);
     updateCounter('daysToGateCounter', Math.max(0, days), 0, '日');
     setText('nextGateWeight', nextGoalWeight.toFixed(1));
     setText('chartLastUpdate', latestDate.replaceAll('-', '.'));
@@ -310,6 +360,55 @@ function formatNumber(value, decimals, suffix) {
 
 function formatInteger(value) {
   return isNumber(value) ? Math.round(value).toLocaleString('ja-JP') : '—';
+}
+
+function formatWeight(value) {
+  return isNumber(value) ? Number(value).toFixed(1) + 'kg' : '—';
+}
+
+function formatSignedWeight(value) {
+  if (!isNumber(value)) return '—';
+  const number = Number(value);
+  return (number > 0 ? '+' : '') + number.toFixed(1) + 'kg';
+}
+
+function formatDeltaMarkup(value) {
+  if (!isNumber(value)) return '<span class="record-delta is-flat">—</span>';
+  const number = Number(value);
+  const className = number < 0 ? 'is-down' : number > 0 ? 'is-up' : 'is-flat';
+  return '<span class="record-delta ' + className + '">' + formatSignedWeight(number) + '</span>';
+}
+
+function monthLabel(month) {
+  const [year, monthNumber] = month.split('-').map(Number);
+  return year + '年' + monthNumber + '月';
+}
+
+function previousIsoDate(isoDate) {
+  const date = new Date(isoDate + 'T00:00:00Z');
+  date.setUTCDate(date.getUTCDate() - 1);
+  return date.toISOString().slice(0, 10);
+}
+
+function updateMovementEquivalents(weeklyPace, currentWeight) {
+  const weight = isNumber(currentWeight) ? Number(currentWeight) : 80;
+  const dailyEnergyEquivalent = Math.max(0, Number(weeklyPace) || 0) * 7200 / 7;
+  const options = [
+    ['walkingMinutes', 4],
+    ['runningMinutes', 8],
+    ['swimmingMinutes', 8],
+    ['strengthMinutes', 3],
+  ];
+  options.forEach(([id, mets]) => {
+    const caloriesPerMinute = mets * 3.5 * weight / 200;
+    const minutes = dailyEnergyEquivalent > 0
+      ? Math.max(5, Math.round((dailyEnergyEquivalent / caloriesPerMinute) / 5) * 5)
+      : 0;
+    setText(id, minutes > 0 ? '約' + minutes + '分' : '維持ペース');
+  });
+  setText('dailyPaceEnergy', weeklyPace > 0
+    ? '週' + Number(weeklyPace).toFixed(2) + 'kgのペースを、4つの動きに変換'
+    : '目標到達後の、心地よい維持ペース');
 }
 
 function shortDate(isoDate) {

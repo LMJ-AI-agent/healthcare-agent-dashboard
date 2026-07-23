@@ -8,12 +8,15 @@ test('dashboard loads fresh health data and exposes dynamic targets', async () =
     readFile('docs/app.js', 'utf8'),
   ]);
 
-  for (const id of ['currentWeightCounter', 'bodyFatCounter', 'daysToGateCounter', 'weightTrendCanvas', 'recordsTable']) {
+  for (const id of ['currentWeightCounter', 'bodyFatCounter', 'daysToGateCounter', 'weightTrendCanvas', 'recordMonthTabs', 'recordsMonthSummary', 'recordsTable']) {
     assert.match(html, new RegExp(`id="${id}"`));
   }
   assert.match(app, /fetch\('\.\/health-data\.json\?ts=' \+ Date\.now\(\), \{ cache: 'no-store' \}\)/);
   assert.match(app, /chart\.update\(weightSeries\)/);
   assert.match(app, /renderRecords\(records\)/);
+  assert.match(app, /selectedRecordMonth/);
+  assert.match(app, /previousIsoDate\(record\.date\)/);
+  assert.match(app, /updateMovementEquivalents\(weeklyPace, currentWeight\)/);
 });
 
 test('committed health data includes the next and final goals', async () => {
@@ -22,7 +25,20 @@ test('committed health data includes the next and final goals', async () => {
   assert.equal(data.goals.nextDeadline, '2026-10-31');
   assert.equal(data.goals.weightKg, 62);
   assert.ok(Array.isArray(data.records));
-  assert.ok(data.records.length > 0);
+  assert.ok(data.records.length >= 53);
+  assert.equal(data.records[0].date, '2026-06-01');
+  assert.ok(data.records.some((record) => record.date === '2026-07-23'));
+  assert.equal(new Set(data.records.map((record) => record.date)).size, data.records.length);
+});
+
+test('dashboard builder restores daily metrics directly from Health Auto Export JSON', async () => {
+  const source = await readFile('scripts/build-dashboard.js', 'utf8');
+  assert.match(source, /buildRawHealthByDate\(\)/);
+  assert.match(source, /RAW_METRIC_NAMES/);
+  assert.match(source, /step_count/);
+  assert.match(source, /weight_body_mass/);
+  assert.match(source, /body_fat_percentage/);
+  assert.match(source, /target\.steps \?\? rawHealth\?\.steps/);
 });
 
 test('partial daily data still runs the dashboard publisher', async () => {

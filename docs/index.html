@@ -64,8 +64,23 @@
     <section class="metrics-wrap" aria-label="現在の主要指標" data-reveal>
       <article class="metric metric-dark"><span>NOW / WEIGHT</span><strong><span id="currentWeightCounter" class="count-up" data-count="81.7" data-decimals="1" data-suffix="kg">0.0kg</span></strong><small id="nextGapLabel">76kgまであと5.7kg</small></article>
       <article class="metric"><span>BODY FAT</span><strong><span id="bodyFatCounter" class="count-up" data-count="27.7" data-decimals="1" data-suffix="%">0.0%</span></strong><small id="bodyFatAverageLabel">7日平均 27.6%</small></article>
-      <article class="metric"><span>WEEKLY PACE</span><strong><span id="weeklyPaceCounter" class="count-up" data-count="0.4" data-decimals="2" data-suffix="kg">0.00kg</span></strong><small>必要な減量ペース</small></article>
+      <article class="metric"><span>WEEKLY PACE</span><strong><span id="weeklyPaceCounter" class="count-up" data-count="0.4" data-decimals="2" data-suffix="kg">0.00kg</span></strong><small id="weeklyPaceLabel">1週間で整えるペース</small></article>
       <article class="metric metric-lime"><span>DAYS TO GATE</span><strong><span id="daysToGateCounter" class="count-up" data-count="100" data-decimals="0" data-suffix="日">0日</span></strong><small>一歩ずつ、前へ</small></article>
+    </section>
+
+    <section class="pace-equivalents" aria-labelledby="pace-title" data-reveal>
+      <div class="pace-intro">
+        <p class="eyebrow">MOVE EQUIVALENTS</p>
+        <h2 id="pace-title">今日の動きに、<br><span>置き換える。</span></h2>
+        <p><strong id="dailyPaceEnergy">週間ペースを4つの動きに変換</strong><br>運動だけで置き換えた場合の目安。全部ではなく、好きな動きを組み合わせる。</p>
+      </div>
+      <div class="pace-options">
+        <article class="pace-option pace-walk"><span>01 / WALK</span><strong id="walkingMinutes">約65分</strong><small>やや速歩・4 METs</small></article>
+        <article class="pace-option pace-run"><span>02 / RUN</span><strong id="runningMinutes">約35分</strong><small>ランニング・8 METs</small></article>
+        <article class="pace-option pace-swim"><span>03 / SWIM</span><strong id="swimmingMinutes">約35分</strong><small>クロール・8 METs</small></article>
+        <article class="pace-option pace-strength"><span>04 / STRENGTH</span><strong id="strengthMinutes">約85分</strong><small>軽い筋トレ・3 METs</small></article>
+      </div>
+      <p class="pace-note">体重とMETsから算出した理論上の目安です。体調に合わせ、食事と日常活動も含めて無理なく調整してください。</p>
     </section>
 
     <section id="today" class="section today-section">
@@ -125,7 +140,9 @@
     </section>
 
     <section id="records" class="section records-section">
-      <div class="records-head" data-reveal><div><p class="eyebrow">RECENT LOG</p><h2>積み上げた記録。</h2></div><span>JUN — JUL 2026</span></div>
+      <div class="records-head" data-reveal><div><p class="eyebrow">FULL HISTORY</p><h2>積み上げた記録。</h2></div><span id="recordsMonthLabel">ALL RECORDS</span></div>
+      <div class="record-month-tabs" id="recordMonthTabs" role="tablist" aria-label="表示する月を選択" data-reveal></div>
+      <div class="records-month-summary" id="recordsMonthSummary" aria-live="polite" data-reveal></div>
       <div class="records-table" id="recordsTable" data-reveal></div>
     </section>
 

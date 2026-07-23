@@ -388,6 +388,7 @@ test('runDailyHealthReport skips without health data', async () => {
   const result = await runDailyHealthReport({
     targetDate: '2026-06-07',
     noCodex: true,
+    skipDashboardPublish: true,
     settings: {
       timeZone: 'Asia/Tokyo',
       healthDataDir: join(root, 'missing-health'),
