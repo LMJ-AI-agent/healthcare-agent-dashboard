@@ -268,7 +268,7 @@ function renderRecords(records) {
     '<span>MONTH CHANGE<strong>' + formatSignedWeight(monthChange) + '</strong></span>' +
     '<span>DAILY RECORDS<strong>' + monthRecords.length + '日 / 平均' + formatInteger(averageSteps) + '歩</strong></span>';
 
-  const header = '<div class="record-row record-header"><span>WEIGHT</span><span>前日比</span><span>月初比</span><span>DATE</span><span>STEPS</span><span>BODY FAT</span></div>';
+  const header = '<div class="record-row record-header"><span>DATE</span><span>WEIGHT</span><span>前日比</span><span>月初比</span><span>STEPS</span><span>BODY FAT</span></div>';
   const rows = [...monthRecords].reverse().map(record => {
     const metrics = record.metrics || {};
     const weight = isNumber(metrics.weightKg) ? Number(metrics.weightKg) : null;
@@ -276,15 +276,16 @@ function renderRecords(records) {
     const previousChange = weight != null && isNumber(previousWeight) ? weight - previousWeight : null;
     const startChange = weight != null && isNumber(monthStartWeight) ? weight - Number(monthStartWeight) : null;
     return '<div class="record-row">' +
+      '<span data-label="DATE"><b>' + record.date.slice(0, 5) + '</b>' + record.date.slice(5).replace('-', '.') + '</span>' +
       '<span data-label="WEIGHT">' + (weight != null ? '<strong>' + weight.toFixed(1) + '</strong> kg' : '—') + '</span>' +
       '<span data-label="前日比">' + formatDeltaMarkup(previousChange) + '</span>' +
       '<span data-label="月初比">' + formatDeltaMarkup(startChange) + '</span>' +
-      '<span data-label="DATE"><b>' + record.date.slice(0, 5) + '</b>' + record.date.slice(5).replace('-', '.') + '</span>' +
       '<span data-label="STEPS">' + formatInteger(metrics.steps) + '</span>' +
       '<span data-label="BODY FAT">' + (isNumber(metrics.bodyFatPercent) ? metrics.bodyFatPercent.toFixed(1) + ' %' : '—') + '</span>' +
       '</div>';
   }).join('');
   container.innerHTML = header + rows;
+  container.scrollTop = 0;
 }
 
 async function refreshDashboard(chart) {

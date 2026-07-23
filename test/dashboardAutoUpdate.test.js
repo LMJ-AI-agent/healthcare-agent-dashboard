@@ -3,9 +3,10 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 test('dashboard loads fresh health data and exposes dynamic targets', async () => {
-  const [html, app] = await Promise.all([
+  const [html, app, styles] = await Promise.all([
     readFile('docs/index.html', 'utf8'),
     readFile('docs/app.js', 'utf8'),
+    readFile('docs/styles.css', 'utf8'),
   ]);
 
   for (const id of ['currentWeightCounter', 'bodyFatCounter', 'daysToGateCounter', 'weightTrendCanvas', 'recordMonthTabs', 'recordsMonthSummary', 'recordsTable']) {
@@ -17,6 +18,15 @@ test('dashboard loads fresh health data and exposes dynamic targets', async () =
   assert.match(app, /selectedRecordMonth/);
   assert.match(app, /previousIsoDate\(record\.date\)/);
   assert.match(app, /updateMovementEquivalents\(weeklyPace, currentWeight\)/);
+  assert.match(app, /<span>DATE<\/span><span>WEIGHT<\/span><span>前日比<\/span><span>月初比<\/span><span>STEPS<\/span><span>BODY FAT<\/span>/);
+  assert.doesNotMatch(app, /<span>ACTIVE KCAL<\/span>/);
+  assert.match(app, /container\.scrollTop = 0/);
+  assert.match(styles, /\.records-table \{ max-height: 580px; overflow-y: auto;/);
+  assert.match(styles, /\.record-header \{ position: sticky;/);
+  assert.match(app, /MONTH CHANGE/);
+  assert.match(html, /1日2kmのランニング/);
+  assert.match(html, /全減量幅のうち最初の76kgゲートまでが約29パーセント/);
+  assert.doesNotMatch(html, /MORNING HABIT/);
 });
 
 test('committed health data includes the next and final goals', async () => {
