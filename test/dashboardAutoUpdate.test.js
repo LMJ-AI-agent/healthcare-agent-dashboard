@@ -43,7 +43,7 @@ test('daily task runs once at noon and does not post to Slack', async () => {
   assert.doesNotMatch(task, /New-ScheduledTaskTrigger -Weekly/);
 });
 
-test('Google Analytics loader stays disabled until a valid GA4 measurement ID is configured', async () => {
+test('Google Analytics loader is wired and enabled with a valid GA4 measurement ID', async () => {
   const [html, config, analytics] = await Promise.all([
     readFile('docs/index.html', 'utf8'),
     readFile('docs/analytics-config.js', 'utf8'),
@@ -52,7 +52,7 @@ test('Google Analytics loader stays disabled until a valid GA4 measurement ID is
 
   assert.match(html, /<script src="\.\/analytics-config\.js"><\/script>/);
   assert.match(html, /<script src="\.\/analytics\.js"><\/script>/);
-  assert.match(config, /googleMeasurementId: ''/);
+  assert.match(config, /googleMeasurementId: 'G-[A-Z0-9]+'/);
   assert.match(analytics, /\^G-\[A-Z0-9\]\+\$/i);
   assert.match(analytics, /googletagmanager\.com\/gtag\/js/);
 });
