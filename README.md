@@ -122,3 +122,9 @@ The dashboard UI reads `docs/health-data.json` with cache bypassing on every pag
 4. lets GitHub Pages publish the new dashboard automatically.
 
 The same publish step also runs when a partial health record arrives, so body-composition-only updates are reflected without waiting for every metric.
+
+The registered Windows task runs once every day at 12:00 (local time) with `--yesterday --no-slack`, so the dashboard is refreshed without sending a Slack message.
+
+### Access analytics
+
+The published page includes an optional Google Analytics 4 loader. Set the web data stream's `G-...` measurement ID in `docs/analytics-config.js` to begin collecting page views. Until a valid measurement ID is configured, no analytics script or request is loaded.

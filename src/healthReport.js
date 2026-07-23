@@ -1130,7 +1130,7 @@ export async function runDailyHealthReport(options = {}) {
   if (!options.dryRun) await tryPublishDashboard();
 
   if (!options.dryRun) {
-    await postToSlack({ settings, text: report });
+    if (!options.noSlack) await postToSlack({ settings, text: report });
     await markPostedForDate(settings.statePath, targetDate, { artifactDir });
   }
 
@@ -1509,6 +1509,7 @@ function parseArgs(argv) {
     const arg = argv[index];
     if (arg === '--dry-run') options.dryRun = true;
     else if (arg === '--no-codex') options.noCodex = true;
+    else if (arg === '--no-slack') options.noSlack = true;
     else if (arg === '--allow-duplicate') options.allowDuplicate = true;
     else if (arg === '--skip-readiness-check') options.skipReadinessCheck = true;
     else if (arg === '--yesterday') options.yesterday = true;

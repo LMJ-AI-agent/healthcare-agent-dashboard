@@ -10,18 +10,10 @@ if (-not (Test-Path -LiteralPath $Runner)) {
 
 $Action = New-ScheduledTaskAction `
   -Execute "powershell.exe" `
-  -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$Runner`" --yesterday" `
+  -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$Runner`" --yesterday --no-slack" `
   -WorkingDirectory $Root
 
-$WeekdayTimes = @("07:00", "07:30", "08:00", "08:30", "09:00", "10:00", "11:00", "12:00")
-$WeekendTimes = @("08:00", "08:30", "09:00", "09:30", "10:00", "11:00", "12:00")
-$Triggers = @()
-foreach ($Time in $WeekdayTimes) {
-  $Triggers += New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At $Time
-}
-foreach ($Time in $WeekendTimes) {
-  $Triggers += New-ScheduledTaskTrigger -Weekly -DaysOfWeek Saturday,Sunday -At $Time
-}
+$Trigger = New-ScheduledTaskTrigger -Daily -At "12:00"
 
 $Settings = New-ScheduledTaskSettingsSet `
   -AllowStartIfOnBatteries `
@@ -41,9 +33,9 @@ if ($Existing) {
 Register-ScheduledTask `
   -TaskName $TaskName `
   -Action $Action `
-  -Trigger $Triggers `
+  -Trigger $Trigger `
   -Settings $Settings `
-  -Description "Generate yesterday's healthcare report through Codex after required data is ready, then post it to Slack." `
+  -Description "Refresh yesterday's healthcare data and publish the GitHub Pages dashboard daily at noon without posting to Slack." `
   -Force | Out-Null
 
 Get-ScheduledTask -TaskName $TaskName
