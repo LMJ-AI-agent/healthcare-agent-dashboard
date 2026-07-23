@@ -9,6 +9,8 @@ const outputDir = join(root, 'docs');
 const GOALS = {
   weightKg: 62,
   deadline: '2028-07-22',
+  nextWeightKg: 76,
+  nextDeadline: '2026-10-31',
   steps: 8000,
   sleepHours: 6.5,
   activeEnergyKcal: 650,
@@ -18,13 +20,24 @@ const GOALS = {
 async function main() {
   const records = await buildRecords();
   await mkdir(outputDir, { recursive: true });
-  await writeJson(join(outputDir, 'health-data.json'), {
+  const outputPath = join(outputDir, 'health-data.json');
+  const previous = await readJsonIfExists(outputPath);
+  if (records.length === 0 && previous?.records?.length) {
+    console.log('No local source records found. Existing dashboard data was preserved.');
+    return;
+  }
+  const comparable = { goals: GOALS, records };
+  const previousComparable = previous ? { goals: previous.goals, records: previous.records } : null;
+  if (previousComparable && JSON.stringify(comparable) === JSON.stringify(previousComparable)) {
+    console.log('Dashboard data is already current.');
+    return;
+  }
+  await writeJson(outputPath, {
     generatedAt: new Date().toISOString(),
     recordCount: records.length,
-    goals: GOALS,
-    records,
+    ...comparable,
   });
-  console.log(`Dashboard data refreshed: ${join(outputDir, 'health-data.json')}`);
+  console.log(`Dashboard data refreshed: ${outputPath}`);
   console.log(`Records: ${records.length}`);
 }
 

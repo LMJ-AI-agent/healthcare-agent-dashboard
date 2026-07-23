@@ -240,6 +240,7 @@ test('runDailyHealthReport skips posting until required data is ready', async ()
   const result = await runDailyHealthReport({
     targetDate: '2026-06-07',
     noCodex: true,
+    skipDashboardPublish: true,
     settings: {
       timeZone: 'Asia/Tokyo',
       healthDataDir,

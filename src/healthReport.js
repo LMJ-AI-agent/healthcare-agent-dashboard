@@ -1108,7 +1108,7 @@ export async function runDailyHealthReport(options = {}) {
   const input = await collectInput({ targetDate, settings });
   if (!options.dryRun && !options.skipReadinessCheck && !input.readiness.ready) {
     const readinessLogPath = await writeReadinessSkip({ settings, targetDate, input });
-    await tryBuildDashboard();
+    if (!options.skipDashboardPublish) await tryPublishDashboard();
     return {
       skipped: true,
       reason: `Data is not ready for ${targetDate}: ${input.readiness.missing.join(', ')}`,

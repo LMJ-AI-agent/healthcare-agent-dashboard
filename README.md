@@ -111,3 +111,14 @@ Settings > Pages > Build and deployment > Deploy from a branch
 Branch: main
 Folder: /docs
 ```
+
+### Automatic dashboard updates
+
+The dashboard UI reads `docs/health-data.json` with cache bypassing on every page load. The scheduled daily report flow automatically:
+
+1. collects the newest health records;
+2. rebuilds `docs/health-data.json` only when the underlying records changed;
+3. commits and pushes the updated data to `main`;
+4. lets GitHub Pages publish the new dashboard automatically.
+
+The same publish step also runs when a partial health record arrives, so body-composition-only updates are reflected without waiting for every metric.
