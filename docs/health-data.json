@@ -2,8 +2,10 @@
   "generatedAt": "2026-07-22T15:03:59.296Z",
   "recordCount": 46,
   "goals": {
-    "weightKg": 79,
-    "deadline": "2026-07-31",
+    "weightKg": 62,
+    "deadline": "2028-07-22",
+    "nextWeightKg": 76,
+    "nextDeadline": "2026-10-31",
     "steps": 8000,
     "sleepHours": 6.5,
     "activeEnergyKcal": 650,

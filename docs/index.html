@@ -47,9 +47,9 @@
         </div>
         <article class="next-gate-card">
           <div class="gate-top"><span>NEXT GATE</span><small>2026.10.31</small></div>
-          <div class="gate-weight"><strong>76.0</strong><em>KG</em></div>
+          <div class="gate-weight"><strong id="nextGateWeight">76.0</strong><em>KG</em></div>
           <div class="gate-progress"><i></i></div>
-          <div class="gate-bottom"><span>現在 81.7kg</span><span>あと 5.7kg</span></div>
+          <div class="gate-bottom"><span id="heroCurrentWeight">現在 81.7kg</span><span id="heroNextGap">あと 5.7kg</span></div>
         </article>
         <div class="float-chip float-chip-one"><span>AM RUN</span><strong>2KM</strong></div>
         <div class="float-chip float-chip-two"><span>STREAK</span><strong>DAY 01</strong></div>
@@ -62,10 +62,10 @@
     </div></div>
 
     <section class="metrics-wrap" aria-label="現在の主要指標" data-reveal>
-      <article class="metric metric-dark"><span>NOW / WEIGHT</span><strong><span class="count-up" data-count="81.7" data-decimals="1" data-suffix="kg">0.0kg</span></strong><small>76kgまであと5.7kg</small></article>
-      <article class="metric"><span>BODY FAT</span><strong><span class="count-up" data-count="27.7" data-decimals="1" data-suffix="%">0.0%</span></strong><small>7日平均 27.6%</small></article>
-      <article class="metric"><span>WEEKLY PACE</span><strong><span class="count-up" data-count="0.4" data-decimals="2" data-suffix="kg">0.00kg</span></strong><small>必要な減量ペース</small></article>
-      <article class="metric metric-lime"><span>DAYS TO GATE</span><strong><span class="count-up" data-count="100" data-decimals="0" data-suffix="日">0日</span></strong><small>一歩ずつ、前へ</small></article>
+      <article class="metric metric-dark"><span>NOW / WEIGHT</span><strong><span id="currentWeightCounter" class="count-up" data-count="81.7" data-decimals="1" data-suffix="kg">0.0kg</span></strong><small id="nextGapLabel">76kgまであと5.7kg</small></article>
+      <article class="metric"><span>BODY FAT</span><strong><span id="bodyFatCounter" class="count-up" data-count="27.7" data-decimals="1" data-suffix="%">0.0%</span></strong><small id="bodyFatAverageLabel">7日平均 27.6%</small></article>
+      <article class="metric"><span>WEEKLY PACE</span><strong><span id="weeklyPaceCounter" class="count-up" data-count="0.4" data-decimals="2" data-suffix="kg">0.00kg</span></strong><small>必要な減量ペース</small></article>
+      <article class="metric metric-lime"><span>DAYS TO GATE</span><strong><span id="daysToGateCounter" class="count-up" data-count="100" data-decimals="0" data-suffix="日">0日</span></strong><small>一歩ずつ、前へ</small></article>
     </section>
 
     <section id="today" class="section today-section">
@@ -75,7 +75,7 @@
       </div>
       <div class="mission-grid">
         <article class="mission-card mission-primary" data-reveal><div class="mission-index">01</div><p>FIRST MOVE</p><h3>朝、外へ出る</h3><strong>2<span>KM</span></strong><small>速さは関係ない。玄関を出たら勝ち。</small><div class="mission-arrow">→</div></article>
-        <article class="mission-card" data-reveal><div class="mission-index">02</div><p>DATA CHECK</p><h3>朝の体重を記録</h3><strong>81.7<span>KG</span></strong><small>結果ではなく、変化を見るための記録。</small><div class="mission-arrow">→</div></article>
+        <article class="mission-card" data-reveal><div class="mission-index">02</div><p>DATA CHECK</p><h3>朝の体重を記録</h3><strong id="dailyWeight">81.7<span>KG</span></strong><small>結果ではなく、変化を見るための記録。</small><div class="mission-arrow">→</div></article>
         <article class="mission-card mission-photo" data-reveal><div class="mission-index">03</div><p>RECOVER</p><h3>今夜は早く眠る</h3><strong>7<span>HOUR</span></strong><small>明日のスタートを、今夜からつくる。</small><div class="mission-arrow">→</div></article>
       </div>
     </section>
@@ -108,16 +108,16 @@
       <div class="progress-grid">
         <article class="chart-card" data-reveal>
           <div class="card-heading"><div><small>WEIGHT TREND / 42 DAYS</small><h3>体重の推移</h3></div><span class="status-chip"><i></i>LIVE</span></div>
-          <div class="chart-summary"><strong><span class="count-up" data-count="81.7" data-decimals="1" data-suffix="kg">0.0kg</span></strong><span>LAST UPDATE<br><b>2026.07.22</b></span></div>
+          <div class="chart-summary"><strong><span id="chartCurrentWeight" class="count-up" data-count="81.7" data-decimals="1" data-suffix="kg">0.0kg</span></strong><span>LAST UPDATE<br><b id="chartLastUpdate">2026.07.22</b></span></div>
           <div class="trend-chart" role="img" aria-label="6月から7月までの体重推移。最新は81.7kg。">
             <canvas id="weightTrendCanvas" class="chart-canvas"></canvas>
-            <span class="chart-y chart-y-top">83.0</span><span class="chart-y chart-y-bottom">79.8kg</span>
-            <div class="chart-x"><span>JUN 11</span><span>JUN 29</span><span>JUL 22</span></div>
-            <div class="chart-offscale"><span>NEXT GATE / 表示レンジ外</span><strong>76.0kg ↓</strong></div>
+            <span id="chartYTop" class="chart-y chart-y-top">83.0</span><span id="chartYBottom" class="chart-y chart-y-bottom">79.8kg</span>
+            <div class="chart-x"><span id="chartXStart">JUN 11</span><span id="chartXMiddle">JUN 29</span><span id="chartXEnd">JUL 22</span></div>
+            <div class="chart-offscale"><span id="chartGoalLabel">NEXT GATE / 表示レンジ外</span><strong id="chartGoalValue">76.0kg ↓</strong></div>
           </div>
         </article>
         <aside class="score-stack">
-          <article class="score-card score-orange" data-reveal><span>NEXT GATE GAP</span><strong><span class="count-up" data-count="5.7" data-decimals="1" data-suffix="kg">0.0kg</span></strong><small>次のゲートまで</small></article>
+          <article class="score-card score-orange" data-reveal><span>NEXT GATE GAP</span><strong><span id="nextGapCounter" class="count-up" data-count="5.7" data-decimals="1" data-suffix="kg">0.0kg</span></strong><small>次のゲートまで</small></article>
           <article class="score-card score-indigo" data-reveal><span>MORNING HABIT</span><strong><span class="count-up" data-count="2" data-decimals="0" data-suffix="km">0km</span></strong><small>毎朝の新しい基準</small></article>
           <article class="score-card score-dark" data-reveal><span>FINAL TARGET</span><strong><span class="count-up" data-count="62" data-decimals="0" data-suffix="kg">0kg</span></strong><small>2028.07.22</small></article>
         </aside>
