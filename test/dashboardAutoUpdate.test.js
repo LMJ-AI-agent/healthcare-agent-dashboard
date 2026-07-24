@@ -27,6 +27,10 @@ test('dashboard loads fresh health data and exposes dynamic targets', async () =
   assert.match(html, /1日2kmのランニング/);
   assert.match(html, /全減量幅のうち最初の76kgゲートまでが約29パーセント/);
   assert.doesNotMatch(html, /MORNING HABIT/);
+  assert.match(html, /<title>RYOTA ISHIJIMA 62 PROJECT \| BODY TRANSFORMATION DASHBOARD<\/title>/);
+  assert.match(html, /<strong>RYOTA ISHIJIMA<\/strong><small>62 PROJECT<\/small>/);
+  assert.match(html, /62 PROJECT · BODY TRANSFORMATION DASHBOARD · 2026/);
+  assert.doesNotMatch(html, /PERSONAL TRANSFORMATION DASHBOARD/);
 });
 
 test('committed health data includes the next and final goals', async () => {
