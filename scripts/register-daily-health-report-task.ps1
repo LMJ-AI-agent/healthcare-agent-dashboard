@@ -10,7 +10,7 @@ if (-not (Test-Path -LiteralPath $Runner)) {
 
 $Action = New-ScheduledTaskAction `
   -Execute "powershell.exe" `
-  -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$Runner`" --yesterday --no-slack" `
+  -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$Runner`" --yesterday --no-slack --dashboard-only" `
   -WorkingDirectory $Root
 
 $Trigger = New-ScheduledTaskTrigger -Daily -At "12:00"

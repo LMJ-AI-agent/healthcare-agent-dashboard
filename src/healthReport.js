@@ -37,7 +37,7 @@ export async function collectInput({ targetDate, settings }) {
   const healthDataDirs = settings.healthDataDirs || [settings.healthDataDir];
   const sleepDate = addDaysToIsoDate(targetDate, 1);
   const bodyCompositionDate = sleepDate;
-  const [healthFile, manualNotes, ringConn] = await Promise.all([
+  const [healthFile, manualNotes, ringConnExports] = await Promise.all([
     findLatestHealthFile(healthDataDirs, targetDate),
     readManualNotes(settings.manualNotesDirs || [settings.manualNotesDir], [targetDate, sleepDate], settings.maxManualNoteBytes),
     inspectRingConnExports(settings.ringConnExportDir, targetDate, settings.maxRingConnBytes),
@@ -61,6 +61,12 @@ export async function collectInput({ targetDate, settings }) {
   const sleepFile = sleepContext?.file || null;
   const sleepData = sleepContext?.data || null;
   const sleepSummary = sleepContext?.summary || null;
+  const ringConn = buildRingConnContext({
+    exportContext: ringConnExports,
+    healthData,
+    sleepData,
+    sleepSummary,
+  });
   const readiness = evaluateDataReadiness({
     healthFile,
     healthData,
@@ -429,6 +435,7 @@ function summarizeSleepData(sleepData, wakeDate = null) {
       totalSleepText: formatHours(sample.effectiveSleepHours),
       rawTotalSleepHours: sample.totalSleep,
       elapsedHours: sample.elapsedHours,
+      source: normalizeSource(sample.source),
       inBedText: formatHours(sample.effectiveInBedHours),
       awakeText: formatHours(sample.awake),
       remText: formatHours(sample.rem),
@@ -817,6 +824,62 @@ function containsRingConnData(text) {
   }
 }
 
+function buildRingConnContext({ exportContext, healthData, sleepData, sleepSummary }) {
+  const healthMetrics = summarizeRingConnMetrics(healthData);
+  const sleepMetrics = summarizeRingConnMetrics(sleepData);
+  const healthKitAvailable = healthMetrics.length > 0 || sleepMetrics.length > 0;
+  const selectedSleepIsRingConn = sourceContainsRingConn(sleepSummary?.source);
+
+  return {
+    ...exportContext,
+    available: Boolean(exportContext?.available || healthKitAvailable),
+    healthKitAvailable,
+    healthMetrics,
+    sleepMetrics,
+    sleepSummary: selectedSleepIsRingConn ? sleepSummary : null,
+    note: healthKitAvailable
+      ? 'RingConn data was found in Health Auto Export / Apple Health.'
+      : exportContext?.note || 'No RingConn data was found.',
+  };
+}
+
+function summarizeRingConnMetrics(text) {
+  if (!text) return [];
+  try {
+    const metrics = JSON.parse(text)?.data?.metrics;
+    if (!Array.isArray(metrics)) return [];
+    return metrics.flatMap((metric) => {
+      const samples = Array.isArray(metric?.data)
+        ? metric.data.filter((sample) => sourceContainsRingConn(sample?.source))
+        : [];
+      if (samples.length === 0) return [];
+      const dates = samples.map((sample) => sample?.date).filter(Boolean).sort();
+      return [{
+        name: metric.name,
+        sampleCount: samples.length,
+        firstDate: dates[0] || null,
+        latestDate: dates.at(-1) || null,
+      }];
+    });
+  } catch {
+    return [];
+  }
+}
+
+function sourceContainsRingConn(source) {
+  return normalizeSource(source).toLowerCase().includes('ringconn');
+}
+
+function normalizeSource(source) {
+  if (typeof source === 'string') return source;
+  if (source == null) return '';
+  try {
+    return JSON.stringify(source);
+  } catch {
+    return String(source);
+  }
+}
+
 export function buildPrompt(input) {
   const sleepDate = input.sleepDate || addDaysToIsoDate(input.targetDate, 1);
   const bodyCompositionDate = input.bodyCompositionDate || sleepDate;
@@ -849,9 +912,18 @@ export function buildPrompt(input) {
   const slackMemos = input.slackMemos?.available
     ? fenced('slack-memos', JSON.stringify(input.slackMemos.messages, null, 2))
     : 'No Slack memo was found. Do not include a memo section.';
-  const ringConn = input.ringConn.snippets.length > 0
-    ? input.ringConn.snippets.map((item) => `File: ${item.path}\n${fenced('ringconn', item.text)}`).join('\n\n')
-    : 'No RingConn note candidate was found. Do not mention RingConn in the report.';
+  const ringConnHealthKit = input.ringConn?.healthKitAvailable
+    ? fenced('ringconn-healthkit-summary', JSON.stringify({
+      healthMetrics: input.ringConn.healthMetrics,
+      sleepMetrics: input.ringConn.sleepMetrics,
+      selectedSleep: input.ringConn.sleepSummary,
+    }, null, 2))
+    : '';
+  const ringConnNotes = input.ringConn?.snippets?.length > 0
+    ? input.ringConn.snippets.map((item) => `File: ${item.path}\n${fenced('ringconn-note', item.text)}`).join('\n\n')
+    : '';
+  const ringConn = [ringConnHealthKit, ringConnNotes].filter(Boolean).join('\n\n')
+    || 'No RingConn data was found. Do not mention RingConn in the report.';
 
   return [
     'You write a concise daily health report in Japanese for Slack.',
@@ -873,6 +945,7 @@ export function buildPrompt(input) {
     '- Do not include a dedicated previous-day-change section.',
     '- Do not show previous-day change for weight.',
     '- Do not show manual notes, RingConn notes, or Slack memo absence.',
+    '- Treat RingConn metrics embedded in Health Auto Export / Apple Health as valid RingConn data; a separate RingConn note export is not required.',
     '- Include a memo section only if Slack memos exist.',
     '- Do not include a 読み取り section or 分析 section as a visible section.',
     '- Do not use the word 仮説 as a heading or repeated label.',
@@ -985,6 +1058,13 @@ export async function writeArtifacts({ settings, targetDate, input, prompt, repo
   return dayDir;
 }
 
+async function writeDashboardSnapshot({ settings, targetDate, input }) {
+  const dayDir = join(settings.outputDir, targetDate);
+  await mkdir(dayDir, { recursive: true });
+  await writeFile(join(dayDir, 'input-summary.json'), `${JSON.stringify(summarizeInput(input), null, 2)}\n`, 'utf8');
+  return dayDir;
+}
+
 function summarizeInput(input) {
   return {
     targetDate: input.targetDate,
@@ -1012,6 +1092,10 @@ function summarizeInput(input) {
     slackMemos: input.slackMemos,
     ringConn: {
       available: input.ringConn.available,
+      healthKitAvailable: input.ringConn.healthKitAvailable,
+      healthMetrics: input.ringConn.healthMetrics,
+      sleepMetrics: input.ringConn.sleepMetrics,
+      sleepSummary: input.ringConn.sleepSummary,
       files: input.ringConn.snippets.map((item) => item.path),
       note: input.ringConn.note,
     },
@@ -1100,7 +1184,7 @@ export async function runDailyHealthReport(options = {}) {
   const settings = options.settings || await readSettings(options.settingsPath);
   const targetDate = options.targetDate || isoDateInTimeZone(new Date(), settings.timeZone);
 
-  if (!options.allowDuplicate && await hasPostedForDate(settings.statePath, targetDate)) {
+  if (!options.dashboardOnly && !options.allowDuplicate && await hasPostedForDate(settings.statePath, targetDate)) {
     return { skipped: true, reason: `Report for ${targetDate} was already posted.` };
   }
 
@@ -1119,6 +1203,12 @@ export async function runDailyHealthReport(options = {}) {
   }
   if (!options.dryRun && !input.healthFile) {
     throw new Error(`Health Auto Export data file was not found for ${targetDate}.`);
+  }
+
+  if (options.dashboardOnly) {
+    const artifactDir = await writeDashboardSnapshot({ settings, targetDate, input });
+    if (!options.dryRun && !options.skipDashboardPublish) await tryPublishDashboard();
+    return { skipped: false, dashboardOnly: true, targetDate, artifactDir };
   }
 
   const prompt = buildPrompt(input);
@@ -1512,6 +1602,7 @@ function parseArgs(argv) {
     else if (arg === '--no-slack') options.noSlack = true;
     else if (arg === '--allow-duplicate') options.allowDuplicate = true;
     else if (arg === '--skip-readiness-check') options.skipReadinessCheck = true;
+    else if (arg === '--dashboard-only') options.dashboardOnly = true;
     else if (arg === '--yesterday') options.yesterday = true;
     else if (arg === '--date') options.targetDate = argv[++index];
     else if (arg.startsWith('--date=')) options.targetDate = arg.slice('--date='.length);
@@ -1531,8 +1622,11 @@ async function main() {
   const result = await runDailyHealthReport({ ...options, settings });
   if (result.skipped) {
     console.log(result.reason);
+    if (options.dashboardOnly && result.reason.startsWith('Data is not ready')) process.exitCode = 2;
   } else {
-    console.log(`Daily health report generated for ${result.targetDate}`);
+    console.log(result.dashboardOnly
+      ? `Dashboard input collected for ${result.targetDate}`
+      : `Daily health report generated for ${result.targetDate}`);
     console.log(`Artifacts: ${result.artifactDir}`);
     if (options.dryRun) {
       console.log('\n--- Report preview ---');

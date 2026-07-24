@@ -61,15 +61,19 @@ test('partial daily data still runs the dashboard publisher', async () => {
 });
 
 test('daily task runs once at noon and does not post to Slack', async () => {
-  const [source, task] = await Promise.all([
+  const [source, task, runner] = await Promise.all([
     readFile('src/healthReport.js', 'utf8'),
     readFile('scripts/register-daily-health-report-task.ps1', 'utf8'),
+    readFile('scripts/run-daily-health-report.ps1', 'utf8'),
   ]);
 
   assert.match(source, /arg === '--no-slack'/);
+  assert.match(source, /arg === '--dashboard-only'/);
   assert.match(source, /if \(!options\.noSlack\) await postToSlack/);
   assert.match(task, /New-ScheduledTaskTrigger -Daily -At "12:00"/);
-  assert.match(task, /--yesterday --no-slack/);
+  assert.match(task, /--yesterday --no-slack --dashboard-only/);
+  assert.match(runner, /Tee-Object -FilePath \$LogPath/);
+  assert.match(runner, /exit \$NodeExitCode/);
   assert.doesNotMatch(task, /New-ScheduledTaskTrigger -Weekly/);
 });
 

@@ -137,6 +137,9 @@ test('collectInput falls back to target-date file when wake-date file has no sle
   assert.equal(input.sleepFile.path, join(healthDataDir, '2026-06-07.json'));
   assert.equal(input.sleepSummary.totalSleepText, '6時間30分');
   assert.equal(input.readiness.checks.sleepData, true);
+  assert.equal(input.ringConn.available, true);
+  assert.equal(input.ringConn.healthKitAvailable, true);
+  assert.ok(input.ringConn.healthMetrics.some((metric) => metric.name === 'step_count'));
 });
 
 test('collectInput rejects late-afternoon RingConn sleep for morning report', async () => {
@@ -380,6 +383,69 @@ test('runDailyHealthReport dry-run writes artifacts without codex or slack', asy
   const report = await readFile(join(outputDir, '2026-06-07', 'report.md'), 'utf8');
   assert.match(report, /Diet Coach Report/);
   assert.match(report, /詳細ダッシュボード/);
+});
+
+test('dashboard-only update records HealthKit RingConn data without Codex or Slack', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'healthcare-agent-dashboard-only-'));
+  const healthDataDir = join(root, 'health');
+  const healthPlanetDir = join(root, 'healthplanet');
+  const outputDir = join(root, 'out');
+  await mkdir(healthDataDir, { recursive: true });
+  await mkdir(healthPlanetDir, { recursive: true });
+  await writeFile(join(healthDataDir, '2026-06-07.json'), JSON.stringify({
+    data: { metrics: [
+      { name: 'step_count', data: [{ qty: 6500, source: 'RingConn', date: '2026-06-07 20:00:00 +0900' }] },
+    ] },
+  }), 'utf8');
+  await writeFile(join(healthDataDir, '2026-06-08.json'), JSON.stringify({
+    data: { metrics: [
+      { name: 'sleep_analysis', data: [{
+        totalSleep: 6,
+        sleepStart: '2026-06-07 23:00:00 +0900',
+        sleepEnd: '2026-06-08 05:30:00 +0900',
+        source: 'RingConn',
+      }] },
+    ] },
+  }), 'utf8');
+  await writeFile(join(healthPlanetDir, '2026-06-08.json'), JSON.stringify({
+    normalized: {
+      measuredDate: '2026-06-08',
+      weightKg: 80.8,
+      bodyFatPercent: 27.5,
+      bodyMassIndex: 30.8,
+    },
+  }), 'utf8');
+
+  const result = await runDailyHealthReport({
+    targetDate: '2026-06-07',
+    dashboardOnly: true,
+    noSlack: true,
+    skipDashboardPublish: true,
+    settings: {
+      timeZone: 'Asia/Tokyo',
+      healthDataDir,
+      healthDataDirs: [healthDataDir],
+      healthPlanet: { enabled: false, outputDir: healthPlanetDir },
+      manualNotesDir: join(root, 'missing-notes'),
+      manualNotesDirs: [join(root, 'missing-notes')],
+      ringConnExportDir: join(root, 'missing-ring'),
+      outputDir,
+      statePath: join(root, 'state.json'),
+      maxHealthFileBytes: 10000,
+      maxManualNoteBytes: 10000,
+      maxRingConnBytes: 10000,
+      historyDays: 14,
+    },
+  });
+
+  assert.equal(result.skipped, false);
+  assert.equal(result.dashboardOnly, true);
+  const summary = JSON.parse(await readFile(join(outputDir, '2026-06-07', 'input-summary.json'), 'utf8'));
+  assert.equal(summary.ringConn.available, true);
+  assert.equal(summary.ringConn.healthKitAvailable, true);
+  assert.equal(summary.ringConn.sleepSummary.source, 'RingConn');
+  assert.ok(summary.ringConn.healthMetrics.some((metric) => metric.name === 'step_count'));
+  assert.equal(await hasPostedForDate(join(root, 'state.json'), '2026-06-07'), false);
 });
 
 test('runDailyHealthReport skips without health data', async () => {
