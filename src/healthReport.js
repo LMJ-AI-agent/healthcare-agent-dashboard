@@ -4,9 +4,6 @@ import { basename, dirname, extname, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { fetchAndSaveHealthPlanetDay, mergeHealthPlanetMetrics, readHealthPlanetDay, readHealthPlanetTokenStatus } from './healthPlanet.js';
 
-const TEXT_EXTENSIONS = new Set(['.json', '.csv', '.txt', '.md']);
-const RINGCONN_KEYWORD_PATTERN = /note|notes|tag|tags|timeline|mood|stress|alcohol|meal|exercise|sleep|health|memo|diary|body|condition|drink|food|workout|ノート|メモ|タグ|タイムライン|気分|ストレス|飲酒|食事|運動|睡眠|体調/i;
-
 export async function readSettings(path = 'config/settings.json') {
   const text = await readFile(path, 'utf8');
   return JSON.parse(text);
@@ -37,10 +34,9 @@ export async function collectInput({ targetDate, settings }) {
   const healthDataDirs = settings.healthDataDirs || [settings.healthDataDir];
   const sleepDate = addDaysToIsoDate(targetDate, 1);
   const bodyCompositionDate = sleepDate;
-  const [healthFile, manualNotes, ringConnExports] = await Promise.all([
+  const [healthFile, manualNotes] = await Promise.all([
     findLatestHealthFile(healthDataDirs, targetDate),
     readManualNotes(settings.manualNotesDirs || [settings.manualNotesDir], [targetDate, sleepDate], settings.maxManualNoteBytes),
-    inspectRingConnExports(settings.ringConnExportDir, targetDate, settings.maxRingConnBytes),
   ]);
   const sleepContext = await findSleepContext(healthDataDirs, targetDate, sleepDate);
   const slackMemos = await readSlackMemos({ settings, targetDate, sleepDate });
@@ -62,7 +58,6 @@ export async function collectInput({ targetDate, settings }) {
   const sleepData = sleepContext?.data || null;
   const sleepSummary = sleepContext?.summary || null;
   const ringConn = buildRingConnContext({
-    exportContext: ringConnExports,
     healthData,
     sleepData,
     sleepSummary,
@@ -306,38 +301,6 @@ async function readManualNotes(dirs, dates, maxBytes) {
     }
   }
   return notes;
-}
-
-async function inspectRingConnExports(dir, targetDate, maxBytes) {
-  const files = await listFilesSafe(dir);
-  const datePattern = new RegExp(targetDate.replaceAll('-', '[-_/]?'));
-  const snippets = [];
-  let remaining = maxBytes;
-
-  for (const path of files.filter((item) => TEXT_EXTENSIONS.has(extname(item).toLowerCase()))) {
-    if (remaining <= 0) break;
-    const nameMatches = RINGCONN_KEYWORD_PATTERN.test(path) || datePattern.test(path);
-    let raw;
-    try {
-      raw = await readLimitedText(path, Math.min(remaining, 40_000));
-    } catch (error) {
-      if (error.code === 'ENOENT' || error.code === 'EPERM' || error.code === 'EACCES') continue;
-      throw error;
-    }
-    const contentMatches = RINGCONN_KEYWORD_PATTERN.test(raw) || datePattern.test(raw);
-    if (!nameMatches && !contentMatches) continue;
-    const text = truncate(raw, Math.min(remaining, 40_000));
-    snippets.push({ path, text });
-    remaining -= Buffer.byteLength(text, 'utf8');
-  }
-
-  return {
-    available: snippets.length > 0,
-    snippets,
-    note: snippets.length > 0
-      ? 'RingConn export candidate files were found.'
-      : 'No RingConn export note candidate was found.',
-  };
 }
 
 async function listFilesSafe(dir) {
@@ -824,22 +787,21 @@ function containsRingConnData(text) {
   }
 }
 
-function buildRingConnContext({ exportContext, healthData, sleepData, sleepSummary }) {
+function buildRingConnContext({ healthData, sleepData, sleepSummary }) {
   const healthMetrics = summarizeRingConnMetrics(healthData);
   const sleepMetrics = summarizeRingConnMetrics(sleepData);
   const healthKitAvailable = healthMetrics.length > 0 || sleepMetrics.length > 0;
   const selectedSleepIsRingConn = sourceContainsRingConn(sleepSummary?.source);
 
   return {
-    ...exportContext,
-    available: Boolean(exportContext?.available || healthKitAvailable),
+    available: healthKitAvailable,
     healthKitAvailable,
     healthMetrics,
     sleepMetrics,
     sleepSummary: selectedSleepIsRingConn ? sleepSummary : null,
     note: healthKitAvailable
       ? 'RingConn data was found in Health Auto Export / Apple Health.'
-      : exportContext?.note || 'No RingConn data was found.',
+      : 'No RingConn data was found in Health Auto Export / Apple Health.',
   };
 }
 
@@ -919,11 +881,8 @@ export function buildPrompt(input) {
       selectedSleep: input.ringConn.sleepSummary,
     }, null, 2))
     : '';
-  const ringConnNotes = input.ringConn?.snippets?.length > 0
-    ? input.ringConn.snippets.map((item) => `File: ${item.path}\n${fenced('ringconn-note', item.text)}`).join('\n\n')
-    : '';
-  const ringConn = [ringConnHealthKit, ringConnNotes].filter(Boolean).join('\n\n')
-    || 'No RingConn data was found. Do not mention RingConn in the report.';
+  const ringConn = ringConnHealthKit
+    || 'No RingConn data was found in Health Auto Export / Apple Health. Do not mention RingConn in the report.';
 
   return [
     'You write a concise daily health report in Japanese for Slack.',
@@ -944,8 +903,8 @@ export function buildPrompt(input) {
     '- Do not mention muscle mass or lean body mass at all, even if unavailable.',
     '- Do not include a dedicated previous-day-change section.',
     '- Do not show previous-day change for weight.',
-    '- Do not show manual notes, RingConn notes, or Slack memo absence.',
-    '- Treat RingConn metrics embedded in Health Auto Export / Apple Health as valid RingConn data; a separate RingConn note export is not required.',
+    '- Do not show manual-note or Slack-memo absence.',
+    '- Treat RingConn metrics embedded in Health Auto Export / Apple Health as the single RingConn data source.',
     '- Include a memo section only if Slack memos exist.',
     '- Do not include a 読み取り section or 分析 section as a visible section.',
     '- Do not use the word 仮説 as a heading or repeated label.',
@@ -1011,7 +970,7 @@ export function buildPrompt(input) {
     'Slack memos:',
     slackMemos,
     '',
-    'RingConn notes/export candidates:',
+    'RingConn data from Health Auto Export / Apple Health:',
     ringConn,
   ].join('\n');
 }
@@ -1096,7 +1055,6 @@ function summarizeInput(input) {
       healthMetrics: input.ringConn.healthMetrics,
       sleepMetrics: input.ringConn.sleepMetrics,
       sleepSummary: input.ringConn.sleepSummary,
-      files: input.ringConn.snippets.map((item) => item.path),
       note: input.ringConn.note,
     },
   };

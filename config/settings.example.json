@@ -16,7 +16,6 @@
     "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\メモ",
     "G:\\.shortcut-targets-by-id\\1TC72FeM8_yHCiGQOp64Kz4Q7HfZlOwCs\\Health Auto Export\\ノート"
   ],
-  "ringConnExportDir": "data/ringconn_exports",
   "healthPlanet": {
     "enabled": true,
     "clientFile": "secrets/healthplanet-client.json",
@@ -34,7 +33,6 @@
   "maxSlackMemoChars": 20000,
   "maxHealthFileBytes": 1500000,
   "maxManualNoteBytes": 80000,
-  "maxRingConnBytes": 180000,
   "historyDays": 14,
   "codexCommand": "codex",
   "codexArgs": [

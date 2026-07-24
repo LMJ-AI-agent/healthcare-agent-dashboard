@@ -64,10 +64,8 @@ test('collectInput reads latest target-date health file and trend', async () => 
       healthPlanet: { enabled: true, outputDir: healthPlanetDir },
       manualNotesDir,
       manualNotesDirs: [manualNotesDir],
-      ringConnExportDir: join(root, 'missing-ring'),
       maxHealthFileBytes: 10000,
       maxManualNoteBytes: 10000,
-      maxRingConnBytes: 10000,
     },
   });
 
@@ -127,10 +125,8 @@ test('collectInput falls back to target-date file when wake-date file has no sle
       healthPlanet: { enabled: true, outputDir: healthPlanetDir },
       manualNotesDir: join(root, 'missing-notes'),
       manualNotesDirs: [join(root, 'missing-notes')],
-      ringConnExportDir: join(root, 'missing-ring'),
       maxHealthFileBytes: 10000,
       maxManualNoteBytes: 10000,
-      maxRingConnBytes: 10000,
     },
   });
 
@@ -184,10 +180,8 @@ test('collectInput rejects late-afternoon RingConn sleep for morning report', as
       healthPlanet: { enabled: true, outputDir: healthPlanetDir },
       manualNotesDir: join(root, 'missing-notes'),
       manualNotesDirs: [join(root, 'missing-notes')],
-      ringConnExportDir: join(root, 'missing-ring'),
       maxHealthFileBytes: 10000,
       maxManualNoteBytes: 10000,
-      maxRingConnBytes: 10000,
     },
   });
 
@@ -250,12 +244,10 @@ test('runDailyHealthReport skips posting until required data is ready', async ()
       healthDataDirs: [healthDataDir],
       manualNotesDir: join(root, 'missing-notes'),
       manualNotesDirs: [join(root, 'missing-notes')],
-      ringConnExportDir: join(root, 'missing-ring'),
       outputDir: join(root, 'out'),
       statePath: join(root, 'state.json'),
       maxHealthFileBytes: 10000,
       maxManualNoteBytes: 10000,
-      maxRingConnBytes: 10000,
     },
   });
 
@@ -279,7 +271,7 @@ test('buildPrompt includes current report display rules', () => {
     healthPlanetTokenStatus: { available: true, remainingDays: 29 },
     manualNotes: [{ path: 'note.md', text: 'worked late' }],
     slackMemos: { available: false, messages: [] },
-    ringConn: { snippets: [], note: 'No RingConn export note candidate was found.' },
+    ringConn: { available: false, healthKitAvailable: false, healthMetrics: [], sleepMetrics: [], sleepSummary: null },
   });
 
   assert.ok(prompt.includes('Put today/target-day data first'));
@@ -370,12 +362,10 @@ test('runDailyHealthReport dry-run writes artifacts without codex or slack', asy
       healthDataDirs: [healthDataDir],
       manualNotesDir: join(root, 'missing-notes'),
       manualNotesDirs: [join(root, 'missing-notes')],
-      ringConnExportDir: join(root, 'missing-ring'),
       outputDir,
       statePath: join(root, 'state.json'),
       maxHealthFileBytes: 10000,
       maxManualNoteBytes: 10000,
-      maxRingConnBytes: 10000,
     },
   });
 
@@ -428,12 +418,10 @@ test('dashboard-only update records HealthKit RingConn data without Codex or Sla
       healthPlanet: { enabled: false, outputDir: healthPlanetDir },
       manualNotesDir: join(root, 'missing-notes'),
       manualNotesDirs: [join(root, 'missing-notes')],
-      ringConnExportDir: join(root, 'missing-ring'),
       outputDir,
       statePath: join(root, 'state.json'),
       maxHealthFileBytes: 10000,
       maxManualNoteBytes: 10000,
-      maxRingConnBytes: 10000,
       historyDays: 14,
     },
   });
@@ -461,12 +449,10 @@ test('runDailyHealthReport skips without health data', async () => {
       healthDataDirs: [join(root, 'missing-health')],
       manualNotesDir: join(root, 'missing-notes'),
       manualNotesDirs: [join(root, 'missing-notes')],
-      ringConnExportDir: join(root, 'missing-ring'),
       outputDir: join(root, 'out'),
       statePath: join(root, 'state.json'),
       maxHealthFileBytes: 10000,
       maxManualNoteBytes: 10000,
-      maxRingConnBytes: 10000,
     },
   });
   assert.equal(result.skipped, true);
