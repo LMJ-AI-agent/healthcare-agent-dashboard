@@ -9,7 +9,7 @@ test('dashboard loads fresh health data and exposes dynamic targets', async () =
     readFile('docs/styles.css', 'utf8'),
   ]);
 
-  for (const id of ['currentWeightCounter', 'bodyFatCounter', 'daysToGateCounter', 'weightTrendCanvas', 'recordMonthTabs', 'recordsMonthSummary', 'recordsTable']) {
+  for (const id of ['currentWeightCounter', 'bodyFatCounter', 'daysToGateCounter', 'achievementProbability', 'controlVerdict', 'controlAction', 'weightTrendCanvas', 'recordMonthTabs', 'recordsMonthSummary', 'recordsTable']) {
     assert.match(html, new RegExp(`id="${id}"`));
   }
   assert.match(app, /fetch\('\.\/health-data\.json\?ts=' \+ Date\.now\(\), \{ cache: 'no-store' \}\)/);
@@ -18,6 +18,10 @@ test('dashboard loads fresh health data and exposes dynamic targets', async () =
   assert.match(app, /selectedRecordMonth/);
   assert.match(app, /previousIsoDate\(record\.date\)/);
   assert.match(app, /updateMovementEquivalents\(weeklyPace, currentWeight\)/);
+  assert.match(app, /updateControlCenter\(records, \{/);
+  assert.match(app, /const FORECAST_WINDOW_DAYS = 14/);
+  assert.match(app, /function calculateGateForecast\(records, options\)/);
+  assert.match(app, /normalCdf\(zScore\)/);
   assert.match(app, /<span>DATE<\/span><span>WEIGHT<\/span><span>前日比<\/span><span>月初比<\/span><span>STEPS<\/span><span>BODY FAT<\/span>/);
   assert.doesNotMatch(app, /<span>ACTIVE KCAL<\/span>/);
   assert.match(app, /container\.scrollTop = 0/);
@@ -31,6 +35,11 @@ test('dashboard loads fresh health data and exposes dynamic targets', async () =
   assert.match(html, /<strong>RYOTA ISHIJIMA<\/strong><small>62 PROJECT<\/small>/);
   assert.match(html, /62 PROJECT · BODY TRANSFORMATION DASHBOARD · 2026/);
   assert.doesNotMatch(html, /PERSONAL TRANSFORMATION DASHBOARD/);
+  assert.match(html, /ACHIEVEMENT PROBABILITY/);
+  assert.match(html, /NO PHOTO STORAGE/);
+  assert.match(html, /食事写真はこのWebページへ保存・公開しません/);
+  assert.match(styles, /\.control-layout \{ display: grid;/);
+  assert.match(styles, /\.meal-review \{ margin-top: 14px; display: grid;/);
 });
 
 test('committed health data includes the next and final goals', async () => {

@@ -18,6 +18,8 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 let nextGoalWeight = 76;
 let nextGoalDeadline = '2026-10-31';
 let selectedRecordMonth = null;
+const PROJECT_START_WEIGHT = 81.7;
+const FORECAST_WINDOW_DAYS = 14;
 
 function setupReveals() {
   const elements = [...document.querySelectorAll('[data-reveal]')];
@@ -331,6 +333,14 @@ async function refreshDashboard(chart) {
     updateCounter('daysToGateCounter', Math.max(0, days), 0, '日');
     setText('nextGateWeight', nextGoalWeight.toFixed(1));
     setText('chartLastUpdate', latestDate.replaceAll('-', '.'));
+    updateControlCenter(records, {
+      currentWeight,
+      latestDate,
+      targetWeight: nextGoalWeight,
+      deadline: nextGoalDeadline,
+      days,
+      goals: data.goals || {},
+    });
 
     const weightSeries = records
       .filter(record => isNumber(record.metrics?.weightKg))
@@ -346,6 +356,172 @@ async function refreshDashboard(chart) {
 function averageRecent(records, key) {
   const values = records.slice(-7).map(record => record.metrics?.[key]).filter(isNumber);
   return values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null;
+}
+
+function updateControlCenter(records, options) {
+  const forecast = calculateGateForecast(records, options);
+  if (!forecast) return;
+
+  updateCounter('achievementProbability', forecast.probability, 0, '%');
+  setText('controlCurrentWeight', forecast.currentWeight.toFixed(1) + 'kg');
+  setText('controlLossFromStart', formatSignedLoss(forecast.lossFromStart));
+  setText('controlRequiredPace', forecast.requiredWeeklyPace.toFixed(2) + 'kg/週');
+  setText('controlActualPace', formatWeeklyLossPace(forecast.actualWeeklyPace));
+  setText('controlProjectedWeight', forecast.projectedWeight.toFixed(1) + 'kg');
+  setText('controlDaysLeft', forecast.days + '日');
+  setText('forecastConfidence', '信頼度：' + forecast.confidence + ' / ' + forecast.sampleCount + '回計測');
+  setText('controlSummary',
+    '今のトレンドが続くと締切時は' + forecast.projectedWeight.toFixed(1) + 'kg。必要ペース週' +
+    forecast.requiredWeeklyPace.toFixed(2) + 'kgに対し、実績は' + formatWeeklyLossPace(forecast.actualWeeklyPace) + '。');
+
+  const verdict = document.getElementById('controlVerdict');
+  if (verdict) {
+    verdict.textContent = forecast.verdict.label;
+    verdict.className = 'verdict-chip ' + forecast.verdict.className;
+  }
+  const probabilityBar = document.getElementById('probabilityBar');
+  if (probabilityBar) probabilityBar.style.width = forecast.probability + '%';
+
+  const recentSteps = averageRecentValid(records, 'steps', 7);
+  const recentSleep = averageRecentValid(records, 'sleepHours', 7);
+  const stepGoal = numberOr(options.goals?.steps, 8000);
+  const sleepGoal = numberOr(options.goals?.sleepHours, 6.5);
+  setText('controlAction', buildControlAction({
+    forecast,
+    recentSteps,
+    recentSleep,
+    stepGoal,
+    sleepGoal,
+  }));
+}
+
+function calculateGateForecast(records, options) {
+  if (!isNumber(options.currentWeight) || !options.latestDate || !options.deadline) return null;
+  const currentWeight = Number(options.currentWeight);
+  const days = Math.max(0, Number(options.days) || 0);
+  const gap = Math.max(0, currentWeight - Number(options.targetWeight));
+  const requiredWeeklyPace = days > 0 ? gap / (days / 7) : 0;
+  const lossFromStart = PROJECT_START_WEIGHT - currentWeight;
+  const latestTime = Date.parse(options.latestDate + 'T00:00:00Z');
+  const points = records
+    .filter(record => isNumber(record.metrics?.weightKg))
+    .map(record => ({
+      date: record.date,
+      time: Date.parse(record.date + 'T00:00:00Z'),
+      weight: Number(record.metrics.weightKg),
+    }))
+    .filter(point => Number.isFinite(point.time) && latestTime - point.time <= (FORECAST_WINDOW_DAYS - 1) * 86400000)
+    .sort((a, b) => a.time - b.time);
+
+  if (points.length < 4) {
+    return {
+      currentWeight,
+      days,
+      lossFromStart,
+      requiredWeeklyPace,
+      actualWeeklyPace: 0,
+      projectedWeight: currentWeight,
+      probability: currentWeight <= Number(options.targetWeight) ? 97 : 25,
+      sampleCount: points.length,
+      confidence: '低',
+      verdict: verdictForProbability(currentWeight <= Number(options.targetWeight) ? 97 : 25),
+    };
+  }
+
+  const origin = points[0].time;
+  const xs = points.map(point => (point.time - origin) / 86400000);
+  const ys = points.map(point => point.weight);
+  const xMean = mean(xs);
+  const yMean = mean(ys);
+  const sxx = xs.reduce((sum, value) => sum + Math.pow(value - xMean, 2), 0);
+  const sxy = xs.reduce((sum, value, index) => sum + (value - xMean) * (ys[index] - yMean), 0);
+  const slope = sxx > 0 ? sxy / sxx : 0;
+  const intercept = yMean - slope * xMean;
+  const deadlineX = (Date.parse(options.deadline + 'T00:00:00Z') - origin) / 86400000;
+  const projectedWeight = intercept + slope * deadlineX;
+  const residualSquares = xs.reduce((sum, value, index) => {
+    const residual = ys[index] - (intercept + slope * value);
+    return sum + residual * residual;
+  }, 0);
+  const residualDeviation = Math.max(0.15, Math.sqrt(residualSquares / Math.max(1, points.length - 2)));
+  const predictionDeviation = residualDeviation * Math.sqrt(1 + 1 / points.length + Math.pow(deadlineX - xMean, 2) / Math.max(1, sxx));
+  const zScore = (Number(options.targetWeight) - projectedWeight) / Math.max(0.2, predictionDeviation);
+  const probability = Math.round(clamp(normalCdf(zScore) * 100, 3, 97));
+  const spanDays = xs.at(-1) - xs[0];
+  const confidence = points.length >= 10 && spanDays >= 10 ? '中' : '低';
+
+  return {
+    currentWeight,
+    days,
+    lossFromStart,
+    requiredWeeklyPace,
+    actualWeeklyPace: -slope * 7,
+    projectedWeight,
+    probability,
+    sampleCount: points.length,
+    confidence,
+    verdict: verdictForProbability(probability),
+  };
+}
+
+function verdictForProbability(probability) {
+  if (probability >= 70) return { label: 'ON TRACK', className: 'is-on-track' };
+  if (probability >= 40) return { label: 'WARNING', className: 'is-warning' };
+  return { label: 'OFF TRACK', className: 'is-off-track' };
+}
+
+function buildControlAction({ forecast, recentSteps, recentSleep, stepGoal, sleepGoal }) {
+  const orders = [];
+  if (forecast.actualWeeklyPace + 0.03 < forecast.requiredWeeklyPace) {
+    orders.push('今週は週' + forecast.requiredWeeklyPace.toFixed(2) + 'kg減のラインへ戻す');
+  } else {
+    orders.push('今の減量ペースを7日間崩さない');
+  }
+  if (isNumber(recentSteps) && recentSteps < stepGoal) {
+    orders.push('歩数平均' + Math.round(recentSteps).toLocaleString('ja-JP') + '歩を' + Math.round(stepGoal).toLocaleString('ja-JP') + '歩まで上げる');
+  }
+  if (isNumber(recentSleep) && recentSleep < sleepGoal) {
+    orders.push('睡眠平均' + Number(recentSleep).toFixed(1) + '時間を' + Number(sleepGoal).toFixed(1) + '時間へ戻す');
+  }
+  orders.push('食事写真を毎食送ってA/B/C判定を受ける');
+  return orders.join('。') + '。';
+}
+
+function averageRecentValid(records, key, limit) {
+  const values = [...records].reverse()
+    .map(record => record.metrics?.[key])
+    .filter(isNumber)
+    .slice(0, limit)
+    .map(Number);
+  return values.length ? mean(values) : null;
+}
+
+function formatSignedLoss(value) {
+  if (!isNumber(value)) return '—';
+  return (Number(value) >= 0 ? '-' : '+') + Math.abs(Number(value)).toFixed(1) + 'kg';
+}
+
+function formatWeeklyLossPace(value) {
+  if (!isNumber(value)) return '—';
+  const number = Number(value);
+  return (number < 0 ? '+' : '-') + Math.abs(number).toFixed(2) + 'kg/週';
+}
+
+function mean(values) {
+  return values.reduce((sum, value) => sum + value, 0) / Math.max(1, values.length);
+}
+
+function normalCdf(value) {
+  const sign = value < 0 ? -1 : 1;
+  const x = Math.abs(value) / Math.sqrt(2);
+  const t = 1 / (1 + 0.3275911 * x);
+  const coefficients = [0.254829592, -0.284496736, 1.421413741, -1.453152027, 1.061405429];
+  const erf = sign * (1 - (((((coefficients[4] * t + coefficients[3]) * t + coefficients[2]) * t + coefficients[1]) * t + coefficients[0]) * t) * Math.exp(-x * x));
+  return 0.5 * (1 + erf);
+}
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
 }
 
 function hasAnyMetric(record) {

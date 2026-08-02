@@ -20,7 +20,7 @@
         <span class="brand-copy"><strong>RYOTA ISHIJIMA</strong><small>62 PROJECT</small></span>
       </a>
       <nav aria-label="ページ内ナビゲーション">
-        <a href="#today">TODAY</a><a href="#roadmap">ROADMAP</a><a href="#trend">PROGRESS</a>
+        <a href="#control">CONTROL</a><a href="#today">TODAY</a><a href="#roadmap">ROADMAP</a><a href="#trend">PROGRESS</a>
       </nav>
       <a class="next-pill" href="#roadmap"><span>NEXT</span>76.0 KG <i class="arrow-icon">↗</i></a>
     </header>
@@ -68,6 +68,60 @@
       <article class="metric metric-lime"><span>DAYS TO GATE</span><strong><span id="daysToGateCounter" class="count-up" data-count="100" data-decimals="0" data-suffix="日">0日</span></strong><small>一歩ずつ、前へ</small></article>
     </section>
 
+    <section id="control" class="control-center" aria-labelledby="control-title">
+      <div class="control-heading" data-reveal>
+        <div>
+          <p class="eyebrow">NEXT GATE CONTROL / 76KG</p>
+          <h2 id="control-title">達成できるかを、<br><span>毎日判定する。</span></h2>
+        </div>
+        <p>直近14日の体重トレンドと残り日数から、76kg到達の見込みを更新。<br>曖昧な「頑張る」は禁止。数字で判定し、次の一手まで出す。</p>
+      </div>
+
+      <div class="control-layout">
+        <article class="probability-card" data-reveal>
+          <div class="probability-top">
+            <span>ACHIEVEMENT PROBABILITY <small>EST.</small></span>
+            <strong id="controlVerdict" class="verdict-chip is-warning">WARNING</strong>
+          </div>
+          <div class="probability-main">
+            <strong><span id="achievementProbability" class="count-up" data-count="50" data-decimals="0" data-suffix="%">0%</span></strong>
+            <div><span>76KG / 2026.10.31</span><small id="forecastConfidence">信頼度：算出中</small></div>
+          </div>
+          <div class="probability-track" aria-hidden="true"><i id="probabilityBar"></i></div>
+          <p id="controlSummary">最新データから達成見込みを算出しています。</p>
+          <div class="control-order">
+            <span>NEXT ORDER</span>
+            <strong id="controlAction">データを確認して、今日の是正指示を出します。</strong>
+          </div>
+        </article>
+
+        <div class="forecast-grid" data-reveal>
+          <article><span>CURRENT WEIGHT</span><strong id="controlCurrentWeight">81.7kg</strong><small>最新計測</small></article>
+          <article><span>LOSS FROM START</span><strong id="controlLossFromStart">0.0kg</strong><small>開始81.7kg比</small></article>
+          <article><span>REQUIRED PACE</span><strong id="controlRequiredPace">0.40kg/週</strong><small>締切までに必要</small></article>
+          <article><span>ACTUAL PACE</span><strong id="controlActualPace">算出中</strong><small>直近14日トレンド</small></article>
+          <article><span>PROJECTED WEIGHT</span><strong id="controlProjectedWeight">—</strong><small>締切日の予想</small></article>
+          <article><span>DAYS LEFT</span><strong id="controlDaysLeft">—</strong><small>次のゲートまで</small></article>
+        </div>
+      </div>
+
+      <article class="meal-review" data-reveal>
+        <div class="meal-review-copy">
+          <span class="privacy-chip">NO PHOTO STORAGE</span>
+          <p class="eyebrow">MEAL PHOTO REVIEW</p>
+          <h3>写真は残さない。<br><span>判定だけ、厳しく残す。</span></h3>
+          <p>食事写真はこのWebページへ保存・公開しません。このチャットに送られた写真を、その場でチェックします。</p>
+        </div>
+        <ol class="meal-review-rules">
+          <li><span>01</span><div><strong>合否を即決</strong><small>A＝合格 / B＝要修正 / C＝計画外</small></div></li>
+          <li><span>02</span><div><strong>量を見積もる</strong><small>推定カロリー帯・たんぱく質・野菜・主食・脂質</small></div></li>
+          <li><span>03</span><div><strong>不足と過剰を指摘</strong><small>曖昧に褒めず、達成を遠ざける要因を明記</small></div></li>
+          <li><span>04</span><div><strong>次の一食を指定</strong><small>帳尻合わせではなく、安全な修正案を1つに絞る</small></div></li>
+        </ol>
+      </article>
+      <p class="control-note" data-reveal>達成確率は直近14日の線形トレンドと日々の変動幅による推定で、医学的診断ではありません。急激な食事制限は採用せず、体調不良や治療中の場合は医療専門職の判断を優先します。</p>
+    </section>
+
     <section class="pace-equivalents" aria-labelledby="pace-title" data-reveal>
       <div class="pace-intro">
         <p class="eyebrow">MOVE EQUIVALENTS</p>
@@ -102,11 +156,11 @@
       </div>
       <div class="roadmap-track" data-reveal>
         <div class="track-line"><i></i></div>
-        <article class="milestone is-active"><div class="milestone-dot"><span>01</span></div><p>NEXT GATE</p><time>2026.10.31</time><strong>76kg</strong><em>毎朝 2km</em></article>
-        <article class="milestone"><div class="milestone-dot"><span>02</span></div><p>6 MONTHS</p><time>2027.01.22</time><strong>70kg</strong><em>毎朝 4km</em></article>
-        <article class="milestone"><div class="milestone-dot"><span>03</span></div><p>1 YEAR</p><time>2027.07.22</time><strong>65kg</strong><em>毎朝 5km</em></article>
-        <article class="milestone"><div class="milestone-dot"><span>04</span></div><p>FINAL FORM</p><time>2028.07.22</time><strong>62kg</strong><em>毎朝 5km</em></article>
-        <article class="milestone"><div class="milestone-dot"><span>05</span></div><p>KEEP GOING</p><time>2029.07.22</time><strong>62kg維持</strong><em>毎朝 5km</em></article>
+        <article class="milestone is-active"><div class="milestone-dot"><span>01</span></div><p>NEXT GATE</p><time>2026.10.31</time><strong>76kg</strong><em>1日 2km</em></article>
+        <article class="milestone"><div class="milestone-dot"><span>02</span></div><p>6 MONTHS</p><time>2027.01.22</time><strong>70kg</strong><em>1日 4km</em></article>
+        <article class="milestone"><div class="milestone-dot"><span>03</span></div><p>1 YEAR</p><time>2027.07.22</time><strong>65kg</strong><em>1日 5km</em></article>
+        <article class="milestone"><div class="milestone-dot"><span>04</span></div><p>FINAL FORM</p><time>2028.07.22</time><strong>62kg</strong><em>1日 5km</em></article>
+        <article class="milestone"><div class="milestone-dot"><span>05</span></div><p>KEEP GOING</p><time>2029.07.22</time><strong>62kg維持</strong><em>1日 5km</em></article>
       </div>
       <div class="gate-callout" data-reveal>
         <span class="gate-callout-label">FIRST CHECKPOINT</span><div><strong>76</strong><em>KG</em></div>
@@ -148,7 +202,7 @@
 
     <section class="closing-cta"><div class="closing-orbit" aria-hidden="true"></div><p class="eyebrow">NO ZERO DAYS</p><h2>今日の一歩が、<br><span>62</span>をつくる。</h2><a href="#top" class="button button-primary">もう一度、今日から <i class="arrow-icon">↗</i></a></section>
     <footer><a href="#top" class="footer-brand">RYOTA ISHIJIMA</a><p>62 PROJECT · BODY TRANSFORMATION DASHBOARD · 2026</p><a href="#top">BACK TO TOP ↑</a></footer>
-    <nav class="mobile-dock" aria-label="スマートフォン用ナビゲーション"><a href="#today"><span>●</span>TODAY</a><a href="#roadmap"><span>↗</span>ROADMAP</a><a href="#trend"><span>⌁</span>PROGRESS</a></nav>
+    <nav class="mobile-dock" aria-label="スマートフォン用ナビゲーション"><a href="#control"><span>!</span>CONTROL</a><a href="#today"><span>●</span>TODAY</a><a href="#roadmap"><span>↗</span>ROADMAP</a><a href="#trend"><span>⌁</span>PROGRESS</a></nav>
   </main>
   <script src="./analytics-config.js"></script>
   <script src="./analytics.js"></script>
