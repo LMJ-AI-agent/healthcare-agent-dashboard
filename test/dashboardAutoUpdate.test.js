@@ -36,10 +36,11 @@ test('dashboard loads fresh health data and exposes dynamic targets', async () =
   assert.match(html, /62 PROJECT · BODY TRANSFORMATION DASHBOARD · 2026/);
   assert.doesNotMatch(html, /PERSONAL TRANSFORMATION DASHBOARD/);
   assert.match(html, /ACHIEVEMENT PROBABILITY/);
-  assert.match(html, /NO PHOTO STORAGE/);
-  assert.match(html, /食事写真はこのWebページへ保存・公開しません/);
+  assert.match(html, /8,000<span>STEPS<\/span>/);
+  assert.doesNotMatch(html, /NO PHOTO STORAGE|MEAL PHOTO REVIEW|睡眠|RECOVER|HOUR/);
+  assert.doesNotMatch(app, /sleepHours|recentSleep|sleepGoal|食事写真/);
   assert.match(styles, /\.control-layout \{ display: grid;/);
-  assert.match(styles, /\.meal-review \{ margin-top: 14px; display: grid;/);
+  assert.doesNotMatch(styles, /\.meal-review|\.privacy-chip/);
 });
 
 test('committed health data includes the next and final goals', async () => {

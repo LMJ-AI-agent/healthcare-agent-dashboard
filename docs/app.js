@@ -383,15 +383,11 @@ function updateControlCenter(records, options) {
   if (probabilityBar) probabilityBar.style.width = forecast.probability + '%';
 
   const recentSteps = averageRecentValid(records, 'steps', 7);
-  const recentSleep = averageRecentValid(records, 'sleepHours', 7);
   const stepGoal = numberOr(options.goals?.steps, 8000);
-  const sleepGoal = numberOr(options.goals?.sleepHours, 6.5);
   setText('controlAction', buildControlAction({
     forecast,
     recentSteps,
-    recentSleep,
     stepGoal,
-    sleepGoal,
   }));
 }
 
@@ -470,7 +466,7 @@ function verdictForProbability(probability) {
   return { label: 'OFF TRACK', className: 'is-off-track' };
 }
 
-function buildControlAction({ forecast, recentSteps, recentSleep, stepGoal, sleepGoal }) {
+function buildControlAction({ forecast, recentSteps, stepGoal }) {
   const orders = [];
   if (forecast.actualWeeklyPace + 0.03 < forecast.requiredWeeklyPace) {
     orders.push('今週は週' + forecast.requiredWeeklyPace.toFixed(2) + 'kg減のラインへ戻す');
@@ -480,10 +476,6 @@ function buildControlAction({ forecast, recentSteps, recentSleep, stepGoal, slee
   if (isNumber(recentSteps) && recentSteps < stepGoal) {
     orders.push('歩数平均' + Math.round(recentSteps).toLocaleString('ja-JP') + '歩を' + Math.round(stepGoal).toLocaleString('ja-JP') + '歩まで上げる');
   }
-  if (isNumber(recentSleep) && recentSleep < sleepGoal) {
-    orders.push('睡眠平均' + Number(recentSleep).toFixed(1) + '時間を' + Number(sleepGoal).toFixed(1) + '時間へ戻す');
-  }
-  orders.push('食事写真を毎食送ってA/B/C判定を受ける');
   return orders.join('。') + '。';
 }
 
