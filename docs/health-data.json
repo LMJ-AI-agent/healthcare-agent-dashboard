@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-05T03:00:13.905Z",
-  "recordCount": 97,
+  "generatedAt": "2026-09-06T03:00:14.476Z",
+  "recordCount": 98,
   "goals": {
     "weightKg": 62,
     "deadline": "2028-07-22",
@@ -6231,8 +6231,8 @@
       ],
       "metrics": {
         "sleepHours": null,
-        "steps": 8371,
-        "activeEnergyKcal": 609,
+        "steps": 8738,
+        "activeEnergyKcal": 651,
         "weightKg": null,
         "bodyMassIndex": null,
         "bodyFatPercent": null
@@ -6267,13 +6267,13 @@
           "weightKg": null,
           "bodyFatPercent": null,
           "sleepHours": null,
-          "steps": 3488,
-          "activeEnergyKcal": 213
+          "steps": 3855,
+          "activeEnergyKcal": 255
         },
         "sevenDay": {
           "sleepHours": 5,
-          "steps": 4345,
-          "activeEnergyKcal": 395,
+          "steps": 4398,
+          "activeEnergyKcal": 401,
           "weightKg": 81.83,
           "bodyFatPercent": 27.53
         }
@@ -6281,17 +6281,85 @@
     },
     {
       "date": "2026-09-05",
+      "status": "posted_or_generated",
+      "bodyCompositionDate": "2026-09-06",
+      "readiness": {
+        "ready": true,
+        "checks": {
+          "healthData": true,
+          "sleepData": false,
+          "bodyComposition": true,
+          "ringConnInHealthData": true
+        },
+        "missing": [],
+        "warnings": [
+          "sleepData"
+        ]
+      },
+      "missing": [],
+      "metrics": {
+        "sleepHours": null,
+        "steps": 9269,
+        "activeEnergyKcal": 404,
+        "weightKg": 82.3,
+        "bodyMassIndex": 31.4,
+        "bodyFatPercent": 26.4
+      },
+      "average7": {
+        "sleepHours": 4.35,
+        "steps": 5269.64,
+        "activeEnergyKcal": 421.14,
+        "weightKg": 82.03,
+        "bodyFatPercent": 27.08
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": 3999,
+        "activeEnergyKcal": -17,
+        "weightKg": 0.3,
+        "bodyFatPercent": -0.7
+      },
+      "goal": {
+        "weightTargetKg": 79,
+        "kgToTarget": 3.3
+      },
+      "coaching": {
+        "topPriority": "未取得データを確認",
+        "actions": [
+          "歩数は基準クリア。今日は追加で追い込みすぎず、食事と筋トレの質を優先する。",
+          "睡眠データは未取得。回復状態が読めないので、筋トレは20分以内でフォーム重視にする。",
+          "体脂肪率は管理圏内。体重だけで判断せず、筋トレ継続で見た目の変化を狙う。",
+          "79.0kgまであと20.3kg。2週間で1kg減のペースなら、今日は小さく確実に削る日。"
+        ],
+        "deltas": {
+          "weightKg": null,
+          "bodyFatPercent": null,
+          "sleepHours": null,
+          "steps": 531,
+          "activeEnergyKcal": -247
+        },
+        "sevenDay": {
+          "sleepHours": 5,
+          "steps": 5267,
+          "activeEnergyKcal": 409,
+          "weightKg": 82.03,
+          "bodyFatPercent": 27.08
+        }
+      }
+    },
+    {
+      "date": "2026-09-06",
       "status": "body_only",
-      "bodyCompositionDate": "2026-09-05",
+      "bodyCompositionDate": "2026-09-06",
       "readiness": null,
       "missing": [],
       "metrics": {
         "sleepHours": null,
         "steps": null,
         "activeEnergyKcal": null,
-        "weightKg": null,
-        "bodyMassIndex": null,
-        "bodyFatPercent": null
+        "weightKg": 82.3,
+        "bodyMassIndex": 31.4,
+        "bodyFatPercent": 26.4
       },
       "average7": {
         "sleepHours": null,
@@ -6317,21 +6385,21 @@
           "歩数データは未取得。今日の最低ラインは8,000歩。昼食後10分、夕方10分の2回に分けて歩く。",
           "睡眠データは未取得。回復状態が読めないので、筋トレは20分以内でフォーム重視にする。",
           "体脂肪率は管理圏内。体重だけで判断せず、筋トレ継続で見た目の変化を狙う。",
-          "79.0kg目標は達成圏。リバウンド防止として筋トレと睡眠を崩さない。"
+          "79.0kgまであと20.3kg。2週間で1kg減のペースなら、今日は小さく確実に削る日。"
         ],
         "deltas": {
-          "weightKg": null,
-          "bodyFatPercent": null,
+          "weightKg": 0,
+          "bodyFatPercent": 0,
           "sleepHours": null,
           "steps": null,
           "activeEnergyKcal": null
         },
         "sevenDay": {
           "sleepHours": 5,
-          "steps": 4538,
-          "activeEnergyKcal": 403,
-          "weightKg": 81.93,
-          "bodyFatPercent": 27.3
+          "steps": 5384,
+          "activeEnergyKcal": 433,
+          "weightKg": 82.15,
+          "bodyFatPercent": 27.2
         }
       }
     }
