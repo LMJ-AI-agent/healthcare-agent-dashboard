@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-14T03:00:13.954Z",
-  "recordCount": 136,
+  "generatedAt": "2026-10-15T03:00:17.745Z",
+  "recordCount": 137,
   "goals": {
     "weightKg": 62,
     "deadline": "2028-07-22",
@@ -8925,8 +8925,8 @@
       ],
       "metrics": {
         "sleepHours": null,
-        "steps": 13875,
-        "activeEnergyKcal": 541,
+        "steps": 15014,
+        "activeEnergyKcal": 709,
         "weightKg": 82.6,
         "bodyMassIndex": 31.5,
         "bodyFatPercent": 28.1
@@ -8961,13 +8961,13 @@
           "weightKg": 0,
           "bodyFatPercent": 0,
           "sleepHours": null,
-          "steps": 12156,
-          "activeEnergyKcal": 391
+          "steps": 13295,
+          "activeEnergyKcal": 559
         },
         "sevenDay": {
           "sleepHours": null,
-          "steps": 6354,
-          "activeEnergyKcal": 425,
+          "steps": 6517,
+          "activeEnergyKcal": 449,
           "weightKg": 81.73,
           "bodyFatPercent": 27.9
         }
@@ -8975,14 +8975,86 @@
     },
     {
       "date": "2026-10-14",
+      "status": "not_ready",
+      "bodyCompositionDate": "2026-10-15",
+      "readiness": {
+        "ready": false,
+        "checks": {
+          "healthData": true,
+          "sleepData": false,
+          "bodyComposition": false,
+          "ringConnInHealthData": true
+        },
+        "missing": [
+          "bodyComposition"
+        ],
+        "warnings": [
+          "sleepData"
+        ]
+      },
+      "missing": [
+        "bodyComposition"
+      ],
+      "metrics": {
+        "sleepHours": null,
+        "steps": 6524,
+        "activeEnergyKcal": 406,
+        "weightKg": null,
+        "bodyMassIndex": null,
+        "bodyFatPercent": null
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 62,
+        "kgToTarget": null
+      },
+      "coaching": {
+        "topPriority": "未取得データを確認",
+        "actions": [
+          "歩数はあと1,476歩。昼食後10分、夕方10分の2回に分けて歩く。",
+          "睡眠データは未取得。回復状態が読めないので、筋トレは20分以内でフォーム重視にする。",
+          "体脂肪率は管理圏内。体重だけで判断せず、筋トレ継続で見た目の変化を狙う。",
+          "79.0kg目標は達成圏。リバウンド防止として筋トレと睡眠を崩さない。"
+        ],
+        "deltas": {
+          "weightKg": null,
+          "bodyFatPercent": null,
+          "sleepHours": null,
+          "steps": -8490,
+          "activeEnergyKcal": -303
+        },
+        "sevenDay": {
+          "sleepHours": null,
+          "steps": 7010,
+          "activeEnergyKcal": 431,
+          "weightKg": 81.72,
+          "bodyFatPercent": 27.8
+        }
+      }
+    },
+    {
+      "date": "2026-10-15",
       "status": "body_only",
-      "bodyCompositionDate": "2026-10-14",
+      "bodyCompositionDate": "2026-10-15",
       "readiness": null,
       "missing": [],
       "metrics": {
         "sleepHours": null,
         "steps": null,
-        "activeEnergyKcal": null,
+        "activeEnergyKcal": 22,
         "weightKg": null,
         "bodyMassIndex": null,
         "bodyFatPercent": null
@@ -9018,14 +9090,14 @@
           "bodyFatPercent": null,
           "sleepHours": null,
           "steps": null,
-          "activeEnergyKcal": null
+          "activeEnergyKcal": -384
         },
         "sevenDay": {
           "sleepHours": null,
-          "steps": 6901,
-          "activeEnergyKcal": 407,
-          "weightKg": 81.72,
-          "bodyFatPercent": 27.8
+          "steps": 7307,
+          "activeEnergyKcal": 372,
+          "weightKg": 81.85,
+          "bodyFatPercent": 27.9
         }
       }
     }
