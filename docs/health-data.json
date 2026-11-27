@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-26T03:00:17.360Z",
-  "recordCount": 179,
+  "generatedAt": "2026-11-27T03:00:17.216Z",
+  "recordCount": 180,
   "goals": {
     "weightKg": 62,
     "deadline": "2028-07-22",
@@ -11933,14 +11933,30 @@
     },
     {
       "date": "2026-11-26",
-      "status": "body_only",
-      "bodyCompositionDate": "2026-11-26",
-      "readiness": null,
-      "missing": [],
+      "status": "not_ready",
+      "bodyCompositionDate": "2026-11-27",
+      "readiness": {
+        "ready": false,
+        "checks": {
+          "healthData": true,
+          "sleepData": false,
+          "bodyComposition": false,
+          "ringConnInHealthData": true
+        },
+        "missing": [
+          "bodyComposition"
+        ],
+        "warnings": [
+          "sleepData"
+        ]
+      },
+      "missing": [
+        "bodyComposition"
+      ],
       "metrics": {
         "sleepHours": null,
-        "steps": 1617,
-        "activeEnergyKcal": 111,
+        "steps": 19258,
+        "activeEnergyKcal": 858,
         "weightKg": null,
         "bodyMassIndex": null,
         "bodyFatPercent": null
@@ -11966,7 +11982,7 @@
       "coaching": {
         "topPriority": "未取得データを確認",
         "actions": [
-          "歩数はあと6,383歩。昼食後10分、夕方10分の2回に分けて歩く。",
+          "歩数は基準クリア。今日は追加で追い込みすぎず、食事と筋トレの質を優先する。",
           "睡眠データは未取得。回復状態が読めないので、筋トレは20分以内でフォーム重視にする。",
           "体脂肪率は管理圏内。体重だけで判断せず、筋トレ継続で見た目の変化を狙う。",
           "79.0kg目標は達成圏。リバウンド防止として筋トレと睡眠を崩さない。"
@@ -11975,15 +11991,71 @@
           "weightKg": null,
           "bodyFatPercent": null,
           "sleepHours": null,
-          "steps": -1013,
-          "activeEnergyKcal": -298
+          "steps": 16628,
+          "activeEnergyKcal": 449
         },
         "sevenDay": {
           "sleepHours": 4.75,
-          "steps": 5836,
-          "activeEnergyKcal": 348,
+          "steps": 8356,
+          "activeEnergyKcal": 455,
           "weightKg": 83.28,
           "bodyFatPercent": 27.68
+        }
+      }
+    },
+    {
+      "date": "2026-11-27",
+      "status": "body_only",
+      "bodyCompositionDate": "2026-11-27",
+      "readiness": null,
+      "missing": [],
+      "metrics": {
+        "sleepHours": null,
+        "steps": 1025,
+        "activeEnergyKcal": 35,
+        "weightKg": null,
+        "bodyMassIndex": null,
+        "bodyFatPercent": null
+      },
+      "average7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "diffFromAverage7": {
+        "sleepHours": null,
+        "steps": null,
+        "activeEnergyKcal": null,
+        "weightKg": null,
+        "bodyFatPercent": null
+      },
+      "goal": {
+        "weightTargetKg": 62,
+        "kgToTarget": null
+      },
+      "coaching": {
+        "topPriority": "未取得データを確認",
+        "actions": [
+          "歩数はあと6,975歩。昼食後10分、夕方10分の2回に分けて歩く。",
+          "睡眠データは未取得。回復状態が読めないので、筋トレは20分以内でフォーム重視にする。",
+          "体脂肪率は管理圏内。体重だけで判断せず、筋トレ継続で見た目の変化を狙う。",
+          "79.0kg目標は達成圏。リバウンド防止として筋トレと睡眠を崩さない。"
+        ],
+        "deltas": {
+          "weightKg": null,
+          "bodyFatPercent": null,
+          "sleepHours": null,
+          "steps": -18233,
+          "activeEnergyKcal": -823
+        },
+        "sevenDay": {
+          "sleepHours": 4.75,
+          "steps": 8173,
+          "activeEnergyKcal": 391,
+          "weightKg": 83.35,
+          "bodyFatPercent": 27.7
         }
       }
     }
